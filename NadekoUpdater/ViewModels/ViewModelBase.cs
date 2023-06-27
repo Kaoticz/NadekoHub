@@ -1,8 +1,7 @@
-﻿using ReactiveUI;
+using ReactiveUI;
 
-namespace NadekoUpdater.ViewModels
+namespace NadekoUpdater.ViewModels;
+
+public class ViewModelBase : ReactiveObject
 {
-    public class ViewModelBase : ReactiveObject
-    {
-    }
 }

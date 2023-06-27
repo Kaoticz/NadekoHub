@@ -1,0 +1,58 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:NadekoUpdater.ViewModels"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        x:Class="NadekoUpdater.Views.MainWindow"
+        x:DataType="vm:MainWindowViewModel"
+        Icon="/Assets/nadekoupdatericon.ico"
+        Title="NadekoBot Updater">
+
+	<Design.DataContext>
+		<!-- This only sets the DataContext for the previewer in an IDE,
+             to set the actual DataContext for runtime, set the DataContext property in code (look at App.axaml.cs) -->
+		<vm:MainWindowViewModel/>
+	</Design.DataContext>
+
+	<Grid RowDefinitions="*,40,*,*,30" ColumnDefinitions="65,*,*,*,*,*" ShowGridLines="True">
+		<!--Left Lateral Bar-->
+		<Button Grid.Row="0" Grid.Column="0" Content="Home Button" HorizontalAlignment="Center" VerticalAlignment="Top"/>
+		<TextBlock Grid.Row="0" Grid.Column="0" Text="Separator" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+		<Button Grid.Row="0" Grid.Column="0" Content="Add Bot Button" Command="{Binding AddBotButton}" HorizontalAlignment="Center" VerticalAlignment="Bottom"/>
+		<ScrollViewer Grid.Row="1" Grid.Column="0" Grid.RowSpan="3">
+			<ItemsRepeater ItemsSource="{Binding BotButtonList}">
+				<ItemsRepeater.ItemTemplate>
+					<DataTemplate>
+						<Border Margin="0,10,0,0" Padding="3">
+							<Button Content="{Binding Content}" />
+						</Border>
+					</DataTemplate>
+				</ItemsRepeater.ItemTemplate>
+			</ItemsRepeater>
+		</ScrollViewer>
+		<Button Grid.Row="5" Grid.Column="0" Content="◯" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+
+		<!--Center Banner-->
+		<TextBlock Grid.Row="0" Grid.Column="1" Text="Nadeko Avatar" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+		<TextBlock Grid.Row="0" Grid.Column="2" Grid.ColumnSpan="4" Text="Welcome to NadekoBot v3" FontSize="28" FontStyle="Oblique" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+
+		<!--Center Buttons-->
+		<Button Grid.Row="1" Grid.Column="1" Content="Commands" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+		<Button Grid.Row="1" Grid.Column="2" Content="Suggest" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+		<Button Grid.Row="1" Grid.Column="3" Content="Docs" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+		<Button Grid.Row="1" Grid.Column="4" Content="Support" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+		<Button Grid.Row="1" Grid.Column="5" Content="Embeds" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+
+		<!--Center Instructions-->
+		<TextBlock Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="6" Text="Pick a bot on the left to get started." FontSize="22" FontStyle="Oblique" HorizontalAlignment="Center" VerticalAlignment="Bottom"/>
+		<TextBlock Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="6" Text="Don't see any bot? Click on the plus button to add a new one." HorizontalAlignment="Center" VerticalAlignment="Top"/>
+
+		<!--Bottom Buttons-->
+		<Button Grid.Row="5" Grid.Column="1" Content="Tip me on Paypal" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+		<Button Grid.Row="5" Grid.Column="2" Content="Support on Patreon" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+		<TextBlock Grid.Row="5" Grid.Column="3" Grid.ColumnSpan="3" Text="Thank You ♡" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+
+	</Grid>
+
+</Window>

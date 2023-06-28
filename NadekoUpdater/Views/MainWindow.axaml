@@ -1,13 +1,18 @@
 <Window xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:vm="using:NadekoUpdater.ViewModels"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:vm="using:NadekoUpdater.ViewModels"
+        xmlns:views="using:NadekoUpdater.Views"
         mc:Ignorable="d" d:DesignWidth="786" d:DesignHeight="593"
         x:Class="NadekoUpdater.Views.MainWindow"
         x:DataType="vm:MainWindowViewModel"
         Icon="/Assets/nadekoupdatericon.ico"
-        Title="NadekoBot Updater">
+        Title="NadekoBot Updater"
+        Width="800"
+        Height="500"
+        MinWidth="800"
+        MinHeight="500">
 
 	<Design.DataContext>
 		<!-- This only sets the DataContext for the previewer in an IDE,
@@ -18,21 +23,14 @@
 	<Grid RowDefinitions="*,40,*,*,30" ColumnDefinitions="65,*,*,*,*,*" ShowGridLines="True">
 
 		<!--Left Lateral Bar-->
-		<Button Grid.Row="0" Grid.Column="0" Content="Home Button" HorizontalAlignment="Center" VerticalAlignment="Top"/>
+		<!--<Button Grid.Row="0" Grid.Column="0" Content="Home Button" HorizontalAlignment="Center" VerticalAlignment="Top"/>
 		<TextBlock Grid.Row="0" Grid.Column="0" Text="Separator" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-		<Button Grid.Row="0" Grid.Column="0" Content="Add Bot Button" Command="{Binding AddBotButton}" HorizontalAlignment="Center" VerticalAlignment="Bottom"/>
-		<ScrollViewer Grid.Row="1" Grid.Column="0" Grid.RowSpan="3">
-			<ItemsRepeater ItemsSource="{Binding BotButtonList}">
-				<ItemsRepeater.ItemTemplate>
-					<DataTemplate>
-						<Border Margin="0,5,0,0">
-							<Button Content="{Binding Content}" />
-						</Border>
-					</DataTemplate>
-				</ItemsRepeater.ItemTemplate>
-			</ItemsRepeater>
-		</ScrollViewer>
-		<Button Grid.Row="5" Grid.Column="0" Content="◯" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+		<Button Grid.Row="0" Grid.Column="0" Content="Add Bot Button" Command="{Binding BotListViewModel.AddBotButton}" HorizontalAlignment="Center" VerticalAlignment="Bottom"/>
+        <ScrollViewer Grid.Row="1" Grid.Column="0" Grid.RowSpan="3">
+            <ContentControl Content="{Binding BotListInstance}" HorizontalAlignment="Center" VerticalAlignment="Top" />
+        </ScrollViewer>
+		<Button Grid.Row="5" Grid.Column="0" Content="◯" HorizontalAlignment="Center" VerticalAlignment="Center"/>-->
+        <ContentControl Grid.Row="0" Grid.Column="0" Grid.RowSpan="5" Content="{Binding LateralBarInstance}" />
 
 		<!--Center Banner-->
 		<TextBlock Grid.Row="0" Grid.Column="1" Text="Nadeko Avatar" HorizontalAlignment="Center" VerticalAlignment="Center"/>

@@ -2,6 +2,9 @@ using ReactiveUI;
 
 namespace NadekoUpdater.ViewModels;
 
-public class ViewModelBase : ReactiveObject
+/// <summary>
+/// Base view-model.
+/// </summary>
+public abstract class ViewModelBase : ReactiveObject
 {
 }

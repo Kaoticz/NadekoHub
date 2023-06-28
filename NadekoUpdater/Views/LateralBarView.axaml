@@ -9,9 +9,16 @@
 
     <Grid RowDefinitions="Auto,Auto,Auto,*,30" ColumnDefinitions="*" ShowGridLines="True">
 
+        <!--Home button-->
         <Button Grid.Row="0" Content="Home Button" HorizontalAlignment="Center" VerticalAlignment="Top"/>
+        
+        <!--Visual separator-->
         <TextBlock Grid.Row="1" Text="Separator" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+        
+        <!--Button that adds new bot buttons-->
         <Button Grid.Row="2" Content="Add Bot Button" Command="{Binding AddBotButton}" HorizontalAlignment="Center" VerticalAlignment="Bottom"/>
+        
+        <!--Scroll bar with bot buttons-->
         <ScrollViewer Grid.Row="3" VerticalAlignment="Stretch">
             <ItemsRepeater ItemsSource="{Binding BotButtonList}">
                 <ItemsRepeater.ItemTemplate>
@@ -23,6 +30,8 @@
                 </ItemsRepeater.ItemTemplate>
             </ItemsRepeater>
         </ScrollViewer>
+        
+        <!--Configurations button-->
         <Button Grid.Row="4" Content="◯" HorizontalAlignment="Center" VerticalAlignment="Center"/>
 
     </Grid>

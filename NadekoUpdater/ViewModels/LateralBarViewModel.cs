@@ -4,10 +4,19 @@ using System.Collections.ObjectModel;
 
 namespace NadekoUpdater.ViewModels;
 
-public class LateralBarViewModel : ViewModelBase
+/// <summary>
+/// View-model for the lateral bar with home, bot, and configuration buttons.
+/// </summary>
+public sealed class LateralBarViewModel : ViewModelBase
 {
+    /// <summary>
+    /// Collection of buttons for bot instances.
+    /// </summary>
     public ObservableCollection<Button> BotButtonList { get; } = new();
 
+    /// <summary>
+    /// Adds a new bot button to the lateral bar.
+    /// </summary>
     public void AddBotButton()
     {
         BotButtonList.Add(new() { Content = "Bot" });

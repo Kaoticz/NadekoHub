@@ -5,7 +5,8 @@
              xmlns:vm="using:NadekoUpdater.ViewModels"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="NadekoUpdater.Views.LateralBarView"
-             x:DataType="vm:LateralBarViewModel">
+             x:DataType="vm:LateralBarViewModel"
+             >
 
     <Grid RowDefinitions="Auto,Auto,Auto,*,30" ColumnDefinitions="*" ShowGridLines="True">
 
@@ -32,7 +33,7 @@
         </ScrollViewer>
         
         <!--Configurations button-->
-        <Button Grid.Row="4" Content="◯" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+        <Button Grid.Row="4" Content="◯" Command="{Binding ShowMessage}" CommandParameter="Hello From Lateral Bar!" HorizontalAlignment="Center" VerticalAlignment="Center"/>
 
     </Grid>
 

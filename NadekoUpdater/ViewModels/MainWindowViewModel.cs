@@ -12,7 +12,7 @@ public sealed class MainWindowViewModel : ViewModelBase
     /// View-model instance of a <see cref="LateralBarView"/>.
     /// </summary>
     public LateralBarViewModel LateralBarInstance { get; } = new();
-    
+
     /// <summary>
     /// Opens the specified URL in the system's default browser.
     /// </summary>

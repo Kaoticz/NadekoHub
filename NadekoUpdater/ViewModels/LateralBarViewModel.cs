@@ -1,4 +1,6 @@
+using Avalonia;
 using Avalonia.Controls;
+using NadekoUpdater.Views;
 using ReactiveUI;
 using System.Collections.ObjectModel;
 
@@ -21,5 +23,11 @@ public sealed class LateralBarViewModel : ViewModelBase
     {
         BotButtonList.Add(new() { Content = "Bot" });
         this.RaisePropertyChanged(nameof(BotButtonList));
+    }
+
+    public void ShowMessage(string message)
+    {
+        var window = new DialogWindowView(message);
+        window.Show();
     }
 }

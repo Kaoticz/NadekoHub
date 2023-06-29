@@ -14,4 +14,9 @@ public static class WindowConstants
     /// Defines the minimum height of the window.
     /// </summary>
     public const string MinWindowHeight = "500";
+
+    /// <summary>
+    /// Defines the default window title.
+    /// </summary>
+    public const string WindowTitle = "NadekoBot Updater";
 }

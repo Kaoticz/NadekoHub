@@ -1,11 +1,20 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
+	<!--Project Settings-->
     <OutputType>WinExe</OutputType>
     <TargetFramework>net7.0</TargetFramework>
     <Nullable>enable</Nullable>
-    <BuiltInComInteropSupport>true</BuiltInComInteropSupport>
+    <WarningsAsErrors>Nullable</WarningsAsErrors>
+    <EnforceCodeStyleInBuild>True</EnforceCodeStyleInBuild>
+    <GenerateDocumentationFile>True</GenerateDocumentationFile>
+    <BuiltInComInteropSupport>True</BuiltInComInteropSupport>
+	  
+	<!--Avalonia Settings-->
     <ApplicationManifest>app.manifest</ApplicationManifest>
 	<AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
+	
+	<!--Supress warning about parameterless views, as we are using DI to manually pass data around-->
+	<NoWarn>AVLN:0005</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>

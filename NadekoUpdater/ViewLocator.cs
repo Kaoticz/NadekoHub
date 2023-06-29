@@ -1,22 +1,26 @@
 using Avalonia.Controls;
 using Avalonia.Controls.Templates;
-using NadekoUpdater.ViewModels;
-using System;
+using NadekoUpdater.ViewModels.Abstractions;
 
 namespace NadekoUpdater;
 
-public class ViewLocator : IDataTemplate
+/// <summary>
+/// An object that creates controls out of view-models.
+/// </summary>
+public sealed class ViewLocator : IDataTemplate
 {
+    /// <inheritdoc />
     public bool Match(object? data)
         => data is ViewModelBase;
 
+    /// <inheritdoc />
     public Control Build(object? data)
     {
-        var name = data?.GetType().FullName?.Replace("ViewModel", "View");
-        var type = (string.IsNullOrWhiteSpace(name)) ? null : Type.GetType(name);
-
-        return (type is not null)
-            ? (Control)Activator.CreateInstance(type)!
-            : new TextBlock { Text = "Not Found: " + name };
+        return data switch
+        {
+            ControlViewModelBase controlViewModel => controlViewModel.Control,
+            ViewModelBase viewModel => viewModel.View,
+            _ => new TextBlock() { Text = $"Control of type \"{data?.GetType().FullName ?? "null"}\" is not recognized." }
+        };
     }
 }

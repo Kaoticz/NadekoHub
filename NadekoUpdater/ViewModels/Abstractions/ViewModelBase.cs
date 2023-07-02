@@ -1,22 +1,15 @@
-using Avalonia.Controls;
 using ReactiveUI;
 
 namespace NadekoUpdater.ViewModels.Abstractions;
 
 /// <summary>
-/// Base view-model.
+/// The base view-model.
 /// </summary>
-public abstract class ViewModelBase : ReactiveObject
+public abstract class ViewModelBase : ReactiveObject, IActivatableViewModel
 {
     /// <summary>
-    /// The view associated with this view-model.
+    /// Activates this view-model with ReactiveUI. See <see cref="ViewModelActivator"/> for more information.
     /// </summary>
-    public Window View { get; }
-
-    /// <summary>
-    /// Creates a view-model.
-    /// </summary>
-    /// <param name="window">The view associated with this view-model.</param>
-    public ViewModelBase(Window window)
-        => View = window;
+    /// <remarks>Activation must also be set up in the corresponding view of this view-model.</remarks>
+    public ViewModelActivator Activator { get; } = new();
 }

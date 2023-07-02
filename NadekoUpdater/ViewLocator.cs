@@ -1,6 +1,9 @@
+using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.Templates;
+using Avalonia.Media;
 using NadekoUpdater.ViewModels.Abstractions;
+using System;
 
 namespace NadekoUpdater;
 
@@ -14,13 +17,12 @@ public sealed class ViewLocator : IDataTemplate
         => data is ViewModelBase;
 
     /// <inheritdoc />
+    /// <remarks>Grabs a view-model and gets its corresponding view.</remarks>
     public Control Build(object? data)
     {
-        return data switch
-        {
-            ControlViewModelBase controlViewModel => controlViewModel.Control,
-            ViewModelBase viewModel => viewModel.View,
-            _ => new TextBlock() { Text = $"Control of type \"{data?.GetType().FullName ?? "null"}\" is not recognized." }
-        };
+        return (data is ViewModelBase viewModel && viewModel.GetType().BaseType?.GenericTypeArguments[0] is Type controlType)
+            ? (Application.Current as App)?.Services.GetService(controlType) as Control
+                ?? new TextBlock { Text = $"View-model of type \"{data?.GetType().FullName ?? "null"}\" is not registered in the IoC container.", TextWrapping = TextWrapping.WrapWithOverflow }
+            : new TextBlock { Text = $"Component of type \"{data?.GetType().FullName ?? "null"}\" is not a valid view-model.", TextWrapping = TextWrapping.WrapWithOverflow };
     }
 }

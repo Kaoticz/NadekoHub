@@ -1,0 +1,60 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:vm="using:NadekoUpdater.ViewModels.Windows"
+        xmlns:views="using:NadekoUpdater.Views"
+        xmlns:const="using:NadekoUpdater.Common"
+        xmlns:dd="using:NadekoUpdater.DesignData.Windows"
+        mc:Ignorable="d"
+        d:DesignWidth="{x:Static const:WindowConstants.MinWindowWidth}"
+        d:DesignHeight="{x:Static const:WindowConstants.MinWindowHeight}"
+        x:Class="NadekoUpdater.Views.Windows.HomeView"
+        x:DataType="vm:HomeViewModel"
+        Icon="/Assets/nadekoupdatericon.ico"
+        WindowStartupLocation="CenterScreen"
+        Title="{x:Static const:WindowConstants.WindowTitle}"
+        Width="{x:Static const:WindowConstants.MinWindowWidth}"
+        Height="{x:Static const:WindowConstants.MinWindowHeight}"
+        MinWidth="{x:Static const:WindowConstants.MinWindowWidth}"
+        MinHeight="{x:Static const:WindowConstants.MinWindowHeight}">
+
+    <Design.DataContext>
+        <dd:DesignHomeViewModel/>
+    </Design.DataContext>
+
+    <Grid RowDefinitions="*,40,*,*,30" ColumnDefinitions="65,*,*,*,*,*" ShowGridLines="True">
+
+        <!--Left Lateral Bar-->
+        <ContentControl Grid.Row="0" Grid.Column="0" Grid.RowSpan="5" Content="{Binding LateralBarInstance}" />
+
+        <!--Center Banner-->
+        <TextBlock Grid.Row="0" Grid.Column="1" Text="Nadeko Avatar" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+        <TextBlock Grid.Row="0" Grid.Column="2" Grid.ColumnSpan="4" Text="Welcome to NadekoBot v4" FontSize="28" FontStyle="Oblique" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+
+        <!--Center Buttons-->
+        <Button Grid.Row="1" Grid.Column="1" Content="Commands" HorizontalAlignment="Center" VerticalAlignment="Center"
+                Command="{Binding OpenUrl}" CommandParameter="https://nadeko.bot/commands"/>
+        <Button Grid.Row="1" Grid.Column="2" Content="Suggest" HorizontalAlignment="Center" VerticalAlignment="Center"
+                Command="{Binding OpenUrl}" CommandParameter="https://suggest.nadeko.bot/"/>
+        <Button Grid.Row="1" Grid.Column="3" Content="Docs" HorizontalAlignment="Center" VerticalAlignment="Center"
+                Command="{Binding OpenUrl}" CommandParameter="https://nadekobot.readthedocs.io/en/v4/"/>
+        <Button Grid.Row="1" Grid.Column="4" Content="Support" HorizontalAlignment="Center" VerticalAlignment="Center"
+                Command="{Binding OpenUrl}" CommandParameter="https://invite.nadeko.bot/"/>
+        <Button Grid.Row="1" Grid.Column="5" Content="Embeds" HorizontalAlignment="Center" VerticalAlignment="Center"
+                Command="{Binding OpenUrl}" CommandParameter="https://eb.nadeko.bot/"/>
+
+        <!--Center Instructions-->
+        <TextBlock Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="6" Text="Pick a bot on the left to get started." FontSize="22" FontStyle="Oblique" HorizontalAlignment="Center" VerticalAlignment="Bottom"/>
+        <TextBlock Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="6" Text="Don't see any bot? Click on the plus button to add a new one." HorizontalAlignment="Center" VerticalAlignment="Top"/>
+
+        <!--Bottom Buttons-->
+        <Button Grid.Row="5" Grid.Column="1" Content="Tip me on Paypal" HorizontalAlignment="Center" VerticalAlignment="Center"
+                 Command="{Binding OpenUrl}" CommandParameter="https://paypal.me/kwoth"/>
+        <Button Grid.Row="5" Grid.Column="2" Content="Support on Patreon" HorizontalAlignment="Center" VerticalAlignment="Center"
+                 Command="{Binding OpenUrl}" CommandParameter="https://patreon.com/nadekobot"/>
+        <TextBlock Grid.Row="5" Grid.Column="3" Grid.ColumnSpan="3" Text="Thank You ♡" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+
+    </Grid>
+
+</Window>

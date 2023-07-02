@@ -1,0 +1,33 @@
+using Microsoft.Extensions.DependencyInjection;
+using ReactiveUI;
+using System.Linq;
+using System.Reflection;
+
+namespace NadekoUpdater.Extensions;
+
+/// <summary>
+/// Defines extension methods for <see cref="IServiceCollection"/>.
+/// </summary>
+public static class IServiceCollectionExt
+{
+    /// <summary>
+    /// Registers all views and view-models in the provided <paramref name="assembly"/> to this service collection.
+    /// </summary>
+    /// <param name="serviceCollection">This service collection.</param>
+    /// <param name="assembly">The assembly to get the views and view-models from.</param>
+    /// <returns>This service collection.</returns>
+    public static IServiceCollection RegisterViewsAndViewModels(this IServiceCollection serviceCollection, Assembly assembly)
+    {
+        var viewModelPairs = assembly.GetTypes()
+            .Where(x => !x.IsAbstract && x.IsAssignableTo(typeof(IViewFor)))
+            .Select(x => (ViewType: x, ViewModelType: x.GetInterface(typeof(IViewFor<>).Name)!.GenericTypeArguments[0]));
+
+        foreach (var (viewType, viewModelType) in viewModelPairs)
+        {
+            serviceCollection.AddSingleton(viewType);
+            serviceCollection.AddTransient(viewModelType);
+        }
+
+        return serviceCollection;
+    }
+}

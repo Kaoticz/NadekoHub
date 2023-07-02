@@ -1,7 +1,10 @@
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
+using Microsoft.Extensions.DependencyInjection;
 using NadekoUpdater.Views.Windows;
+using System;
+using System.Reflection;
 
 namespace NadekoUpdater;
 
@@ -10,6 +13,13 @@ namespace NadekoUpdater;
 /// </summary>
 public partial class App : Application
 {
+    /// <summary>
+    /// IoC container with all services required by the application.
+    /// </summary>
+    public IServiceProvider Services { get; } = new ServiceCollection()
+        .RegisterViewsAndViewModels(Assembly.GetExecutingAssembly())
+        .BuildServiceProvider(true);
+
     /// <inheritdoc />
     public override void Initialize()
         => AvaloniaXamlLoader.Load(this);
@@ -18,7 +28,7 @@ public partial class App : Application
     public override void OnFrameworkInitializationCompleted()
     {
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
-            desktop.MainWindow = new MainWindow();
+            desktop.MainWindow = Services.GetRequiredService<HomeView>();
 
         base.OnFrameworkInitializationCompleted();
     }

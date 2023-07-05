@@ -17,6 +17,7 @@ public class HomeViewModel : ViewModelBase<HomeView>
     public LateralBarViewModel LateralBarInstance { get; }
 
     /// <inheritdoc />
+    /// <param name="lateralBarInstance">The lateral bar.</param>
     public HomeViewModel(LateralBarViewModel lateralBarInstance)
         => LateralBarInstance = lateralBarInstance;
 

@@ -22,7 +22,7 @@
         <Separator Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center" />
         
         <!--Button that adds new bot buttons-->
-        <Button Grid.Row="2" Content="Add Bot Button" Command="{Binding AddBotButton}" HorizontalAlignment="Center" VerticalAlignment="Bottom"/>
+        <Button Grid.Row="2" Content="Add Bot Button" Command="{Binding AddBotButtonAsync}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
         
         <!--Scroll bar with bot buttons-->
         <ScrollViewer Grid.Row="3" VerticalAlignment="Stretch">

@@ -1,15 +1,12 @@
 using Avalonia.Controls;
 using Avalonia.ReactiveUI;
-using MessageBox.Avalonia.Enums;
 using Microsoft.Extensions.DependencyInjection;
 using MsBox.Avalonia;
-using NadekoUpdater.Common;
+using MsBox.Avalonia.Enums;
 using NadekoUpdater.DesignData.Common;
 using NadekoUpdater.ViewModels.Windows;
 using NadekoUpdater.Views.Controls;
 using ReactiveUI;
-using System;
-using System.Threading.Tasks;
 
 namespace NadekoUpdater.Views.Windows;
 
@@ -49,7 +46,7 @@ public partial class HomeView : ReactiveWindow<HomeViewModel>
     {
         var dialogBox = MessageBoxManager.GetMessageBoxStandard(
             DialogType.Notification.ToString(),
-            "Hello from MainWindow view!",
+            $"Hello from {nameof(HomeView)} view!",
             ButtonEnum.Ok,
             MsBox.Avalonia.Enums.Icon.Success,
             WindowStartupLocation.CenterOwner

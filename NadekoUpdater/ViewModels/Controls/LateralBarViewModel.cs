@@ -1,8 +1,12 @@
 using Avalonia.Controls;
+using NadekoUpdater.Services;
 using NadekoUpdater.ViewModels.Abstractions;
 using NadekoUpdater.Views.Controls;
 using ReactiveUI;
 using System.Collections.ObjectModel;
+using System.Linq;
+using System.Reactive.Disposables;
+using System.Threading.Tasks;
 
 namespace NadekoUpdater.ViewModels.Controls;
 
@@ -16,12 +20,53 @@ public class LateralBarViewModel : ViewModelBase<LateralBarView>
     /// </summary>
     public ObservableCollection<Button> BotButtonList { get; } = new();
 
+    private readonly BotEntryManager _botEntryManager;
+
+    /// <summary>
+    /// Creates the view-model for the <see cref="LateralBarView"/>.
+    /// </summary>
+    /// <param name="botEntryManager">The bot entry manager for the lateral bar.</param>
+    public LateralBarViewModel(BotEntryManager botEntryManager)
+    {
+        _botEntryManager = botEntryManager;
+
+        this.WhenActivated(disposables =>
+        {
+            // Use WhenActivated to execute logic
+            // when the view model gets activated.
+            this.LoadBotButtons(botEntryManager);
+
+            // Or use WhenActivated to execute logic
+            // when the view model gets deactivated.
+            Disposable.Create(() => BotButtonList.Clear())
+                .DisposeWith(disposables);
+        });
+    }
+
     /// <summary>
     /// Adds a new bot button to the lateral bar.
     /// </summary>
-    public void AddBotButton()
+    public async Task AddBotButtonAsync()
     {
-        BotButtonList.Add(new() { Content = "Bot" });
+        var (_, botEntry) = await _botEntryManager.CreateEntryAsync();
+
+        BotButtonList.Add(new() { Content = botEntry.Name });
+        this.RaisePropertyChanged(nameof(BotButtonList));
+    }
+
+    /// <summary>
+    /// Loads the bot buttons to the lateral bar.
+    /// </summary>
+    /// <param name="botEntryManager">The bot entry manager.</param>
+    private void LoadBotButtons(BotEntryManager botEntryManager)
+    {
+        var botEntries = botEntryManager.BotEntries
+            .OrderBy(x => x.Key)
+            .Select(x => x.Value);
+
+        foreach (var botEntry in botEntries)
+            BotButtonList.Add(new() { Content = botEntry.Name });
+
         this.RaisePropertyChanged(nameof(BotButtonList));
     }
 }

@@ -18,6 +18,7 @@ public partial class App : Application
     /// </summary>
     public IServiceProvider Services { get; } = new ServiceCollection()
         .RegisterViewsAndViewModels(Assembly.GetExecutingAssembly())
+        .RegisterServices()
         .BuildServiceProvider(true);
 
     /// <inheritdoc />

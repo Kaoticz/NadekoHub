@@ -4,9 +4,7 @@ using NadekoUpdater.ViewModels.Abstractions;
 using NadekoUpdater.Views.Controls;
 using ReactiveUI;
 using System.Collections.ObjectModel;
-using System.Linq;
 using System.Reactive.Disposables;
-using System.Threading.Tasks;
 
 namespace NadekoUpdater.ViewModels.Controls;
 

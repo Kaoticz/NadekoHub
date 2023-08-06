@@ -3,7 +3,6 @@ using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
 using Microsoft.Extensions.DependencyInjection;
 using NadekoUpdater.Views.Windows;
-using System;
 using System.Reflection;
 
 namespace NadekoUpdater;
@@ -29,7 +28,7 @@ public partial class App : Application
     public override void OnFrameworkInitializationCompleted()
     {
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
-            desktop.MainWindow = Services.GetRequiredService<HomeView>();
+            desktop.MainWindow = Services.GetRequiredService<AppView>();
 
         base.OnFrameworkInitializationCompleted();
     }

@@ -1,0 +1,30 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:vm="using:NadekoUpdater.ViewModels.Controls"
+        xmlns:views="using:NadekoUpdater.Views"
+        xmlns:const="using:NadekoUpdater.Common"
+        xmlns:dd="using:NadekoUpdater.DesignData.Controls"
+        mc:Ignorable="d"
+        d:DesignWidth="{x:Static const:WindowConstants.MinWindowWidth}"
+        d:DesignHeight="{x:Static const:WindowConstants.MinWindowHeight}"
+        x:Class="NadekoUpdater.Views.Controls.ConfigView"
+        x:DataType="vm:ConfigViewModel">
+
+    <Design.DataContext>
+        <dd:DesignConfigViewModel/>
+    </Design.DataContext>
+
+    <Grid RowDefinitions="80,*,*,*,*" ColumnDefinitions="*" ShowGridLines="True">
+        <TextBlock Grid.Row="0" Grid.Column="0" Text="Configuration" FontSize="28" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+
+        <TextBlock Grid.Row="1" Grid.Column="0" Text="Dependencies" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+        <TextBlock Grid.Row="2" Grid.Column="0" Text="Actual Dependencies Here" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+
+        <Separator Grid.Row="3" HorizontalAlignment="Left" VerticalAlignment="Top" />
+
+        <TextBlock Grid.Row="3" Grid.Column="0" Text="Something" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+        <TextBlock Grid.Row="4" Grid.Column="0" Text="Else" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+    </Grid>
+</UserControl>

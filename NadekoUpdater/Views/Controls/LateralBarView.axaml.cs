@@ -15,7 +15,7 @@ public partial class LateralBarView : ReactiveUserControl<LateralBarViewModel>
     /// </summary>
     public LateralBarView()
     {
-        InitializeComponent();
         this.WhenActivated(_ => Debug.WriteLine($"{nameof(LateralBarView)} activated."));
+        InitializeComponent();
     }
 }

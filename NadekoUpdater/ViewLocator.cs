@@ -17,7 +17,7 @@ public sealed class ViewLocator : IDataTemplate
         => data is ViewModelBase;
 
     /// <inheritdoc />
-    /// <remarks>Grabs a view-model and gets its corresponding view.</remarks>
+    /// <remarks>Receives a view-model and returns its corresponding view.</remarks>
     public Control Build(object? data)
     {
         return (data is ViewModelBase viewModel && viewModel.GetType().BaseType?.GenericTypeArguments[0] is Type controlType)

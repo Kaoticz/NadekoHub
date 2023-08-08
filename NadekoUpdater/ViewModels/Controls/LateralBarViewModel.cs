@@ -1,4 +1,5 @@
 using Avalonia.Controls;
+using NadekoUpdater.Models;
 using NadekoUpdater.Services;
 using NadekoUpdater.ViewModels.Abstractions;
 using NadekoUpdater.Views.Controls;
@@ -18,13 +19,14 @@ public class LateralBarViewModel : ViewModelBase<LateralBarView>
     /// </summary>
     public ObservableCollection<Button> BotButtonList { get; } = new();
 
-    private readonly BotEntryManager _botEntryManager;
+    private readonly AppConfigManager _botEntryManager;
 
     /// <summary>
     /// Creates the view-model for the <see cref="LateralBarView"/>.
     /// </summary>
+    /// <param name="appConfig">The application's settings.</param>
     /// <param name="botEntryManager">The bot entry manager for the lateral bar.</param>
-    public LateralBarViewModel(BotEntryManager botEntryManager)
+    public LateralBarViewModel(AppConfig appConfig, AppConfigManager botEntryManager)
     {
         _botEntryManager = botEntryManager;
 
@@ -32,7 +34,7 @@ public class LateralBarViewModel : ViewModelBase<LateralBarView>
         {
             // Use WhenActivated to execute logic
             // when the view model gets activated.
-            this.LoadBotButtons(botEntryManager);
+            this.LoadBotButtons(appConfig);
 
             // Or use WhenActivated to execute logic
             // when the view model gets deactivated.
@@ -55,10 +57,10 @@ public class LateralBarViewModel : ViewModelBase<LateralBarView>
     /// <summary>
     /// Loads the bot buttons to the lateral bar.
     /// </summary>
-    /// <param name="botEntryManager">The bot entry manager.</param>
-    private void LoadBotButtons(BotEntryManager botEntryManager)
+    /// <param name="appConfig">The application's configuration.</param>
+    private void LoadBotButtons(AppConfig appConfig)
     {
-        var botEntries = botEntryManager.BotEntries
+        var botEntries = appConfig.BotEntries
             .OrderBy(x => x.Key)
             .Select(x => x.Value);
 

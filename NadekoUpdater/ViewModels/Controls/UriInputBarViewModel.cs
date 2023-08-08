@@ -13,7 +13,7 @@ namespace NadekoUpdater.ViewModels.Controls;
 public class UriInputBarViewModel : ViewModelBase<UriInputBar>
 {
     private static readonly FolderPickerOpenOptions _folderPickerOptions = new();
-    private string _currentUri = AppStatics.DefaultUserConfigUri;   // TODO: Set to whatever the user prefers
+    private string _currentUri = AppStatics.DefaultAppConfigDirectoryUri;   // TODO: Set to whatever the user prefers
     private bool _isFolderValid = true; // TODO: above
     private readonly IStorageProvider _storageProvider;
 

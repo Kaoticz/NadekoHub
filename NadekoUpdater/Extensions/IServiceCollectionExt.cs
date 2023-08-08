@@ -1,8 +1,10 @@
 using Microsoft.Extensions.DependencyInjection;
+using NadekoUpdater.Models;
 using NadekoUpdater.Services;
 using ReactiveUI;
 using System.Linq;
 using System.Reflection;
+using System.Text.Json;
 
 namespace NadekoUpdater.Extensions;
 
@@ -39,7 +41,13 @@ public static class IServiceCollectionExt
     /// <returns>This service collection with the services added.</returns>
     public static IServiceCollection RegisterServices(this IServiceCollection serviceCollection)
     {
-        serviceCollection.AddSingleton<BotEntryManager>();
+        serviceCollection.AddSingleton<AppConfigManager>();
+        serviceCollection.AddSingleton(_ =>
+            (File.Exists(AppStatics.AppConfigUri))
+                ? JsonSerializer.Deserialize<AppConfig>(File.ReadAllText(AppStatics.AppConfigUri)) ?? new(AppStatics.DefaultAppConfigDirectoryUri, new())
+                : new(AppStatics.DefaultAppConfigDirectoryUri, new())
+        );
+
         return serviceCollection;
     }
 }

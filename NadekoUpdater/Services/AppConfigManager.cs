@@ -1,32 +1,24 @@
 using NadekoUpdater.Models;
 using NadekoUpdater.ViewModels.Controls;
-using System.Collections.Concurrent;
 using System.Text.Json;
 
 namespace NadekoUpdater.Services;
 
 /// <summary>
-/// Service that manages the bot entries in the <see cref="LateralBarViewModel"/>.
+/// Service that manages the application's settings.
 /// </summary>
-public sealed class BotEntryManager
+public sealed class AppConfigManager
 {
-    /// <summary>
-    /// Contains the bot entries and their position in the bot list.
-    /// </summary>
-    public IReadOnlyDictionary<uint, BotInstanceInfo> BotEntries => _botEntries;
-
     private readonly JsonSerializerOptions _jsonSerializerOptions = new() { WriteIndented = true };
-    private readonly ConcurrentDictionary<uint, BotInstanceInfo> _botEntries;
+    private readonly AppConfig _appConfig;
 
     /// <summary>
     /// Creates a service that managers bot entries in the <see cref="LateralBarViewModel"/>.
     /// </summary>
-    public BotEntryManager()
+    public AppConfigManager(AppConfig appConfig)
     {
-        Directory.CreateDirectory(AppStatics.DefaultUserConfigUri);
-        _botEntries = (File.Exists(AppStatics.BotEntryListConfigUri))
-            ? JsonSerializer.Deserialize<ConcurrentDictionary<uint, BotInstanceInfo>>(File.ReadAllText(AppStatics.BotEntryListConfigUri)) ?? new()
-            : new();
+        _appConfig = appConfig;
+        Directory.CreateDirectory(appConfig.BotsDirectoryUri);  // Create the directory where the bot instances will be stored.
     }
 
     /// <summary>
@@ -37,11 +29,11 @@ public sealed class BotEntryManager
     /// <exception cref="InvalidOperationException">Occurs when the bot entry is not successfully created.</exception>
     public async ValueTask<BotEntry> CreateEntryAsync(CancellationToken cToken = default)
     {
-        var newPosition = (_botEntries.Count is 0) ? 0 : _botEntries.Keys.Max() + 1;
+        var newPosition = (_appConfig.BotEntries.Count is 0) ? 0 : _appConfig.BotEntries.Keys.Max() + 1;
         var newBotName = "NewBot_" + newPosition;
         var newEntry = new BotInstanceInfo(newBotName, AppStatics.GenerateBotLocationUri(newBotName));
 
-        if (!_botEntries.TryAdd(newPosition, newEntry))
+        if (!_appConfig.BotEntries.TryAdd(newPosition, newEntry))
             throw new InvalidOperationException($"Could not create a new bot entry at position {newPosition}.");
 
         await SaveAsync(cToken);
@@ -57,7 +49,7 @@ public sealed class BotEntryManager
     /// <returns>The bot entry that got deleted, <see langword="null"/> otherwise.</returns>
     public async ValueTask<BotEntry?> DeleteEntryAsync(uint position, CancellationToken cToken = default)
     {
-        if (!_botEntries.TryRemove(position, out var removedEntry))
+        if (!_appConfig.BotEntries.TryRemove(position, out var removedEntry))
             return null;
         else if (Directory.Exists(removedEntry.InstanceDirectoryUri))
             Directory.Delete(removedEntry.InstanceDirectoryUri, true);
@@ -76,13 +68,13 @@ public sealed class BotEntryManager
     /// <returns><see langword="true"/> if the entry got moved, <see langword="false"/> otherwise.</returns>
     public async ValueTask<bool> MoveEntryAsync(uint oldPosition, uint newPosition, CancellationToken cToken = default)
     {
-        if (oldPosition == newPosition || !_botEntries.TryGetValue(newPosition, out var target) || !_botEntries.TryGetValue(oldPosition, out var source))
+        if (oldPosition == newPosition || !_appConfig.BotEntries.TryGetValue(newPosition, out var target) || !_appConfig.BotEntries.TryGetValue(oldPosition, out var source))
             return false;
 
-        _botEntries.TryRemove(oldPosition, out _);
-        _botEntries.TryRemove(newPosition, out _);
-        _botEntries.TryAdd(oldPosition, target);
-        _botEntries.TryAdd(newPosition, source);
+        _appConfig.BotEntries.TryRemove(oldPosition, out _);
+        _appConfig.BotEntries.TryRemove(newPosition, out _);
+        _appConfig.BotEntries.TryAdd(oldPosition, target);
+        _appConfig.BotEntries.TryAdd(newPosition, source);
 
         await SaveAsync(cToken);
 
@@ -98,12 +90,12 @@ public sealed class BotEntryManager
     /// <returns><see langword="true"/> if changes were made on the entry, <see langword="false"/> otherwise.</returns>
     public async ValueTask<bool> EditEntryAsync(uint position, Func<BotInstanceInfo, BotInstanceInfo> selector, CancellationToken cToken = default)
     {
-        if (!_botEntries.TryRemove(position, out var entry))
+        if (!_appConfig.BotEntries.TryRemove(position, out var entry))
             return false;
 
         var updatedEntry = selector(entry);
 
-        _botEntries.TryAdd(position, updatedEntry);
+        _appConfig.BotEntries.TryAdd(position, updatedEntry);
 
         await SaveAsync(cToken);
 
@@ -119,7 +111,11 @@ public sealed class BotEntryManager
     /// <param name="cToken">The cancellation token.</param>
     private async ValueTask SaveAsync(CancellationToken cToken = default)
     {
-        var json = JsonSerializer.Serialize(BotEntries, _jsonSerializerOptions);
-        await File.WriteAllTextAsync(AppStatics.BotEntryListConfigUri, json, cToken);
+        // Create the directory where the config file will be stored, if it doesn't exist.
+        Directory.CreateDirectory(AppStatics.DefaultAppConfigDirectoryUri);
+
+        // Create the configuration file.
+        var json = JsonSerializer.Serialize(_appConfig, _jsonSerializerOptions);
+        await File.WriteAllTextAsync(AppStatics.AppConfigUri, json, cToken);
     }
 }

@@ -16,7 +16,7 @@
         <dd:DesignConfigViewModel/>
     </Design.DataContext>
 
-    <Grid RowDefinitions="80,Auto,*,*" ColumnDefinitions="*" Margin="5 0 5 0" ShowGridLines="True">
+    <Grid RowDefinitions="80,Auto,*" ColumnDefinitions="*" Margin="5 0 5 0" ShowGridLines="True">
         <!--Settings Title-->
         <TextBlock Grid.Row="0" Text="Settings" FontSize="28" HorizontalAlignment="Left" VerticalAlignment="Center"/>
 
@@ -41,8 +41,10 @@
             <Separator Grid.Row="2" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" />
         </StackPanel>
         
-        <TextBlock Grid.Row="2" Text="Something" HorizontalAlignment="Left" VerticalAlignment="Center"/>
-        
-        <TextBlock Grid.Row="3" Text="Else" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+        <!--Application Settings-->
+        <StackPanel Grid.Row="2">
+            <TextBlock Grid.Row="2" Text="Default App Directory:" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+            <ContentControl Content="{Binding DefaultBotUriBar}" />
+        </StackPanel>
     </Grid>
 </UserControl>

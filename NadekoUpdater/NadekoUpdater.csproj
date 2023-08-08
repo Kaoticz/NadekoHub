@@ -30,6 +30,7 @@
 
   <ItemGroup>
     <Watch Remove="Views\Controls\DependencyButton.axaml" />
+    <Watch Remove="Views\Controls\UriInputBar.axaml" />
   </ItemGroup>
 
   <ItemGroup>

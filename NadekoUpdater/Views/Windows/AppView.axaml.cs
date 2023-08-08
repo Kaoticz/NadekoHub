@@ -6,6 +6,7 @@ using NadekoUpdater.ViewModels.Controls;
 using NadekoUpdater.ViewModels.Windows;
 using NadekoUpdater.Views.Controls;
 using ReactiveUI;
+using System.Diagnostics;
 
 namespace NadekoUpdater.Views.Windows;
 

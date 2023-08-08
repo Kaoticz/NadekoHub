@@ -39,7 +39,7 @@ public sealed class BotEntryManager
     {
         var newPosition = (_botEntries.Count is 0) ? 0 : _botEntries.Keys.Max() + 1;
         var newBotName = "NewBot_" + newPosition;
-        var newEntry = new BotInstanceInfo(newBotName, AppStatics.GenerateBotLocationPath(newBotName));
+        var newEntry = new BotInstanceInfo(newBotName, AppStatics.GenerateBotLocationUri(newBotName));
 
         if (!_botEntries.TryAdd(newPosition, newEntry))
             throw new InvalidOperationException($"Could not create a new bot entry at position {newPosition}.");

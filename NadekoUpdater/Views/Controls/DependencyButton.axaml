@@ -1,0 +1,19 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="using:NadekoUpdater.ViewModels.Controls"
+             xmlns:dd="using:NadekoUpdater.DesignData.Controls"
+             mc:Ignorable="d" d:DesignWidth="600" d:DesignHeight="50"
+             x:Class="NadekoUpdater.Views.Controls.DependencyButton"
+             x:DataType="vm:DependencyButtonViewModel">
+
+    <Design.DataContext>
+        <dd:DesignDependencyButtonViewModel/>
+    </Design.DataContext>
+
+    <Grid RowDefinitions="*" ColumnDefinitions="*,Auto" ShowGridLines="True">
+        <TextBlock Grid.Column="0" Text="{Binding DependencyName}" HorizontalAlignment="Left" VerticalAlignment="Center" />
+        <Button Grid.Column="1" Content="{Binding Status}" HorizontalAlignment="Center" VerticalAlignment="Center" />
+    </Grid>
+</UserControl>

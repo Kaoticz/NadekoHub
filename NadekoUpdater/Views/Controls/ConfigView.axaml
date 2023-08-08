@@ -3,7 +3,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:vm="using:NadekoUpdater.ViewModels.Controls"
-        xmlns:views="using:NadekoUpdater.Views"
+        xmlns:views="using:NadekoUpdater.Views.Controls"
         xmlns:const="using:NadekoUpdater.Common"
         xmlns:dd="using:NadekoUpdater.DesignData.Controls"
         mc:Ignorable="d"
@@ -16,15 +16,33 @@
         <dd:DesignConfigViewModel/>
     </Design.DataContext>
 
-    <Grid RowDefinitions="80,*,*,*,*" ColumnDefinitions="*" ShowGridLines="True">
-        <TextBlock Grid.Row="0" Grid.Column="0" Text="Configuration" FontSize="28" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+    <Grid RowDefinitions="80,Auto,*,*" ColumnDefinitions="*" Margin="5 0 5 0" ShowGridLines="True">
+        <!--Settings Title-->
+        <TextBlock Grid.Row="0" Text="Settings" FontSize="28" HorizontalAlignment="Left" VerticalAlignment="Center"/>
 
-        <TextBlock Grid.Row="1" Grid.Column="0" Text="Dependencies" HorizontalAlignment="Left" VerticalAlignment="Center"/>
-        <TextBlock Grid.Row="2" Grid.Column="0" Text="Actual Dependencies Here" HorizontalAlignment="Left" VerticalAlignment="Center"/>
-
-        <Separator Grid.Row="3" HorizontalAlignment="Left" VerticalAlignment="Top" />
-
-        <TextBlock Grid.Row="3" Grid.Column="0" Text="Something" HorizontalAlignment="Left" VerticalAlignment="Center"/>
-        <TextBlock Grid.Row="4" Grid.Column="0" Text="Else" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+        <!--Dependencies-->
+        <StackPanel Grid.Row="1">
+            <!--Text-->
+            <TextBlock Text="Dependencies" FontSize="22" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+            <TextBlock Text="Make sure the dependencies below are installed. " HorizontalAlignment="Left" VerticalAlignment="Center"/>
+            
+            <!--Dependency Buttons-->
+            <ItemsRepeater ItemsSource="{Binding DependencyButtons}">
+                <ItemsRepeater.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel>
+                            <views:DependencyButton />
+                        </StackPanel>
+                    </DataTemplate>
+                </ItemsRepeater.ItemTemplate>
+            </ItemsRepeater>
+            
+            <!--Separator-->
+            <Separator Grid.Row="2" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" />
+        </StackPanel>
+        
+        <TextBlock Grid.Row="2" Text="Something" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+        
+        <TextBlock Grid.Row="3" Text="Else" HorizontalAlignment="Left" VerticalAlignment="Center"/>
     </Grid>
 </UserControl>

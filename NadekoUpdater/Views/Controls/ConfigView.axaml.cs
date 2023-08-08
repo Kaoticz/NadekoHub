@@ -1,5 +1,9 @@
 using Avalonia.ReactiveUI;
+using Microsoft.Extensions.DependencyInjection;
+using NadekoUpdater.DesignData.Common;
 using NadekoUpdater.ViewModels.Controls;
+using NadekoUpdater.ViewModels.Windows;
+using ReactiveUI;
 
 namespace NadekoUpdater.Views.Controls;
 
@@ -9,8 +13,19 @@ namespace NadekoUpdater.Views.Controls;
 public partial class ConfigView : ReactiveUserControl<ConfigViewModel>
 {
     /// <summary>
-    /// Created a view for the application's settings.
+    /// Designer's constructor. Use the parameterized constructor instead.
     /// </summary>
-    public ConfigView()
-        => InitializeComponent();
+    [Obsolete(WindowConstants.DesignerCtorWarning, true)]
+    public ConfigView() : this(DesignStatics.Services.GetRequiredService<ConfigViewModel>())
+    {
+    }
+
+    /// <summary>
+    /// Creates a view for the application's settings.
+    /// </summary>
+    public ConfigView(ConfigViewModel viewModel)
+    {
+        this.WhenActivated(_ => base.ViewModel = viewModel);
+        InitializeComponent();
+    }
 }

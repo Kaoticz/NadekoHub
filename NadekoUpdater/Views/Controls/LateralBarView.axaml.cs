@@ -1,7 +1,5 @@
 using Avalonia.ReactiveUI;
 using NadekoUpdater.ViewModels.Controls;
-using ReactiveUI;
-using System.Diagnostics;
 
 namespace NadekoUpdater.Views.Controls;
 
@@ -14,8 +12,5 @@ public partial class LateralBarView : ReactiveUserControl<LateralBarViewModel>
     /// Creates the lateral bar of the application.
     /// </summary>
     public LateralBarView()
-    {
-        this.WhenActivated(_ => Debug.WriteLine($"{nameof(LateralBarView)} activated."));
-        InitializeComponent();
-    }
+        => InitializeComponent();
 }

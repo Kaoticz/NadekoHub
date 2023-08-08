@@ -1,6 +1,3 @@
-using System;
-using System.IO;
-
 namespace NadekoUpdater.Common;
 
 /// <summary>
@@ -27,6 +24,6 @@ public static class AppStatics
     /// </summary>
     /// <param name="botName">The name of the bot instance.</param>
     /// <returns>The location path to the bot instance.</returns>
-    public static string GenerateBotLocationPath(string botName)
+    public static string GenerateBotLocationUri(string botName)
         => Path.Combine(DefaultUserConfigUri, botName);
 }

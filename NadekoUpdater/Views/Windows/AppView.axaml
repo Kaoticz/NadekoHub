@@ -3,8 +3,6 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:vm="using:NadekoUpdater.ViewModels.Windows"
-        xmlns:vc="using:NadekoUpdater.ViewModels.Controls"
-        xmlns:views="using:NadekoUpdater.Views.Controls"
         xmlns:const="using:NadekoUpdater.Common"
         xmlns:dd="using:NadekoUpdater.DesignData.Windows"
         mc:Ignorable="d"

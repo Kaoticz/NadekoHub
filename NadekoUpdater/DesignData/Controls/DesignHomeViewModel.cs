@@ -7,10 +7,4 @@ namespace NadekoUpdater.DesignData.Controls;
 /// </summary>
 public sealed class DesignHomeViewModel : HomeViewModel
 {
-    /// <summary>
-    /// Creates a mock <see cref="HomeViewModel"/> to be used at design-time.
-    /// </summary>
-    public DesignHomeViewModel() : base()
-    {
-    }
 }

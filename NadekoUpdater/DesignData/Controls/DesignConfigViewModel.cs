@@ -7,10 +7,4 @@ namespace NadekoUpdater.DesignData.Controls;
 /// </summary>
 public sealed class DesignConfigViewModel : ConfigViewModel
 {
-    /// <summary>
-    /// Creates a mock <see cref="ConfigViewModel"/> to be used at design-time.
-    /// </summary>
-    public DesignConfigViewModel() : base()
-    {
-    }
 }

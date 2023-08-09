@@ -2,7 +2,6 @@ using Microsoft.Extensions.DependencyInjection;
 using NadekoUpdater.Models;
 using NadekoUpdater.Services;
 using ReactiveUI;
-using System.Linq;
 using System.Reflection;
 using System.Text.Json;
 

@@ -1,8 +1,9 @@
 <Application xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             x:Class="NadekoUpdater.App"
              xmlns:local="using:NadekoUpdater"
-             RequestedThemeVariant="Default">
+             RequestedThemeVariant="Default"
+             x:Class="NadekoUpdater.App"
+             x:DataType="local:App">
              <!-- "Default" ThemeVariant follows system theme variant. "Dark" or "Light" are other available options. -->
 
     <Application.DataTemplates>
@@ -12,4 +13,18 @@
     <Application.Styles>
         <FluentTheme />
     </Application.Styles>
+
+    <TrayIcon.Icons>
+      <TrayIcons>
+        <TrayIcon Icon="/Assets/nadekoupdatericon.ico" ToolTipText="Nadeko Updater">
+          <TrayIcon.Menu>
+            <NativeMenu>
+              <NativeMenuItem Header="Open" Click="ShowApp" />
+              <NativeMenuItemSeparator />
+              <NativeMenuItem Header="Close" Click="CloseApp" />
+            </NativeMenu>
+          </TrayIcon.Menu>
+        </TrayIcon>
+      </TrayIcons>
+    </TrayIcon.Icons>
 </Application>

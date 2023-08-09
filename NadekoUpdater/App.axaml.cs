@@ -1,4 +1,5 @@
 using Avalonia;
+using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
 using Microsoft.Extensions.DependencyInjection;
@@ -32,4 +33,20 @@ public partial class App : Application
 
         base.OnFrameworkInitializationCompleted();
     }
+
+    /// <summary>
+    /// Executed when the "Open" menu in the tray icon is clicked.
+    /// </summary>
+    /// <param name="sender">A <see cref="NativeMenuItem"/>.</param>
+    /// <param name="eventArgs">A <see cref="EventArgs"/>.</param>
+    private void ShowApp(object sender, EventArgs eventArgs)
+        => Services.GetRequiredService<AppView>().Show();
+
+    /// <summary>
+    /// Executed when the "Close" menu in the tray icon is clicked.
+    /// </summary>
+    /// <param name="sender">A <see cref="NativeMenuItem"/>.</param>
+    /// <param name="eventArgs">A <see cref="EventArgs"/>.</param>
+    private void CloseApp(object sender, EventArgs eventArgs)
+        => Services.GetRequiredService<AppView>().Close();
 }

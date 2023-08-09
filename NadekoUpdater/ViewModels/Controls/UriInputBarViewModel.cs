@@ -4,6 +4,8 @@ using System.Diagnostics;
 using Avalonia.Platform.Storage;
 using NadekoUpdater.Views.Windows;
 using ReactiveUI;
+using NadekoUpdater.Events;
+using NadekoUpdater.Events.Args;
 
 namespace NadekoUpdater.ViewModels.Controls;
 
@@ -13,8 +15,9 @@ namespace NadekoUpdater.ViewModels.Controls;
 public class UriInputBarViewModel : ViewModelBase<UriInputBar>
 {
     private static readonly FolderPickerOpenOptions _folderPickerOptions = new();
+    private string _lastValidUri = AppStatics.DefaultAppConfigDirectoryUri;
     private string _currentUri = AppStatics.DefaultAppConfigDirectoryUri;   // TODO: Set to whatever the user prefers
-    private bool _isFolderValid = true; // TODO: above
+    private bool _isDirectoryValid = true; // TODO: above
     private readonly IStorageProvider _storageProvider;
 
     /// <summary>
@@ -22,8 +25,8 @@ public class UriInputBarViewModel : ViewModelBase<UriInputBar>
     /// </summary>
     public bool IsDirectoryValid
     {
-        get => _isFolderValid;
-        set => this.RaiseAndSetIfChanged(ref _isFolderValid, value);
+        get => _isDirectoryValid;
+        set => this.RaiseAndSetIfChanged(ref _isDirectoryValid, value);
     }
 
     /// <summary>
@@ -36,8 +39,19 @@ public class UriInputBarViewModel : ViewModelBase<UriInputBar>
         {
             IsDirectoryValid = Directory.Exists(value) && HasWritePermission(value);
             this.RaiseAndSetIfChanged(ref _currentUri, value);
+
+            if (IsDirectoryValid)
+            {
+                OnValidUri?.Invoke(this, new(_lastValidUri, value));
+                _lastValidUri = value;
+            }
         }
     }
+
+    /// <summary>
+    /// Triggers when a valid uri path is set.
+    /// </summary>
+    public event EventHandler<UriInputBarViewModel, UriInputBarEventArgs>? OnValidUri;
 
     /// <summary>
     /// Creates a text box for inputting the absolute path of a directory.

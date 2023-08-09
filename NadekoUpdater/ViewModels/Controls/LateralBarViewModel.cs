@@ -48,7 +48,7 @@ public class LateralBarViewModel : ViewModelBase<LateralBarView>
     /// </summary>
     public async Task AddBotButtonAsync()
     {
-        var (_, botEntry) = await _botEntryManager.CreateEntryAsync();
+        var (_, botEntry) = await _botEntryManager.CreateBotEntryAsync();
 
         BotButtonList.Add(new() { Content = botEntry.Name });
         this.RaisePropertyChanged(nameof(BotButtonList));

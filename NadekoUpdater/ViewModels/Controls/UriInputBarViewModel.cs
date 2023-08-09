@@ -6,6 +6,7 @@ using NadekoUpdater.Views.Windows;
 using ReactiveUI;
 using NadekoUpdater.Events;
 using NadekoUpdater.Events.Args;
+using NadekoUpdater.Models;
 
 namespace NadekoUpdater.ViewModels.Controls;
 
@@ -16,8 +17,8 @@ public class UriInputBarViewModel : ViewModelBase<UriInputBar>
 {
     private static readonly FolderPickerOpenOptions _folderPickerOptions = new();
     private string _lastValidUri = AppStatics.DefaultAppConfigDirectoryUri;
-    private string _currentUri = AppStatics.DefaultAppConfigDirectoryUri;   // TODO: Set to whatever the user prefers
-    private bool _isDirectoryValid = true; // TODO: above
+    private bool _isDirectoryValid = true;
+    private string _currentUri;
     private readonly IStorageProvider _storageProvider;
 
     /// <summary>
@@ -26,7 +27,7 @@ public class UriInputBarViewModel : ViewModelBase<UriInputBar>
     public bool IsDirectoryValid
     {
         get => _isDirectoryValid;
-        set => this.RaiseAndSetIfChanged(ref _isDirectoryValid, value);
+        private set => this.RaiseAndSetIfChanged(ref _isDirectoryValid, value);
     }
 
     /// <summary>
@@ -37,7 +38,7 @@ public class UriInputBarViewModel : ViewModelBase<UriInputBar>
         get => _currentUri;
         set
         {
-            IsDirectoryValid = Directory.Exists(value) && HasWritePermission(value);
+            IsDirectoryValid = IsValidDirectory(value);
             this.RaiseAndSetIfChanged(ref _currentUri, value);
 
             if (IsDirectoryValid)
@@ -57,8 +58,14 @@ public class UriInputBarViewModel : ViewModelBase<UriInputBar>
     /// Creates a text box for inputting the absolute path of a directory.
     /// </summary>
     /// <param name="mainWindow">The application's main window.</param>
-    public UriInputBarViewModel(AppView mainWindow)
-        => _storageProvider = mainWindow.StorageProvider;
+    /// <param name="appConfig">The application's settings.</param>
+    public UriInputBarViewModel(AppView mainWindow, AppConfig appConfig)
+    {
+        _storageProvider = mainWindow.StorageProvider;
+        _currentUri = (IsValidDirectory(appConfig.BotsDirectoryUri))
+            ? appConfig.BotsDirectoryUri
+            : AppStatics.DefaultAppConfigDirectoryUri;
+    }
 
     /// <summary>
     /// Opens the directory at <paramref name="directoryUri"/>.
@@ -76,8 +83,16 @@ public class UriInputBarViewModel : ViewModelBase<UriInputBar>
             .Select(x => x.Path.AbsolutePath)
             .FirstOrDefault();
 
-        CurrentUri = selectedUri ?? CurrentUri;
+        CurrentUri = Path.GetFullPath(selectedUri ?? CurrentUri);
     }
+
+    /// <summary>
+    /// Checks if the specified uri points to a valid directory.
+    /// </summary>
+    /// <param name="directoryUri">The absolute path to a directory.</param>
+    /// <returns><see langword="true"/> if the directory is valid, <see langword="false"/> otherwise.</returns>
+    private bool IsValidDirectory(string directoryUri)
+        => Directory.Exists(directoryUri) && HasWritePermission(directoryUri);
 
     /// <summary>
     /// Checks if the application can write to <paramref name="directoryUri"/>.

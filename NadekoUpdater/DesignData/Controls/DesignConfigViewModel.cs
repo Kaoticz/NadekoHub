@@ -1,5 +1,6 @@
 using Microsoft.Extensions.DependencyInjection;
 using NadekoUpdater.DesignData.Common;
+using NadekoUpdater.Services;
 using NadekoUpdater.ViewModels.Controls;
 
 namespace NadekoUpdater.DesignData.Controls;
@@ -12,7 +13,10 @@ public sealed class DesignConfigViewModel : ConfigViewModel
     /// <summary>
     /// Creates a mock <see cref="ConfigViewModel"/> to be used at design-time.
     /// </summary>
-    public DesignConfigViewModel() : base(DesignStatics.Services.GetRequiredService<UriInputBarViewModel>())
+    public DesignConfigViewModel() : base(
+            DesignStatics.Services.GetRequiredService<UriInputBarViewModel>(),
+            DesignStatics.Services.GetRequiredService<AppConfigManager>()
+        )
     {
     }
 }

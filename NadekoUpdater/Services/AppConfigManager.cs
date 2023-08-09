@@ -27,7 +27,7 @@ public sealed class AppConfigManager
     /// <param name="cToken">The cancellation token.</param>
     /// <returns>The bot entry that got created.</returns>
     /// <exception cref="InvalidOperationException">Occurs when the bot entry is not successfully created.</exception>
-    public async ValueTask<BotEntry> CreateEntryAsync(CancellationToken cToken = default)
+    public async ValueTask<BotEntry> CreateBotEntryAsync(CancellationToken cToken = default)
     {
         var newPosition = (_appConfig.BotEntries.Count is 0) ? 0 : _appConfig.BotEntries.Keys.Max() + 1;
         var newBotName = "NewBot_" + newPosition;
@@ -47,7 +47,7 @@ public sealed class AppConfigManager
     /// <param name="position">The position of the entry.</param>
     /// <param name="cToken">The cancellation token.</param>
     /// <returns>The bot entry that got deleted, <see langword="null"/> otherwise.</returns>
-    public async ValueTask<BotEntry?> DeleteEntryAsync(uint position, CancellationToken cToken = default)
+    public async ValueTask<BotEntry?> DeleteBotEntryAsync(uint position, CancellationToken cToken = default)
     {
         if (!_appConfig.BotEntries.TryRemove(position, out var removedEntry))
             return null;
@@ -66,7 +66,7 @@ public sealed class AppConfigManager
     /// <param name="newPosition">The entry's new position.</param>
     /// <param name="cToken">The cancellation token.</param>
     /// <returns><see langword="true"/> if the entry got moved, <see langword="false"/> otherwise.</returns>
-    public async ValueTask<bool> MoveEntryAsync(uint oldPosition, uint newPosition, CancellationToken cToken = default)
+    public async ValueTask<bool> MoveBotEntryAsync(uint oldPosition, uint newPosition, CancellationToken cToken = default)
     {
         if (oldPosition == newPosition || !_appConfig.BotEntries.TryGetValue(newPosition, out var target) || !_appConfig.BotEntries.TryGetValue(oldPosition, out var source))
             return false;
@@ -88,7 +88,7 @@ public sealed class AppConfigManager
     /// <param name="selector">The changes that should be performed on the entry.</param>
     /// <param name="cToken">The cancellation token.</param>
     /// <returns><see langword="true"/> if changes were made on the entry, <see langword="false"/> otherwise.</returns>
-    public async ValueTask<bool> EditEntryAsync(uint position, Func<BotInstanceInfo, BotInstanceInfo> selector, CancellationToken cToken = default)
+    public async ValueTask<bool> EditBotEntryAsync(uint position, Func<BotInstanceInfo, BotInstanceInfo> selector, CancellationToken cToken = default)
     {
         if (!_appConfig.BotEntries.TryRemove(position, out var entry))
             return false;
@@ -103,6 +103,17 @@ public sealed class AppConfigManager
             Directory.Move(entry.InstanceDirectoryUri, updatedEntry.InstanceDirectoryUri);
 
         return true;
+    }
+
+    /// <summary>
+    /// Changes the application's settings file according to the <paramref name="action"/>.
+    /// </summary>
+    /// <param name="action">The action to be performed on the configuration file.</param>
+    /// <param name="cToken">The cancellation token.</param>
+    public ValueTask UpdateConfigAsync(Action<AppConfig> action, CancellationToken cToken = default)
+    {
+        action(_appConfig);
+        return SaveAsync(cToken);
     }
 
     /// <summary>

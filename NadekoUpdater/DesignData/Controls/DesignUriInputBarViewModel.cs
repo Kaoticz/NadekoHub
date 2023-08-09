@@ -1,5 +1,6 @@
 using Microsoft.Extensions.DependencyInjection;
 using NadekoUpdater.DesignData.Common;
+using NadekoUpdater.Models;
 using NadekoUpdater.ViewModels.Controls;
 using NadekoUpdater.Views.Windows;
 
@@ -13,7 +14,10 @@ public sealed class DesignUriInputBarViewModel : UriInputBarViewModel
     /// <summary>
     /// Creates a mock <see cref="UriInputBarViewModel"/> to be used at design-time.
     /// </summary>
-    public DesignUriInputBarViewModel() : base(DesignStatics.Services.GetRequiredService<AppView>())
+    public DesignUriInputBarViewModel() : base(
+            DesignStatics.Services.GetRequiredService<AppView>(),
+            DesignStatics.Services.GetRequiredService<AppConfig>()
+        )
     {
     }
 }

@@ -1,4 +1,6 @@
 using Avalonia.Platform.Storage;
+using NadekoUpdater.Events.Args;
+using NadekoUpdater.Services;
 using NadekoUpdater.ViewModels.Abstractions;
 using NadekoUpdater.Views.Controls;
 using NadekoUpdater.Views.Windows;
@@ -28,6 +30,10 @@ public class ConfigViewModel : ViewModelBase<ConfigView>
     /// Creates the view-model for the application's settings.
     /// </summary>
     /// <param name="defaultBotUriBar">The bar that defines where the bot instances should be saved to.</param>
-    public ConfigViewModel(UriInputBarViewModel defaultBotUriBar)
-        => DefaultBotUriBar = defaultBotUriBar;
+    /// <param name="appConfigManager">The service that manages the application's settings.</param>
+    public ConfigViewModel(UriInputBarViewModel defaultBotUriBar, AppConfigManager appConfigManager)
+    {
+        DefaultBotUriBar = defaultBotUriBar;
+        DefaultBotUriBar.OnValidUri += async (_, eventArgs) => await appConfigManager.UpdateConfigAsync(x => x.BotsDirectoryUri = eventArgs.NewUri);
+    }
 }

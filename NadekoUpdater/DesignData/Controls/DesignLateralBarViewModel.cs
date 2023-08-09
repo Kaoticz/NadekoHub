@@ -14,10 +14,7 @@ public sealed class DesignLateralBarViewModel : LateralBarViewModel
     /// <summary>
     /// Creates a mock <see cref="LateralBarViewModel"/> to be used at design-time.
     /// </summary>
-    public DesignLateralBarViewModel() : base(
-            DesignStatics.Services.GetRequiredService<AppConfig>(),
-            DesignStatics.Services.GetRequiredService<AppConfigManager>()
-        )
+    public DesignLateralBarViewModel() : base(DesignStatics.Services.GetRequiredService<AppConfigManager>())
     {
     }
 }

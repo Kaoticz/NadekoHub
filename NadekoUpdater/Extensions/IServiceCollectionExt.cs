@@ -42,10 +42,11 @@ public static class IServiceCollectionExt
     public static IServiceCollection RegisterServices(this IServiceCollection serviceCollection)
     {
         serviceCollection.AddSingleton<AppConfigManager>();
+        serviceCollection.AddSingleton<ReadOnlyAppConfig>();
         serviceCollection.AddSingleton(_ =>
             (File.Exists(AppStatics.AppConfigUri))
-                ? JsonSerializer.Deserialize<AppConfig>(File.ReadAllText(AppStatics.AppConfigUri)) ?? new(AppStatics.DefaultAppConfigDirectoryUri, new())
-                : new(AppStatics.DefaultAppConfigDirectoryUri, new())
+                ? JsonSerializer.Deserialize<AppConfig>(File.ReadAllText(AppStatics.AppConfigUri)) ?? new()
+                : new()
         );
 
         return serviceCollection;

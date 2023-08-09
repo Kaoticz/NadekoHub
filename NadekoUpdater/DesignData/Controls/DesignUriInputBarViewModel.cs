@@ -16,7 +16,7 @@ public sealed class DesignUriInputBarViewModel : UriInputBarViewModel
     /// </summary>
     public DesignUriInputBarViewModel() : base(
             DesignStatics.Services.GetRequiredService<AppView>(),
-            DesignStatics.Services.GetRequiredService<AppConfig>()
+            DesignStatics.Services.GetRequiredService<ReadOnlyAppConfig>()
         )
     {
     }

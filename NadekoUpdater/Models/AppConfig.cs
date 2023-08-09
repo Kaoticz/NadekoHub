@@ -5,26 +5,21 @@ namespace NadekoUpdater.Models;
 /// <summary>
 /// Represents the settings of the application.
 /// </summary>
-public sealed record AppConfig
+/// <remarks>Prefer using <see cref="ReadOnlyAppConfig"/> in dependency injection, if possible.</remarks>
+public sealed class AppConfig
 {
     /// <summary>
     /// The absolute path to the directory where the bot instances will be stored.
     /// </summary>
-    public string BotsDirectoryUri { get; set; }
+    public string BotsDirectoryUri { get; set; } = AppStatics.DefaultAppConfigDirectoryUri;
+
+    /// <summary>
+    /// Determines whether the application should be minimized to the system tray when closed.
+    /// </summary>
+    public bool MinimizeToTray { get; set; } = true;
 
     /// <summary>
     /// A collection of metadata about the bot instances.
     /// </summary>
-    public ConcurrentDictionary<uint, BotInstanceInfo> BotEntries { get; init; }
-
-    /// <summary>
-    /// Creates the settings of the application.
-    /// </summary>
-    /// <param name="botsDirectoryUri">The absolute path to the directory where the bot instances will be stored.</param>
-    /// <param name="botEntries">A collection of metadata about the bot instances.</param>
-    public AppConfig(string botsDirectoryUri, ConcurrentDictionary<uint, BotInstanceInfo> botEntries)
-    {
-        BotsDirectoryUri = botsDirectoryUri;
-        BotEntries = botEntries;
-    }
+    public ConcurrentDictionary<uint, BotInstanceInfo> BotEntries { get; init; } = new();
 }

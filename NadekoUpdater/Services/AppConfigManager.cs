@@ -1,5 +1,4 @@
 using NadekoUpdater.Models;
-using NadekoUpdater.ViewModels.Controls;
 using System.Text.Json;
 
 namespace NadekoUpdater.Services;
@@ -13,11 +12,18 @@ public sealed class AppConfigManager
     private readonly AppConfig _appConfig;
 
     /// <summary>
-    /// Creates a service that managers bot entries in the <see cref="LateralBarViewModel"/>.
+    /// The application settings.
     /// </summary>
-    public AppConfigManager(AppConfig appConfig)
+    public ReadOnlyAppConfig AppConfig { get; }
+
+    /// <summary>
+    /// Creates a service that manages the application's settings.
+    /// </summary>
+    public AppConfigManager(AppConfig appConfig, ReadOnlyAppConfig readOnlyAppConfig)
     {
         _appConfig = appConfig;
+        AppConfig = readOnlyAppConfig;
+
         Directory.CreateDirectory(appConfig.BotsDirectoryUri);  // Create the directory where the bot instances will be stored.
     }
 

@@ -24,7 +24,7 @@ public class UriInputBarViewModel : ViewModelBase<UriInputBar>
     /// <summary>
     /// Determines whether the path in <see cref="CurrentUri"/> is valid or not.
     /// </summary>
-    public bool IsDirectoryValid
+    public bool IsValidUri
     {
         get => _isDirectoryValid;
         private set => this.RaiseAndSetIfChanged(ref _isDirectoryValid, value);
@@ -38,10 +38,10 @@ public class UriInputBarViewModel : ViewModelBase<UriInputBar>
         get => _currentUri;
         set
         {
-            IsDirectoryValid = IsValidDirectory(value);
+            IsValidUri = IsValidDirectory(value);
             this.RaiseAndSetIfChanged(ref _currentUri, value);
 
-            if (IsDirectoryValid)
+            if (IsValidUri)
             {
                 OnValidUri?.Invoke(this, new(_lastValidUri, value));
                 _lastValidUri = value;
@@ -59,7 +59,7 @@ public class UriInputBarViewModel : ViewModelBase<UriInputBar>
     /// </summary>
     /// <param name="mainWindow">The application's main window.</param>
     /// <param name="appConfig">The application's settings.</param>
-    public UriInputBarViewModel(AppView mainWindow, AppConfig appConfig)
+    public UriInputBarViewModel(AppView mainWindow, ReadOnlyAppConfig appConfig)
     {
         _storageProvider = mainWindow.StorageProvider;
         _currentUri = (IsValidDirectory(appConfig.BotsDirectoryUri))

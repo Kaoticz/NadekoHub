@@ -16,15 +16,15 @@
         <dd:DesignConfigViewModel/>
     </Design.DataContext>
 
-    <Grid RowDefinitions="80,Auto,*" ColumnDefinitions="*" Margin="5 0 5 0" ShowGridLines="True">
+    <Grid RowDefinitions="80,*" ColumnDefinitions="*" ShowGridLines="True">
         <!--Settings Title-->
         <TextBlock Grid.Row="0" Text="Settings" FontSize="28" HorizontalAlignment="Left" VerticalAlignment="Center"/>
 
         <!--Dependencies-->
         <StackPanel Grid.Row="1">
             <!--Text-->
-            <TextBlock Text="Dependencies" FontSize="22" HorizontalAlignment="Left" VerticalAlignment="Center"/>
-            <TextBlock Text="Make sure the dependencies below are installed. " HorizontalAlignment="Left" VerticalAlignment="Center"/>
+            <TextBlock Text="Dependencies" FontSize="22" />
+            <TextBlock Text="Make sure the dependencies below are installed." />
             
             <!--Dependency Buttons-->
             <ItemsRepeater ItemsSource="{Binding DependencyButtons}">
@@ -38,13 +38,15 @@
             </ItemsRepeater>
             
             <!--Separator-->
-            <Separator Grid.Row="2" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" />
-        </StackPanel>
-        
-        <!--Application Settings-->
-        <StackPanel Grid.Row="2">
-            <TextBlock Grid.Row="2" Text="Default App Directory:" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+            <Separator HorizontalAlignment="Stretch" />
+
+            <!--Application Settings-->
+            <TextBlock Text="Default App Directory:" ToolTip.Tip="Defines the base directory the updater suggests bot instances should be installed to."/>
             <ContentControl Content="{Binding DefaultBotUriBar}" />
+
+            <CheckBox Content="Minimize to system tray." ToolTip.Tip="Defines whether the updater should be minimized to the system tray rather than closed."
+                      IsChecked="{Binding MinimizeToTray}" Command="{Binding ToggleMinimizeToTrayAsync}" />
+                
         </StackPanel>
     </Grid>
 </UserControl>

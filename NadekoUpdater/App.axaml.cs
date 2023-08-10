@@ -13,6 +13,8 @@ namespace NadekoUpdater;
 /// </summary>
 public partial class App : Application
 {
+    private DateTimeOffset _trayClickTime = DateTimeOffset.UnixEpoch;
+
     /// <summary>
     /// IoC container with all services required by the application.
     /// </summary>
@@ -49,4 +51,30 @@ public partial class App : Application
     /// <param name="eventArgs">A <see cref="EventArgs"/>.</param>
     private void CloseApp(object sender, EventArgs eventArgs)
         => Services.GetRequiredService<AppView>().Close();
+
+    /// <summary>
+    /// Executed when the tray icon is clicked.
+    /// </summary>
+    /// <param name="sender">A <see cref="TrayIcon"/>.</param>
+    /// <param name="eventArgs">A <see cref="EventArgs"/>.</param>
+    /// <remarks>Shows or hides the application when the tray icon is double-clicked.</remarks>
+    private void TrayDoubleClick(object sender, EventArgs eventArgs)
+    {
+        // If this is the first click or if the second click took longer than 0.3 seconds, exit.
+        if (_trayClickTime == DateTimeOffset.UnixEpoch || DateTimeOffset.Now.Subtract(_trayClickTime) > TimeSpan.FromSeconds(0.3))
+        {
+            _trayClickTime = DateTimeOffset.Now;
+            return;
+        }
+
+        // User has double-clicked the tray icon. Reset the timer.
+        _trayClickTime = DateTimeOffset.UnixEpoch;
+
+        var mainWindow = Services.GetRequiredService<AppView>();
+
+        if (mainWindow.IsVisible)
+            mainWindow.Hide();
+        else
+            mainWindow.Show();
+    }
 }

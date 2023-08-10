@@ -2,8 +2,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:local="using:NadekoUpdater"
              RequestedThemeVariant="Default"
-             x:Class="NadekoUpdater.App"
-             x:DataType="local:App">
+             x:Class="NadekoUpdater.App">
              <!-- "Default" ThemeVariant follows system theme variant. "Dark" or "Light" are other available options. -->
 
     <Application.DataTemplates>
@@ -16,7 +15,7 @@
 
     <TrayIcon.Icons>
       <TrayIcons>
-        <TrayIcon Icon="/Assets/nadekoupdatericon.ico" ToolTipText="Nadeko Updater">
+        <TrayIcon Clicked="TrayDoubleClick" ToolTipText="Nadeko Updater" Icon="/Assets/nadekoupdatericon.ico">
           <TrayIcon.Menu>
             <NativeMenu>
               <NativeMenuItem Header="Open" Click="ShowApp" />

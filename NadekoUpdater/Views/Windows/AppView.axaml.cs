@@ -2,7 +2,7 @@ using Avalonia.Controls;
 using Avalonia.ReactiveUI;
 using Microsoft.Extensions.DependencyInjection;
 using NadekoUpdater.DesignData.Common;
-using NadekoUpdater.Models;
+using NadekoUpdater.Models.Config;
 using NadekoUpdater.ViewModels.Abstractions;
 using NadekoUpdater.ViewModels.Controls;
 using NadekoUpdater.ViewModels.Windows;

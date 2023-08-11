@@ -1,6 +1,6 @@
 using System.Collections.Concurrent;
 
-namespace NadekoUpdater.Models;
+namespace NadekoUpdater.Models.Config;
 
 /// <summary>
 /// Represents the settings of the application.

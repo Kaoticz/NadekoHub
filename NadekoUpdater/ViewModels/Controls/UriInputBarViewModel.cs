@@ -4,9 +4,9 @@ using System.Diagnostics;
 using Avalonia.Platform.Storage;
 using NadekoUpdater.Views.Windows;
 using ReactiveUI;
-using NadekoUpdater.Events;
-using NadekoUpdater.Events.Args;
-using NadekoUpdater.Models;
+using Kotz.Events;
+using NadekoUpdater.Models.EventArguments;
+using NadekoUpdater.Models.Config;
 
 namespace NadekoUpdater.ViewModels.Controls;
 
@@ -20,6 +20,11 @@ public class UriInputBarViewModel : ViewModelBase<UriInputBar>
     private bool _isDirectoryValid = true;
     private string _currentUri;
     private readonly IStorageProvider _storageProvider;
+
+    /// <summary>
+    /// Triggers when a valid uri path is set.
+    /// </summary>
+    public event EventHandler<UriInputBarViewModel, UriInputBarEventArgs>? OnValidUri;
 
     /// <summary>
     /// Determines whether the path in <see cref="CurrentUri"/> is valid or not.
@@ -48,11 +53,6 @@ public class UriInputBarViewModel : ViewModelBase<UriInputBar>
             }
         }
     }
-
-    /// <summary>
-    /// Triggers when a valid uri path is set.
-    /// </summary>
-    public event EventHandler<UriInputBarViewModel, UriInputBarEventArgs>? OnValidUri;
 
     /// <summary>
     /// Creates a text box for inputting the absolute path of a directory.

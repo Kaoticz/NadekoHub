@@ -1,4 +1,4 @@
-namespace NadekoUpdater.Models;
+namespace NadekoUpdater.Models.Config;
 
 /// <summary>
 /// Represents a read-only version of <see cref="AppConfig"/>.

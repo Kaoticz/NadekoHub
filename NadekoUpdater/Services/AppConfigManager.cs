@@ -1,4 +1,5 @@
 using NadekoUpdater.Models;
+using NadekoUpdater.Models.Config;
 using System.Text.Json;
 
 namespace NadekoUpdater.Services;

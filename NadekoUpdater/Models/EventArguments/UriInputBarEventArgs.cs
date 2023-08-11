@@ -1,6 +1,6 @@
 using NadekoUpdater.ViewModels.Controls;
 
-namespace NadekoUpdater.Events.Args;
+namespace NadekoUpdater.Models.EventArguments;
 
 /// <summary>
 /// Defines the event arguments for when a valid uri is set to a <see cref="UriInputBarViewModel"/>.

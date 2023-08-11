@@ -1,11 +1,6 @@
-using Avalonia.Platform.Storage;
-using NadekoUpdater.Events.Args;
-using NadekoUpdater.Models;
 using NadekoUpdater.Services;
 using NadekoUpdater.ViewModels.Abstractions;
 using NadekoUpdater.Views.Controls;
-using NadekoUpdater.Views.Windows;
-using ReactiveUI;
 
 namespace NadekoUpdater.ViewModels.Controls;
 

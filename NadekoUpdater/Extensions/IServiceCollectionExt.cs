@@ -1,5 +1,5 @@
 using Microsoft.Extensions.DependencyInjection;
-using NadekoUpdater.Models;
+using NadekoUpdater.Models.Config;
 using NadekoUpdater.Services;
 using ReactiveUI;
 using System.Reflection;

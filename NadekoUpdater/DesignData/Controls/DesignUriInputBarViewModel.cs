@@ -1,6 +1,6 @@
 using Microsoft.Extensions.DependencyInjection;
 using NadekoUpdater.DesignData.Common;
-using NadekoUpdater.Models;
+using NadekoUpdater.Models.Config;
 using NadekoUpdater.ViewModels.Controls;
 using NadekoUpdater.Views.Windows;
 

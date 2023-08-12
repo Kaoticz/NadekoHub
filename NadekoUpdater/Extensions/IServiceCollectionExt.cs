@@ -13,6 +13,11 @@ namespace NadekoUpdater.Extensions;
 public static class IServiceCollectionExt
 {
     /// <summary>
+    /// Http handler to stop redirections from happening.
+    /// </summary>
+    private static readonly HttpClientHandler _httpHandler = new() { AllowAutoRedirect = false };
+
+    /// <summary>
     /// Registers all views and view-models in the provided <paramref name="assembly"/> to this service collection.
     /// </summary>
     /// <param name="serviceCollection">This service collection.</param>
@@ -40,6 +45,13 @@ public static class IServiceCollectionExt
     /// <returns>This service collection with the services added.</returns>
     public static IServiceCollection RegisterServices(this IServiceCollection serviceCollection)
     {
+        // Web requests
+        serviceCollection.AddSingleton<YtdlpResolver>();
+        serviceCollection.AddHttpClient();
+        serviceCollection.AddHttpClient(AppStatics.NoRedirectClient)
+            .ConfigureHttpMessageHandlerBuilder(builder => builder.PrimaryHandler = _httpHandler);
+
+        // App settings
         serviceCollection.AddSingleton<AppConfigManager>();
         serviceCollection.AddSingleton<ReadOnlyAppConfig>();
         serviceCollection.AddSingleton(_ =>

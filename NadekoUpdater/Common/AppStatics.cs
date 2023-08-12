@@ -15,14 +15,24 @@ public static class AppStatics
 #endif
 
     /// <summary>
-    /// Defines the location where the updater's configuration file is stored.
+    /// Defines the location of the application's configuration file.
     /// </summary>
     public static string AppConfigUri { get; } = Path.Combine(DefaultAppConfigDirectoryUri, "config.json");
+
+    /// <summary>
+    /// Defines the location of the application's dependencies.
+    /// </summary>
+    public static string AppDepsUri { get; } = Path.Combine(DefaultAppConfigDirectoryUri, "deps");
 
     /// <summary>
     /// Defines the location of the default image for the bot avatar.
     /// </summary>
     public const string BotAvatarPlaceholderUri = "avares://NadekoUpdater/Assets/bot.png";
+
+    /// <summary>
+    /// The name for an <see cref="HttpClient"/> that does not automatically follow redirect responses.
+    /// </summary>
+    public const string NoRedirectClient = "NoRedirect";
 
     /// <summary>
     /// Generates the location path for a bot instance, given its name.

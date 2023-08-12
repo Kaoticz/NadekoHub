@@ -18,15 +18,6 @@ public class BotConfigViewModel : ViewModelBase<BotConfigView>
     private readonly AppConfigManager _appConfigManager;
 
     /// <summary>
-    /// The hint for <see cref="BotDirectoryUriBar"/>.
-    /// </summary>
-    public string DirectoryHint 
-    {
-        get => _directoryHint;
-        private set => this.RaiseAndSetIfChanged(ref _directoryHint, value);
-    }
-
-    /// <summary>
     /// The position of this bot instance in the lateral bot list.
     /// </summary>
     public uint Position { get; private set; }
@@ -43,6 +34,15 @@ public class BotConfigViewModel : ViewModelBase<BotConfigView>
     {
         get => _botAvatar;
         set => this.RaiseAndSetIfChanged(ref _botAvatar, value);
+    }
+
+    /// <summary>
+    /// The hint for <see cref="BotDirectoryUriBar"/>.
+    /// </summary>
+    public string DirectoryHint
+    {
+        get => _directoryHint;
+        private set => this.RaiseAndSetIfChanged(ref _directoryHint, value);
     }
 
     /// <summary>

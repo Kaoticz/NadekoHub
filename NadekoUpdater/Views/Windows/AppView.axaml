@@ -6,27 +6,30 @@
         xmlns:const="using:NadekoUpdater.Common"
         xmlns:dd="using:NadekoUpdater.DesignData.Windows"
         mc:Ignorable="d"
-        d:DesignWidth="{x:Static const:WindowConstants.MinWindowWidth}"
-        d:DesignHeight="{x:Static const:WindowConstants.MinWindowHeight}"
+        d:DesignWidth="{x:Static const:WindowConstants.DefaultWindowWidth}"
+        d:DesignHeight="{x:Static const:WindowConstants.DefaultWindowHeight}"
         x:Class="NadekoUpdater.Views.Windows.AppView"
         x:DataType="vm:AppViewModel"
         Icon="/Assets/nadekoupdatericon.ico"
         WindowStartupLocation="CenterScreen"
         Title="{x:Static const:WindowConstants.WindowTitle}"
-        Width="{x:Static const:WindowConstants.MinWindowWidth}"
-        Height="{x:Static const:WindowConstants.MinWindowHeight}"
-        MinWidth="{x:Static const:WindowConstants.MinWindowWidth}"
-        MinHeight="{x:Static const:WindowConstants.MinWindowHeight}">
+        Width="{x:Static const:WindowConstants.DefaultWindowWidth}"
+        Height="{x:Static const:WindowConstants.DefaultWindowHeight}"
+        MinWidth="150"
+        MinHeight="100">
 
     <Design.DataContext>
         <dd:DesignAppViewModel/>
     </Design.DataContext>
 
-    <Grid RowDefinitions="*" ColumnDefinitions="65,*" ShowGridLines="True">
-        <!--Left Lateral Bar-->
-        <ContentControl Grid.Row="0" Grid.Column="0" Grid.RowSpan="5" Content="{Binding LateralBarInstance}" />
+    <!--Add vertical and horizontal scrolling bars when the window is too small-->
+    <ScrollViewer VerticalAlignment="Stretch" VerticalScrollBarVisibility="Auto">
+        <Grid RowDefinitions="*" ColumnDefinitions="65,*" ShowGridLines="True">
+            <!--Left Lateral Bar-->
+            <ContentControl Grid.Row="0" Grid.Column="0" Grid.RowSpan="5" Content="{Binding LateralBarInstance}" />
 
-        <!--View-->
-        <ContentControl Grid.Row="0" Grid.Column="1" Content="{Binding ContentViewModel}" Padding="5 0 5 0" />
-    </Grid>
+            <!--View-->
+            <ContentControl Grid.Row="0" Grid.Column="1" Content="{Binding ContentViewModel}" Padding="5 0 5 0" />
+        </Grid>
+    </ScrollViewer>
 </Window>

@@ -20,6 +20,11 @@ public static class AppStatics
     public static string AppConfigUri { get; } = Path.Combine(DefaultAppConfigDirectoryUri, "config.json");
 
     /// <summary>
+    /// Defines the location of the default image for the bot avatar.
+    /// </summary>
+    public const string BotAvatarPlaceholderUri = "avares://NadekoUpdater/Assets/bot.png";
+
+    /// <summary>
     /// Generates the location path for a bot instance, given its name.
     /// </summary>
     /// <param name="botName">The name of the bot instance.</param>

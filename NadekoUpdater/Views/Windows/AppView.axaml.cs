@@ -44,9 +44,23 @@ public partial class AppView : ReactiveWindow<AppViewModel>
 
         lateralBarView.ConfigButton.Click += (_, _) => viewModel.ContentViewModel = GetViewModel<ConfigViewModel>(scopeFactory);
         lateralBarView.HomeButton.Click += (_, _) => viewModel.ContentViewModel = GetViewModel<HomeViewModel>(scopeFactory);
+        lateralBarView.BotButtonClick += (button, _) => viewModel.ContentViewModel = GetBotConfigViewModel(button, scopeFactory);
 
         this.WhenActivated(_ => base.ViewModel = viewModel);    // Sets the view-model to the one in the IoC container.
         InitializeComponent();
+    }
+
+    /// <inheritdoc />
+    protected override void OnClosing(WindowClosingEventArgs eventArgs)
+    {
+        // Hide the window instead of closing it, in case the user
+        // prefers the window to be minimized to the system tray.
+        eventArgs.Cancel = _appConfig.MinimizeToTray && !eventArgs.IsProgrammatic;
+
+        if (eventArgs.Cancel)
+            base.Hide();
+
+        base.OnClosing(eventArgs);
     }
 
     /// <summary>
@@ -61,16 +75,18 @@ public partial class AppView : ReactiveWindow<AppViewModel>
         return scope.ServiceProvider.GetRequiredService<T>();
     }
 
-    /// <inheritdoc />
-    protected override void OnClosing(WindowClosingEventArgs eventArgs)
+    /// <summary>
+    /// Gets a <see cref="BotConfigViewModel"/> from the <paramref name="scopeFactory"/> and initializes
+    /// its properties with user data.
+    /// </summary>
+    /// <param name="button">The button that was pressed in the bot list.</param>
+    /// <param name="scopeFactory">The IoC scope factory.</param>
+    /// <returns>The view-model associated with the pressed <paramref name="button"/>.</returns>
+    /// <exception cref="InvalidCastException">Occurs when <paramref name="button"/> has a <see cref="ContentControl.Content"/> that is not an <see langword="uint"/>.</exception>
+    /// <exception cref="InvalidOperationException">Occurs when <paramref name="button"/> has an invalid <see cref="ContentControl.Content"/>.</exception>
+    private BotConfigViewModel GetBotConfigViewModel(Button button, IServiceScopeFactory scopeFactory)
     {
-        // Hide the window instead of closing it, in case the user
-        // prefers the window to be minimized to the system tray.
-        eventArgs.Cancel = _appConfig.MinimizeToTray && !eventArgs.IsProgrammatic;
-
-        if (eventArgs.Cancel)
-            base.Hide();
-
-        base.OnClosing(eventArgs);
+        return GetViewModel<BotConfigViewModel>(scopeFactory)
+            .FinishInitialization((uint)(button.Content ?? throw new InvalidOperationException("Bot button has no id/position.")));
     }
 }

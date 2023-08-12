@@ -6,14 +6,11 @@ using NadekoUpdater.ViewModels.Controls;
 namespace NadekoUpdater.DesignData.Controls;
 
 /// <summary>
-/// Mock view-model for <see cref="ConfigViewModel"/>.
+/// Mock view-model for <see cref="BotConfigViewModel"/>.
 /// </summary>
-public sealed class DesignConfigViewModel : ConfigViewModel
+public sealed class DesignBotConfigViewModel : BotConfigViewModel
 {
-    /// <summary>
-    /// Creates a mock <see cref="ConfigViewModel"/> to be used at design-time.
-    /// </summary>
-    public DesignConfigViewModel() : base(
+    public DesignBotConfigViewModel() : base(
             DesignStatics.Services.GetRequiredService<AppConfigManager>(),
             DesignStatics.Services.GetRequiredService<UriInputBarViewModel>()
         )

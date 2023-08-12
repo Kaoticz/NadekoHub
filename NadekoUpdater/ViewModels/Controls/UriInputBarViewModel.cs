@@ -6,7 +6,6 @@ using NadekoUpdater.Views.Windows;
 using ReactiveUI;
 using Kotz.Events;
 using NadekoUpdater.Models.EventArguments;
-using NadekoUpdater.Models.Config;
 
 namespace NadekoUpdater.ViewModels.Controls;
 
@@ -17,8 +16,8 @@ public class UriInputBarViewModel : ViewModelBase<UriInputBar>
 {
     private static readonly FolderPickerOpenOptions _folderPickerOptions = new();
     private string _lastValidUri = AppStatics.DefaultAppConfigDirectoryUri;
-    private bool _isDirectoryValid = true;
-    private string _currentUri;
+    private bool _isDirectoryValid = false;
+    private string _currentUri = string.Empty;
     private readonly IStorageProvider _storageProvider;
 
     /// <summary>
@@ -58,14 +57,8 @@ public class UriInputBarViewModel : ViewModelBase<UriInputBar>
     /// Creates a text box for inputting the absolute path of a directory.
     /// </summary>
     /// <param name="mainWindow">The application's main window.</param>
-    /// <param name="appConfig">The application's settings.</param>
-    public UriInputBarViewModel(AppView mainWindow, ReadOnlyAppConfig appConfig)
-    {
-        _storageProvider = mainWindow.StorageProvider;
-        _currentUri = (IsValidDirectory(appConfig.BotsDirectoryUri))
-            ? appConfig.BotsDirectoryUri
-            : AppStatics.DefaultAppConfigDirectoryUri;
-    }
+    public UriInputBarViewModel(AppView mainWindow)
+        => _storageProvider = mainWindow.StorageProvider;
 
     /// <summary>
     /// Opens the directory at <paramref name="directoryUri"/>.

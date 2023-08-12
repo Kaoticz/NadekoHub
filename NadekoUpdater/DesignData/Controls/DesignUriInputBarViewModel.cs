@@ -14,10 +14,7 @@ public sealed class DesignUriInputBarViewModel : UriInputBarViewModel
     /// <summary>
     /// Creates a mock <see cref="UriInputBarViewModel"/> to be used at design-time.
     /// </summary>
-    public DesignUriInputBarViewModel() : base(
-            DesignStatics.Services.GetRequiredService<AppView>(),
-            DesignStatics.Services.GetRequiredService<ReadOnlyAppConfig>()
-        )
+    public DesignUriInputBarViewModel() : base(DesignStatics.Services.GetRequiredService<AppView>())
     {
     }
 }

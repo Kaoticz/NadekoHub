@@ -1,0 +1,49 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="using:NadekoUpdater.ViewModels.Controls"
+             xmlns:dd="using:NadekoUpdater.DesignData.Controls"
+             xmlns:const="using:NadekoUpdater.Common"
+             mc:Ignorable="d"
+             d:DesignWidth="{x:Static const:WindowConstants.DefaultWindowWidth}"
+             d:DesignHeight="{x:Static const:WindowConstants.DefaultWindowHeight}"
+             x:Class="NadekoUpdater.Views.Controls.BotConfigView"
+             x:DataType="vm:BotConfigViewModel">
+
+    <Design.DataContext>
+        <dd:DesignBotConfigViewModel/>
+    </Design.DataContext>
+
+    <Grid RowDefinitions="80,*" ColumnDefinitions="*" ShowGridLines="True">
+        <!--Bot Settings Title-->
+        <TextBlock Grid.Row="0" Text="{Binding BotName}" FontSize="28" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+
+        <StackPanel Grid.Row="1">
+            <Grid RowDefinitions="Auto,Auto,Auto" ColumnDefinitions="130,*" ShowGridLines="True">
+                <Border Grid.Row="0" Grid.Column="0" Grid.RowSpan="3" ClipToBounds="True" CornerRadius="70" Margin="10">
+                    <Image Stretch="UniformToFill" Source="{Binding BotAvatar}" />
+                </Border>
+                <TextBlock Grid.Row="0" Grid.Column="1" Text="Bot Name" VerticalAlignment="Center" />
+                <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding BotName}" />
+                <TextBlock Grid.Row="2" Grid.Column="1" FontSize="11" TextWrapping="WrapWithOverflow" VerticalAlignment="Center"
+                           Text="Changing bot name or avatar here has no effect on your bot. This is purely for organization purposes in the updater." />
+            </Grid>
+
+            <!--Visual separator-->
+            <Separator HorizontalAlignment="Stretch" VerticalAlignment="Center" />
+
+            <TextBlock Text="Installation Path" />
+            <ContentControl Content="{Binding BotDirectoryUriBar}" />
+            <TextBlock Text="{Binding DirectoryHint}" FontSize="11" TextWrapping="WrapWithOverflow" />
+
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                <Button Content="Apply" />
+                <Button Content="Start" />
+                <Button Content="Stop" />
+                <Button Content="Delete Bot" />
+            </StackPanel>
+        </StackPanel>
+        
+    </Grid>
+</UserControl>

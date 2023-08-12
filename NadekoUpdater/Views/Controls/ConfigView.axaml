@@ -7,8 +7,8 @@
         xmlns:const="using:NadekoUpdater.Common"
         xmlns:dd="using:NadekoUpdater.DesignData.Controls"
         mc:Ignorable="d"
-        d:DesignWidth="{x:Static const:WindowConstants.MinWindowWidth}"
-        d:DesignHeight="{x:Static const:WindowConstants.MinWindowHeight}"
+        d:DesignWidth="{x:Static const:WindowConstants.DefaultWindowWidth}"
+        d:DesignHeight="{x:Static const:WindowConstants.DefaultWindowHeight}"
         x:Class="NadekoUpdater.Views.Controls.ConfigView"
         x:DataType="vm:ConfigViewModel">
 

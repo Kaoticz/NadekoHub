@@ -34,12 +34,13 @@ public class ConfigViewModel : ViewModelBase<ConfigView>
     /// <summary>
     /// Creates the view-model for the application's settings.
     /// </summary>
-    /// <param name="defaultBotUriBar">The bar that defines where the bot instances should be saved to.</param>
     /// <param name="appConfigManager">The service that manages the application's settings.</param>
-    public ConfigViewModel(UriInputBarViewModel defaultBotUriBar, AppConfigManager appConfigManager)
+    /// <param name="defaultBotUriBar">The bar that defines where the bot instances should be saved to.</param>
+    public ConfigViewModel(AppConfigManager appConfigManager, UriInputBarViewModel defaultBotUriBar)
     {
-        DefaultBotUriBar = defaultBotUriBar;
         _appConfigManager = appConfigManager;
+        DefaultBotUriBar = defaultBotUriBar;
+        DefaultBotUriBar.CurrentUri = appConfigManager.AppConfig.BotsDirectoryUri;
 
         DefaultBotUriBar.OnValidUri += async (_, eventArgs) => await appConfigManager.UpdateConfigAsync(x => x.BotsDirectoryUri = eventArgs.NewUri);
     }

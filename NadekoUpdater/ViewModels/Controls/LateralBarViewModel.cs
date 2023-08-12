@@ -33,7 +33,7 @@ public class LateralBarViewModel : ViewModelBase<LateralBarView>
         {
             // Use WhenActivated to execute logic
             // when the view model gets activated.
-            this.LoadBotButtons(botEntryManager.AppConfig.BotEntries);
+            this.ReloadBotButtons(botEntryManager.AppConfig.BotEntries);
 
             // Or use WhenActivated to execute logic
             // when the view model gets deactivated.
@@ -47,9 +47,9 @@ public class LateralBarViewModel : ViewModelBase<LateralBarView>
     /// </summary>
     public async Task AddBotButtonAsync()
     {
-        var (_, botEntry) = await _botEntryManager.CreateBotEntryAsync();
+        var botEntry = await _botEntryManager.CreateBotEntryAsync();
 
-        BotButtonList.Add(new() { Content = botEntry.Name });
+        BotButtonList.Add(new() { Content = botEntry.Position });
         this.RaisePropertyChanged(nameof(BotButtonList));
     }
 
@@ -57,14 +57,16 @@ public class LateralBarViewModel : ViewModelBase<LateralBarView>
     /// Loads the bot buttons to the lateral bar.
     /// </summary>
     /// <param name="botEntires">The bot entries.</param>
-    private void LoadBotButtons(IReadOnlyDictionary<uint, BotInstanceInfo> botEntires)
+    private void ReloadBotButtons(IReadOnlyDictionary<uint, BotInstanceInfo> botEntires)
     {
-        var botInfos = botEntires
-            .OrderBy(x => x.Key)
-            .Select(x => x.Value);
+        BotButtonList.Clear();
 
-        foreach (var botEntry in botInfos)
-            BotButtonList.Add(new() { Content = botEntry.Name });
+        var botPositions = botEntires
+            .OrderBy(x => x.Key)
+            .Select(x => x.Key);
+
+        foreach (var botPosition in botPositions)
+            BotButtonList.Add(new() { Content = botPosition });
 
         this.RaisePropertyChanged(nameof(BotButtonList));
     }

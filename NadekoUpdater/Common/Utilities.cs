@@ -8,6 +8,12 @@ namespace NadekoUpdater.Common;
 /// </summary>
 internal static class Utilities
 {
+
+    private static readonly string _envPathSeparator = (Environment.OSVersion.Platform is PlatformID.Win32NT) ? ";" : ":";
+    private static readonly EnvironmentVariableTarget _envTarget = (Environment.OSVersion.Platform is PlatformID.Win32NT)
+        ? EnvironmentVariableTarget.User
+        : EnvironmentVariableTarget.Process;
+
     /// <summary>
     /// Starts the specified program.
     /// </summary>
@@ -37,11 +43,31 @@ internal static class Utilities
     /// <returns><see langword="true"/> if the program exists, <see langword="false"/> otherwise.</returns>
     public static async ValueTask<bool> ProgramExistsAsync(string programName)
     {
-        if (Environment.GetEnvironmentVariable("PATH")?.Contains(programName, StringComparison.Ordinal) is true)
-            return true;
-
         using var process = StartProcess((Environment.OSVersion.Platform is PlatformID.Win32NT) ? "where" : "which", programName);
-
         return !string.IsNullOrWhiteSpace(await process.StandardOutput.ReadToEndAsync());
+    }
+
+    /// <summary>
+    /// Adds a directory path to the PATH environment variable.
+    /// </summary>
+    /// <param name="directoryPath">The absolute path to a directory.</param>
+    /// <returns><see langword="true"/> if path got successfully added to the PATH envar, <see langword="false"/> otherwise.</returns>
+    public static bool AddPathToPATHEnvar(string directoryPath)
+    {
+        var envPathValue = Environment.GetEnvironmentVariable("PATH", _envTarget) ?? string.Empty;
+
+        if (envPathValue.Contains(directoryPath, StringComparison.Ordinal))
+            return false;
+
+        var newPathEnvValue = envPathValue + _envPathSeparator + directoryPath;
+
+        // Add path to Windows' user envar, so it persists across reboots.
+        if (Environment.OSVersion.Platform is PlatformID.Win32NT)
+            Environment.SetEnvironmentVariable("PATH", newPathEnvValue, EnvironmentVariableTarget.User);
+
+        // Add path to the current process' envar, so the updater can see the dependencies.
+        Environment.SetEnvironmentVariable("PATH", newPathEnvValue, EnvironmentVariableTarget.Process);
+
+        return true;
     }
 }

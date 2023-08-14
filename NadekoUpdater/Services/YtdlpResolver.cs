@@ -28,7 +28,7 @@ public sealed class YtdlpResolver
     /// <param name="dependenciesUri">The absolute path to the directory where yt-dlp should be installed to.</param>
     /// <returns>
     /// A tuple that may or may not contain the old and new versions of yt-dlp. <br />
-    /// (<see langword="string"/>, <see langword="null"/>): No operation was performed. <br />
+    /// (<see langword="string"/>, <see langword="null"/>): Yt-dlp is already up-to-date, so no operation was performed. <br />
     /// (<see langword="null"/>, <see langword="string"/>): Yt-dlp was installed. <br />
     /// (<see langword="string"/>, <see langword="string"/>): Yt-dlp was updated.
     /// </returns>
@@ -51,7 +51,12 @@ public sealed class YtdlpResolver
         }
 
         // Install
-        var ytdlpUri = Path.Combine(dependenciesUri, YtdlpFileName);
+        Directory.CreateDirectory(dependenciesUri);
+        var ytdlpPath = Path.Combine(dependenciesUri, YtdlpFileName);
+
+        if (File.Exists(ytdlpPath))
+            File.Delete(ytdlpPath);
+
         var downloadLink = $"https://github.com/yt-dlp/yt-dlp/releases/download/{newVersion}/{YtdlpFileName}";
         using var http = _httpClientFactory.CreateClient();
         using var downloadStream = await http.GetStreamAsync(downloadLink);
@@ -60,9 +65,29 @@ public sealed class YtdlpResolver
         await downloadStream.CopyToAsync(fileStream);
 
         // Update environment variables
-        Environment.SetEnvironmentVariable("PATH", $"{Environment.GetEnvironmentVariable("PATH")};{ytdlpUri}", EnvironmentVariableTarget.User);
+        Utilities.AddPathToPATHEnvar(dependenciesUri);
 
         return (null, newVersion);
+    }
+
+    /// <summary>
+    /// Checks if yt-dlp can be updated.
+    /// </summary>
+    /// <returns>
+    /// <see langword="true"/> if yt-dlp can be updated,
+    /// <see langword="false"/> if yt-dlp is up-to-date,
+    /// <see langword="null"/> if yt-dlp is not installed.
+    /// </returns>
+    public async ValueTask<bool?> CanUpdateAsync()
+    {
+        var currentVer = await GetCurrentVersionAsync();
+
+        if (currentVer is null)
+            return null;
+
+        var latestVer = await GetLatestVersionAsync();
+
+        return !latestVer.Equals(currentVer, StringComparison.Ordinal);
     }
 
     /// <summary>

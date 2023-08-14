@@ -1,4 +1,7 @@
+using Avalonia.Controls;
+using Avalonia.Interactivity;
 using Avalonia.ReactiveUI;
+using Kotz.Events;
 using NadekoUpdater.ViewModels.Controls;
 
 namespace NadekoUpdater.Views.Controls;

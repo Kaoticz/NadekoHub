@@ -3,7 +3,15 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.6.33801.468
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NadekoUpdater", "NadekoUpdater\NadekoUpdater.csproj", "{EF30ADCA-56FC-4760-8AFB-8B4C0FB3EEE9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NadekoUpdater", "NadekoUpdater\NadekoUpdater.csproj", "{EF30ADCA-56FC-4760-8AFB-8B4C0FB3EEE9}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{77CDC297-174D-4173-96B2-A44FFFFE9452}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+		.gitignore = .gitignore
+		LICENSE = LICENSE
+		README.md = README.md
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

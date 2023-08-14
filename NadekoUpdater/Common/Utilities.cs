@@ -8,7 +8,7 @@ namespace NadekoUpdater.Common;
 /// </summary>
 internal static class Utilities
 {
-
+    private static readonly string _programVerifier = (Environment.OSVersion.Platform is PlatformID.Win32NT) ? "where" : "which";
     private static readonly string _envPathSeparator = (Environment.OSVersion.Platform is PlatformID.Win32NT) ? ";" : ":";
     private static readonly EnvironmentVariableTarget _envTarget = (Environment.OSVersion.Platform is PlatformID.Win32NT)
         ? EnvironmentVariableTarget.User
@@ -24,6 +24,7 @@ internal static class Utilities
     /// <param name="arguments">The arguments to the program.</param>
     /// <returns>The process of the specified program.</returns>
     /// <exception cref="Win32Exception">Occurs when <paramref name="program"/> does not exist.</exception>
+    /// <exception cref="InvalidOperationException">Occurs when the process fails to execute.</exception>
     public static Process StartProcess(string program, string arguments = "")
     {
         return Process.Start(new ProcessStartInfo()
@@ -33,7 +34,7 @@ internal static class Utilities
             UseShellExecute = false,
             CreateNoWindow = true,
             RedirectStandardOutput = true,
-        })!;
+        }) ?? throw new InvalidOperationException($"Failed spawing process for: {program} {arguments}");
     }
 
     /// <summary>
@@ -43,7 +44,7 @@ internal static class Utilities
     /// <returns><see langword="true"/> if the program exists, <see langword="false"/> otherwise.</returns>
     public static async ValueTask<bool> ProgramExistsAsync(string programName)
     {
-        using var process = StartProcess((Environment.OSVersion.Platform is PlatformID.Win32NT) ? "where" : "which", programName);
+        using var process = StartProcess(_programVerifier, programName);
         return !string.IsNullOrWhiteSpace(await process.StandardOutput.ReadToEndAsync());
     }
 
@@ -51,7 +52,7 @@ internal static class Utilities
     /// Adds a directory path to the PATH environment variable.
     /// </summary>
     /// <param name="directoryPath">The absolute path to a directory.</param>
-    /// <returns><see langword="true"/> if path got successfully added to the PATH envar, <see langword="false"/> otherwise.</returns>
+    /// <returns><see langword="true"/> if <paramref name="directoryPath"/> got successfully added to the PATH envar, <see langword="false"/> otherwise.</returns>
     public static bool AddPathToPATHEnvar(string directoryPath)
     {
         var envPathValue = Environment.GetEnvironmentVariable("PATH", _envTarget) ?? string.Empty;

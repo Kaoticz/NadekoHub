@@ -5,6 +5,7 @@ namespace NadekoUpdater.Services;
 /// <summary>
 /// Service that checks, downloads, installs, and updates yt-dlp.
 /// </summary>
+/// <remarks>Source: https://github.com/yt-dlp/yt-dlp/releases/latest</remarks>
 public sealed class YtdlpResolver
 {
     private const string _ytdlpProcessName = "yt-dlp";
@@ -23,7 +24,7 @@ public sealed class YtdlpResolver
         => _httpClientFactory = httpClientFactory;
 
     /// <summary>
-    /// Installs or updates yt-dlp to this system.
+    /// Installs or updates yt-dlp on this system.
     /// </summary>
     /// <param name="dependenciesUri">The absolute path to the directory where yt-dlp should be installed to.</param>
     /// <returns>
@@ -52,14 +53,9 @@ public sealed class YtdlpResolver
 
         // Install
         Directory.CreateDirectory(dependenciesUri);
-        var ytdlpPath = Path.Combine(dependenciesUri, YtdlpFileName);
 
-        if (File.Exists(ytdlpPath))
-            File.Delete(ytdlpPath);
-
-        var downloadLink = $"https://github.com/yt-dlp/yt-dlp/releases/download/{newVersion}/{YtdlpFileName}";
         using var http = _httpClientFactory.CreateClient();
-        using var downloadStream = await http.GetStreamAsync(downloadLink);
+        using var downloadStream = await http.GetStreamAsync($"https://github.com/yt-dlp/yt-dlp/releases/download/{newVersion}/{YtdlpFileName}");
         using var fileStream = new FileStream(Path.Combine(dependenciesUri, YtdlpFileName), FileMode.Create);
 
         await downloadStream.CopyToAsync(fileStream);

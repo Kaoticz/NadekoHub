@@ -27,16 +27,17 @@ public sealed class YtdlpResolver
     /// Installs or updates yt-dlp on this system.
     /// </summary>
     /// <param name="dependenciesUri">The absolute path to the directory where yt-dlp should be installed to.</param>
+    /// <param name="cToken">The cancellation token.</param>
     /// <returns>
     /// A tuple that may or may not contain the old and new versions of yt-dlp. <br />
     /// (<see langword="string"/>, <see langword="null"/>): Yt-dlp is already up-to-date, so no operation was performed. <br />
     /// (<see langword="null"/>, <see langword="string"/>): Yt-dlp was installed. <br />
     /// (<see langword="string"/>, <see langword="string"/>): Yt-dlp was updated.
     /// </returns>
-    public async ValueTask<(string? OldVersion, string? NewVersion)> InstallOrUpdateYtdlpAsync(string dependenciesUri)
+    public async ValueTask<(string? OldVersion, string? NewVersion)> InstallOrUpdateYtdlpAsync(string dependenciesUri, CancellationToken cToken = default)
     {
-        var currentVersion = await GetCurrentVersionAsync();
-        var newVersion = await GetLatestVersionAsync();
+        var currentVersion = await GetCurrentVersionAsync(cToken);
+        var newVersion = await GetLatestVersionAsync(cToken);
 
         // Update
         if (currentVersion is not null)
@@ -46,7 +47,7 @@ public sealed class YtdlpResolver
                 return (currentVersion, null);
 
             using var ytdlp = Utilities.StartProcess(_ytdlpProcessName, "-U");
-            await ytdlp.WaitForExitAsync();
+            await ytdlp.WaitForExitAsync(cToken);
 
             return (currentVersion, newVersion);
         }
@@ -55,12 +56,12 @@ public sealed class YtdlpResolver
         Directory.CreateDirectory(dependenciesUri);
 
         using var http = _httpClientFactory.CreateClient();
-        using var downloadStream = await http.GetStreamAsync($"https://github.com/yt-dlp/yt-dlp/releases/download/{newVersion}/{YtdlpFileName}");
+        using var downloadStream = await http.GetStreamAsync($"https://github.com/yt-dlp/yt-dlp/releases/download/{newVersion}/{YtdlpFileName}", cToken);
         using var fileStream = new FileStream(Path.Combine(dependenciesUri, YtdlpFileName), FileMode.Create);
 
-        await downloadStream.CopyToAsync(fileStream);
+        await downloadStream.CopyToAsync(fileStream, cToken);
 
-        // Update environment variables
+        // Update environment variable
         Utilities.AddPathToPATHEnvar(dependenciesUri);
 
         return (null, newVersion);
@@ -69,19 +70,20 @@ public sealed class YtdlpResolver
     /// <summary>
     /// Checks if yt-dlp can be updated.
     /// </summary>
+    /// <param name="cToken">The cancellation token.</param>
     /// <returns>
     /// <see langword="true"/> if yt-dlp can be updated,
     /// <see langword="false"/> if yt-dlp is up-to-date,
     /// <see langword="null"/> if yt-dlp is not installed.
     /// </returns>
-    public async ValueTask<bool?> CanUpdateAsync()
+    public async ValueTask<bool?> CanUpdateAsync(CancellationToken cToken = default)
     {
-        var currentVer = await GetCurrentVersionAsync();
+        var currentVer = await GetCurrentVersionAsync(cToken);
 
         if (currentVer is null)
             return null;
 
-        var latestVer = await GetLatestVersionAsync();
+        var latestVer = await GetLatestVersionAsync(cToken);
 
         return !latestVer.Equals(currentVer, StringComparison.Ordinal);
     }
@@ -89,29 +91,31 @@ public sealed class YtdlpResolver
     /// <summary>
     /// Gets the version of yt-dlp current installed on this system.
     /// </summary>
+    /// <param name="cToken">The cancellation token.</param>
     /// <returns>The version of yt-dlp on this system or <see langword="null"/> if yt-dlp is not installed.</returns>
-    public async ValueTask<string?> GetCurrentVersionAsync()
+    public async ValueTask<string?> GetCurrentVersionAsync(CancellationToken cToken = default)
     {
-        if (!await Utilities.ProgramExistsAsync(_ytdlpProcessName))
+        if (!await Utilities.ProgramExistsAsync(_ytdlpProcessName, cToken))
             return null;
 
         using var ytdlp = Utilities.StartProcess(_ytdlpProcessName, "--version");
 
-        return (await ytdlp.StandardOutput.ReadToEndAsync()).Trim();
+        return (await ytdlp.StandardOutput.ReadToEndAsync(cToken)).Trim();
     }
 
     /// <summary>
     /// Gets the latest version of yt-dlp.
     /// </summary>
+    /// <param name="cToken">The cancellation token.</param>
     /// <returns>The latest version of yt-dlp.</returns>
     /// <exception cref="InvalidOperationException">
     /// Occurs when there is an issue with the redirection of GitHub's latest release link.
     /// </exception>
-    public async ValueTask<string> GetLatestVersionAsync()
+    public async ValueTask<string> GetLatestVersionAsync(CancellationToken cToken = default)
     {
         using var http = _httpClientFactory.CreateClient(AppStatics.NoRedirectClient);
 
-        var response = await http.GetAsync("https://github.com/yt-dlp/yt-dlp/releases/latest");
+        var response = await http.GetAsync("https://github.com/yt-dlp/yt-dlp/releases/latest", cToken);
 
         var lastSlashIndex = response.Headers.Location?.OriginalString.LastIndexOf('/')
             ?? throw new InvalidOperationException("Failed to get the latest yt-dlp version.");

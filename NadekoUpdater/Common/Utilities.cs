@@ -41,11 +41,12 @@ internal static class Utilities
     /// Checks if a program exists.
     /// </summary>
     /// <param name="programName">The name of the program.</param>
+    /// <param name="cToken">The cancellation token.</param>
     /// <returns><see langword="true"/> if the program exists, <see langword="false"/> otherwise.</returns>
-    public static async ValueTask<bool> ProgramExistsAsync(string programName)
+    public static async ValueTask<bool> ProgramExistsAsync(string programName, CancellationToken cToken = default)
     {
         using var process = StartProcess(_programVerifier, programName);
-        return !string.IsNullOrWhiteSpace(await process.StandardOutput.ReadToEndAsync());
+        return !string.IsNullOrWhiteSpace(await process.StandardOutput.ReadToEndAsync(cToken));
     }
 
     /// <summary>

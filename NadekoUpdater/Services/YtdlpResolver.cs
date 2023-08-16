@@ -1,3 +1,4 @@
+using NadekoUpdater.Services.Abstractions;
 using System.Runtime.InteropServices;
 
 namespace NadekoUpdater.Services;
@@ -6,15 +7,16 @@ namespace NadekoUpdater.Services;
 /// Service that checks, downloads, installs, and updates yt-dlp.
 /// </summary>
 /// <remarks>Source: https://github.com/yt-dlp/yt-dlp/releases/latest</remarks>
-public sealed class YtdlpResolver
+public sealed class YtdlpResolver : IYtdlpResolver
 {
     private const string _ytdlpProcessName = "yt-dlp";
     private readonly IHttpClientFactory _httpClientFactory;
 
-    /// <summary>
-    /// The name of the yt-dlp binary file.
-    /// </summary>
-    public string YtdlpFileName { get; } = GetFileName();
+    /// <inheritdoc />
+    public string DependencyName { get; } = "Yt-dlp";
+
+    /// <inheritdoc />
+    public string FileName { get; } = GetFileName();
 
     /// <summary>
     /// Creates a service that checks, downloads, installs, and updates yt-dlp.
@@ -23,18 +25,8 @@ public sealed class YtdlpResolver
     public YtdlpResolver(IHttpClientFactory httpClientFactory)
         => _httpClientFactory = httpClientFactory;
 
-    /// <summary>
-    /// Installs or updates yt-dlp on this system.
-    /// </summary>
-    /// <param name="dependenciesUri">The absolute path to the directory where yt-dlp should be installed to.</param>
-    /// <param name="cToken">The cancellation token.</param>
-    /// <returns>
-    /// A tuple that may or may not contain the old and new versions of yt-dlp. <br />
-    /// (<see langword="string"/>, <see langword="null"/>): Yt-dlp is already up-to-date, so no operation was performed. <br />
-    /// (<see langword="null"/>, <see langword="string"/>): Yt-dlp was installed. <br />
-    /// (<see langword="string"/>, <see langword="string"/>): Yt-dlp was updated.
-    /// </returns>
-    public async ValueTask<(string? OldVersion, string? NewVersion)> InstallOrUpdateYtdlpAsync(string dependenciesUri, CancellationToken cToken = default)
+    /// <inheritdoc />
+    public async ValueTask<(string? OldVersion, string? NewVersion)> InstallOrUpdateAsync(string dependenciesUri, CancellationToken cToken = default)
     {
         var currentVersion = await GetCurrentVersionAsync(cToken);
         var newVersion = await GetLatestVersionAsync(cToken);
@@ -56,8 +48,8 @@ public sealed class YtdlpResolver
         Directory.CreateDirectory(dependenciesUri);
 
         using var http = _httpClientFactory.CreateClient();
-        using var downloadStream = await http.GetStreamAsync($"https://github.com/yt-dlp/yt-dlp/releases/download/{newVersion}/{YtdlpFileName}", cToken);
-        using var fileStream = new FileStream(Path.Combine(dependenciesUri, YtdlpFileName), FileMode.Create);
+        using var downloadStream = await http.GetStreamAsync($"https://github.com/yt-dlp/yt-dlp/releases/download/{newVersion}/{FileName}", cToken);
+        using var fileStream = new FileStream(Path.Combine(dependenciesUri, FileName), FileMode.Create);
 
         await downloadStream.CopyToAsync(fileStream, cToken);
 
@@ -67,15 +59,7 @@ public sealed class YtdlpResolver
         return (null, newVersion);
     }
 
-    /// <summary>
-    /// Checks if yt-dlp can be updated.
-    /// </summary>
-    /// <param name="cToken">The cancellation token.</param>
-    /// <returns>
-    /// <see langword="true"/> if yt-dlp can be updated,
-    /// <see langword="false"/> if yt-dlp is up-to-date,
-    /// <see langword="null"/> if yt-dlp is not installed.
-    /// </returns>
+    /// <inheritdoc />
     public async ValueTask<bool?> CanUpdateAsync(CancellationToken cToken = default)
     {
         var currentVer = await GetCurrentVersionAsync(cToken);
@@ -88,11 +72,7 @@ public sealed class YtdlpResolver
         return !latestVer.Equals(currentVer, StringComparison.Ordinal);
     }
 
-    /// <summary>
-    /// Gets the version of yt-dlp current installed on this system.
-    /// </summary>
-    /// <param name="cToken">The cancellation token.</param>
-    /// <returns>The version of yt-dlp on this system or <see langword="null"/> if yt-dlp is not installed.</returns>
+    /// <inheritdoc />
     public async ValueTask<string?> GetCurrentVersionAsync(CancellationToken cToken = default)
     {
         if (!await Utilities.ProgramExistsAsync(_ytdlpProcessName, cToken))
@@ -103,14 +83,7 @@ public sealed class YtdlpResolver
         return (await ytdlp.StandardOutput.ReadToEndAsync(cToken)).Trim();
     }
 
-    /// <summary>
-    /// Gets the latest version of yt-dlp.
-    /// </summary>
-    /// <param name="cToken">The cancellation token.</param>
-    /// <returns>The latest version of yt-dlp.</returns>
-    /// <exception cref="InvalidOperationException">
-    /// Occurs when there is an issue with the redirection of GitHub's latest release link.
-    /// </exception>
+    /// <inheritdoc />
     public async ValueTask<string> GetLatestVersionAsync(CancellationToken cToken = default)
     {
         using var http = _httpClientFactory.CreateClient(AppStatics.NoRedirectClient);

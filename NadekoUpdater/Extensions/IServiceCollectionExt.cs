@@ -1,6 +1,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using NadekoUpdater.Models.Config;
 using NadekoUpdater.Services;
+using NadekoUpdater.Services.Abstractions;
 using ReactiveUI;
 using System.Reflection;
 using System.Text.Json;
@@ -46,7 +47,6 @@ public static class IServiceCollectionExt
     public static IServiceCollection RegisterServices(this IServiceCollection serviceCollection)
     {
         // Web requests
-        serviceCollection.AddSingleton<YtdlpResolver>();
         serviceCollection.AddHttpClient();
         serviceCollection.AddHttpClient(AppStatics.NoRedirectClient)
             .ConfigureHttpMessageHandlerBuilder(builder => builder.PrimaryHandler = _httpHandler);
@@ -59,6 +59,10 @@ public static class IServiceCollectionExt
                 ? JsonSerializer.Deserialize<AppConfig>(File.ReadAllText(AppStatics.AppConfigUri)) ?? new()
                 : new()
         );
+
+        // Dependency resolvers
+        serviceCollection.AddSingleton<IFfmpegResolver, FfmpegWindowsResolver>();
+        serviceCollection.AddSingleton<IYtdlpResolver, YtdlpResolver>();
 
         return serviceCollection;
     }

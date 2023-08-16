@@ -10,6 +10,9 @@ namespace NadekoUpdater.DesignData.Controls;
 /// </summary>
 public sealed class DesignBotConfigViewModel : BotConfigViewModel
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public DesignBotConfigViewModel() : base(
             DesignStatics.Services.GetRequiredService<AppConfigManager>(),
             DesignStatics.Services.GetRequiredService<UriInputBarViewModel>()

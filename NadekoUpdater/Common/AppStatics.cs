@@ -1,9 +1,11 @@
+using System.Text.RegularExpressions;
+
 namespace NadekoUpdater.Common;
 
 /// <summary>
 /// Defines the application's environment data.
 /// </summary>
-public static class AppStatics
+public static partial class AppStatics
 {
     /// <summary>
     /// Defines the default location where the updater configuration and bot instances are stored.
@@ -25,6 +27,12 @@ public static class AppStatics
     public static string AppDepsUri { get; } = Path.Combine(DefaultAppConfigDirectoryUri, "deps");
 
     /// <summary>
+    /// Matches the version of Ffmpeg from its CLI output.
+    /// </summary>
+    /// <remarks>Pattern: ^(?:\S+\s+\D*?){2}(git\S+|[\d\.]+)</remarks>
+    public static Regex FfmpegVersionRegex { get; } = FfmpegVersionRegexGenerator();
+
+    /// <summary>
     /// Defines the location of the default image for the bot avatar.
     /// </summary>
     public const string BotAvatarPlaceholderUri = "avares://NadekoUpdater/Assets/bot.png";
@@ -41,4 +49,7 @@ public static class AppStatics
     /// <returns>The location path to the bot instance.</returns>
     public static string GenerateBotLocationUri(string botName)
         => Path.Combine(DefaultAppConfigDirectoryUri, botName);
+
+    [GeneratedRegex(@"^(?:\S+\s+\D*?){2}(git\S+|[\d\.]+)", RegexOptions.Compiled)]
+    private static partial Regex FfmpegVersionRegexGenerator();
 }

@@ -58,6 +58,7 @@ internal static class Utilities
     {
         var envPathValue = Environment.GetEnvironmentVariable("PATH", _envTarget) ?? string.Empty;
 
+        // If directoryPath is already in the PATH envar, don't add it again.
         if (envPathValue.Contains(directoryPath, StringComparison.Ordinal))
             return false;
 

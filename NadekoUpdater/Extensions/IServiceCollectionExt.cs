@@ -4,6 +4,7 @@ using NadekoUpdater.Services;
 using NadekoUpdater.Services.Abstractions;
 using ReactiveUI;
 using System.Reflection;
+using System.Runtime.InteropServices;
 using System.Text.Json;
 
 namespace NadekoUpdater.Extensions;
@@ -61,8 +62,12 @@ public static class IServiceCollectionExt
         );
 
         // Dependency resolvers
-        serviceCollection.AddSingleton<IFfmpegResolver, FfmpegWindowsResolver>();
         serviceCollection.AddSingleton<IYtdlpResolver, YtdlpResolver>();
+
+        if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            serviceCollection.AddSingleton<IFfmpegResolver, FfmpegWindowsResolver>();
+        else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+            serviceCollection.AddSingleton<IFfmpegResolver, FfmpegLinuxResolver>();
 
         return serviceCollection;
     }

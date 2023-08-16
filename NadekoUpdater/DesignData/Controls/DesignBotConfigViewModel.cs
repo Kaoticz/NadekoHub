@@ -11,7 +11,7 @@ namespace NadekoUpdater.DesignData.Controls;
 public sealed class DesignBotConfigViewModel : BotConfigViewModel
 {
     /// <summary>
-    /// 
+    /// Creates a mock <see cref="BotConfigViewModel"/> to be used at design-time.
     /// </summary>
     public DesignBotConfigViewModel() : base(
             DesignStatics.Services.GetRequiredService<AppConfigManager>(),

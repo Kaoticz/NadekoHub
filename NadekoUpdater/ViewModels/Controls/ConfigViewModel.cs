@@ -125,7 +125,12 @@ public class ConfigViewModel : ViewModelBase<ConfigView>
     /// <param name="dialogType">The type of dialog window to display.</param>
     private Task ShowDialogWindowAsync(string message, Icon iconType = Icon.None, DialogType dialogType = DialogType.Notification)
     {
-        var dialogBox = MessageBoxManager.GetMessageBoxStandard(dialogType.ToString(), message, ButtonEnum.Ok, iconType, WindowStartupLocation.CenterOwner);
+        var unixNotice = (Environment.OSVersion.Platform is not PlatformID.Unix)
+            ? string.Empty
+            : Environment.NewLine + "To make the dependencies accessible to your NadekoBot instances without this updater, consider installing " +
+            $"them through your package manager of choice or adding the directory \"{AppStatics.AppDepsUri}\" to your PATH environment variable.";
+
+        var dialogBox = MessageBoxManager.GetMessageBoxStandard(dialogType.ToString(), message + unixNotice, ButtonEnum.Ok, iconType, WindowStartupLocation.CenterOwner);
         return dialogBox.ShowWindowDialogAsync(_mainWindow);
     }
 }

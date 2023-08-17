@@ -496,6 +496,8 @@ dotnet_diagnostic.IDE0058.severity = none
 # IDE0011: Add braces to 'if'/'else' statement
 dotnet_diagnostic.IDE0011.severity = none
 
+# IDE0290: Use primary constructor
+dotnet_diagnostic.IDE0290.severity = none
 
 #### ReSharper Properties ####
 

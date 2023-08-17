@@ -10,13 +10,14 @@ namespace NadekoUpdater.Services;
 public sealed class YtdlpResolver : IYtdlpResolver
 {
     private const string _ytdlpProcessName = "yt-dlp";
+    private readonly string _downloadedFileName = GetFileName();
     private readonly IHttpClientFactory _httpClientFactory;
 
     /// <inheritdoc />
     public string DependencyName { get; } = "Yt-dlp";
 
     /// <inheritdoc />
-    public string FileName { get; } = GetFileName();
+    public string FileName { get; } = "yt-dlp";
 
     /// <summary>
     /// Creates a service that checks, downloads, installs, and updates yt-dlp.
@@ -47,14 +48,24 @@ public sealed class YtdlpResolver : IYtdlpResolver
         // Install
         Directory.CreateDirectory(dependenciesUri);
 
+        var filePath = Path.Combine(dependenciesUri, _downloadedFileName);
         using var http = _httpClientFactory.CreateClient();
-        using var downloadStream = await http.GetStreamAsync($"https://github.com/yt-dlp/yt-dlp/releases/download/{newVersion}/{FileName}", cToken);
-        using var fileStream = new FileStream(Path.Combine(dependenciesUri, FileName), FileMode.Create);
+        using var downloadStream = await http.GetStreamAsync($"https://github.com/yt-dlp/yt-dlp/releases/download/{newVersion}/{_downloadedFileName}", cToken);
+        using var fileStream = new FileStream(filePath, FileMode.Create);
 
         await downloadStream.CopyToAsync(fileStream, cToken);
 
         // Update environment variable
         Utilities.AddPathToPATHEnvar(dependenciesUri);
+
+        // On Linux and MacOS, we need to mark the file as executable
+        // and change its name to its process name.
+        if (Environment.OSVersion.Platform is PlatformID.Unix)
+        {
+            using var chmod = Utilities.StartProcess("chmod", "+x " + filePath);
+            await chmod.WaitForExitAsync(cToken);
+            File.Move(filePath, Path.Combine(dependenciesUri, _ytdlpProcessName));
+        }
 
         return (null, newVersion);
     }
@@ -75,8 +86,19 @@ public sealed class YtdlpResolver : IYtdlpResolver
     /// <inheritdoc />
     public async ValueTask<string?> GetCurrentVersionAsync(CancellationToken cToken = default)
     {
+        // If yt-dlp is not accessible from the shell...
         if (!await Utilities.ProgramExistsAsync(_ytdlpProcessName, cToken))
-            return null;
+        {
+            // And doesn't exist in the dependencies folder,
+            // report that yt-dlp is not installed.
+            if (!File.Exists(Path.Combine(AppStatics.AppDepsUri, FileName)))
+                return null;
+
+            // Else, add the dependencies directory to the PATH envar,
+            // then try again.
+            Utilities.AddPathToPATHEnvar(AppStatics.AppDepsUri);
+            return await GetCurrentVersionAsync(cToken);
+        }
 
         using var ytdlp = Utilities.StartProcess(_ytdlpProcessName, "--version");
 

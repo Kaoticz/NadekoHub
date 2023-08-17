@@ -40,8 +40,19 @@ public abstract class FfmpegResolver : IFfmpegResolver
     /// <inheritdoc/>
     public virtual async ValueTask<string?> GetCurrentVersionAsync(CancellationToken cToken = default)
     {
+        // If ffmpeg is not accessible from the shell...
         if (!await Utilities.ProgramExistsAsync(FfmpegProcessName, cToken))
-            return null;
+        {
+            // And doesn't exist in the dependencies folder,
+            // report that ffmpeg is not installed.
+            if (!File.Exists(Path.Combine(AppStatics.AppDepsUri, FileName)))
+                return null;
+
+            // Else, add the dependencies directory to the PATH envar,
+            // then try again.
+            Utilities.AddPathToPATHEnvar(AppStatics.AppDepsUri);
+            return await GetCurrentVersionAsync(cToken);
+        }
 
         using var ffmpeg = Utilities.StartProcess(FfmpegProcessName, "-version");
         var match = AppStatics.FfmpegVersionRegex.Match(await ffmpeg.StandardOutput.ReadLineAsync(cToken) ?? string.Empty);

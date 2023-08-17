@@ -17,7 +17,9 @@ public sealed class YtdlpResolver : IYtdlpResolver
     public string DependencyName { get; } = "Yt-dlp";
 
     /// <inheritdoc />
-    public string FileName { get; } = "yt-dlp";
+    public string FileName { get; } = (Environment.OSVersion.Platform is PlatformID.Win32NT)
+        ? "yt-dlp.exe"
+        : "yt-dlp";
 
     /// <summary>
     /// Creates a service that checks, downloads, installs, and updates yt-dlp.
@@ -48,23 +50,20 @@ public sealed class YtdlpResolver : IYtdlpResolver
         // Install
         Directory.CreateDirectory(dependenciesUri);
 
-        var filePath = Path.Combine(dependenciesUri, _downloadedFileName);
+        var finalFilePath = Path.Combine(dependenciesUri, FileName);
         using var http = _httpClientFactory.CreateClient();
         using var downloadStream = await http.GetStreamAsync($"https://github.com/yt-dlp/yt-dlp/releases/download/{newVersion}/{_downloadedFileName}", cToken);
-        using var fileStream = new FileStream(filePath, FileMode.Create);
-
-        await downloadStream.CopyToAsync(fileStream, cToken);
+        using (var fileStream = new FileStream(finalFilePath, FileMode.Create))
+            await downloadStream.CopyToAsync(fileStream, cToken);
 
         // Update environment variable
         Utilities.AddPathToPATHEnvar(dependenciesUri);
 
-        // On Linux and MacOS, we need to mark the file as executable
-        // and change its name to its process name.
+        // On Linux and MacOS, we need to mark the file as executable.
         if (Environment.OSVersion.Platform is PlatformID.Unix)
         {
-            using var chmod = Utilities.StartProcess("chmod", "+x " + filePath);
+            using var chmod = Utilities.StartProcess("chmod", "+x " + finalFilePath);
             await chmod.WaitForExitAsync(cToken);
-            File.Move(filePath, Path.Combine(dependenciesUri, _ytdlpProcessName));
         }
 
         return (null, newVersion);

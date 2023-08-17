@@ -82,6 +82,10 @@ public sealed partial class FfmpegLinuxResolver : FfmpegResolver
         File.Move(Path.Combine(tarExtractDir, FileName), Path.Combine(dependenciesUri, FileName));
         File.Move(Path.Combine(tarExtractDir, "ffprobe"), Path.Combine(dependenciesUri, "ffprobe"));
 
+        // Mark the files as executable.
+        using var chmod = Utilities.StartProcess("chmod", $"+x {Path.Combine(dependenciesUri, FileName)} {Path.Combine(dependenciesUri, "ffprobe")}");
+        await chmod.WaitForExitAsync(cToken);
+
         // Cleanup
         File.Delete(tarFilePath);
         Directory.Delete(tarExtractDir, true);

@@ -5,6 +5,8 @@ namespace NadekoUpdater.Services.Abstractions;
 /// </summary>
 public abstract class FfmpegResolver : IFfmpegResolver
 {
+    private readonly string _programVerifier = (Environment.OSVersion.Platform is PlatformID.Win32NT) ? "where" : "which";
+
     /// <summary>
     /// The name of the Ffmpeg process.
     /// </summary>
@@ -20,7 +22,7 @@ public abstract class FfmpegResolver : IFfmpegResolver
     public virtual async ValueTask<bool?> CanUpdateAsync(CancellationToken cToken = default)
     {
         // Check where ffmpeg is referenced.
-        using var whereProcess = Utilities.StartProcess("where", FfmpegProcessName);
+        using var whereProcess = Utilities.StartProcess(_programVerifier, FfmpegProcessName);
         var installationPath = await whereProcess.StandardOutput.ReadToEndAsync(cToken);
 
         // If ffmpeg is present but not managed by us, just report it is installed.
@@ -29,8 +31,9 @@ public abstract class FfmpegResolver : IFfmpegResolver
 
         var currentVer = await GetCurrentVersionAsync(cToken);
 
-        if (currentVer is null)
-            return null;
+        // If ffmpeg or ffprobe are absent, a reinstall needs to be performed.
+        if (currentVer is null || !await Utilities.ProgramExistsAsync("ffprobe", cToken))
+            return null;       
 
         var latestVer = await GetLatestVersionAsync(cToken);
 

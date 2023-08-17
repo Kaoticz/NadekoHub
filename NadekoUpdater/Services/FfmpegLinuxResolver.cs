@@ -35,7 +35,7 @@ public sealed partial class FfmpegLinuxResolver : FfmpegResolver
     /// <inheritdoc/>
     public override async ValueTask<string> GetLatestVersionAsync(CancellationToken cToken = default)
     {
-        using var http = _httpClientFactory.CreateClient();
+        var http = _httpClientFactory.CreateClient();
         var pageContent = await http.GetStringAsync("https://johnvansickle.com/ffmpeg", cToken);
         var match = _ffmpegLatestVersionRegex.Match(pageContent);
 
@@ -57,15 +57,15 @@ public sealed partial class FfmpegLinuxResolver : FfmpegResolver
             if (currentVersion == newVersion)
                 return (currentVersion, null);
 
-            File.Delete(Path.Combine(dependenciesUri, FileName));
-            File.Delete(Path.Combine(dependenciesUri, "ffprobe"));
+            Utilities.TryDeleteFile(Path.Combine(dependenciesUri, FileName));
+            Utilities.TryDeleteFile(Path.Combine(dependenciesUri, "ffprobe"));
         }
 
         // Install
         Directory.CreateDirectory(dependenciesUri);
 
         var tarFileName = $"ffmpeg-release-{((RuntimeInformation.OSArchitecture is Architecture.X64) ? "amd" : "arm")}64-static.tar.xz";
-        using var http = _httpClientFactory.CreateClient();
+        var http = _httpClientFactory.CreateClient();
         using var downloadStream = await http.GetStreamAsync($"https://johnvansickle.com/ffmpeg/releases/{tarFileName}", cToken);
 
         // Save tar file to the temporary directory.

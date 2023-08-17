@@ -29,47 +29,6 @@ public sealed class YtdlpResolver : IYtdlpResolver
         => _httpClientFactory = httpClientFactory;
 
     /// <inheritdoc />
-    public async ValueTask<(string? OldVersion, string? NewVersion)> InstallOrUpdateAsync(string dependenciesUri, CancellationToken cToken = default)
-    {
-        var currentVersion = await GetCurrentVersionAsync(cToken);
-        var newVersion = await GetLatestVersionAsync(cToken);
-
-        // Update
-        if (currentVersion is not null)
-        {
-            // If the versions are the same, exit.
-            if (currentVersion == newVersion)
-                return (currentVersion, null);
-
-            using var ytdlp = Utilities.StartProcess(_ytdlpProcessName, "-U");
-            await ytdlp.WaitForExitAsync(cToken);
-
-            return (currentVersion, newVersion);
-        }
-
-        // Install
-        Directory.CreateDirectory(dependenciesUri);
-
-        var finalFilePath = Path.Combine(dependenciesUri, FileName);
-        using var http = _httpClientFactory.CreateClient();
-        using var downloadStream = await http.GetStreamAsync($"https://github.com/yt-dlp/yt-dlp/releases/download/{newVersion}/{_downloadedFileName}", cToken);
-        using (var fileStream = new FileStream(finalFilePath, FileMode.Create))
-            await downloadStream.CopyToAsync(fileStream, cToken);
-
-        // Update environment variable
-        Utilities.AddPathToPATHEnvar(dependenciesUri);
-
-        // On Linux and MacOS, we need to mark the file as executable.
-        if (Environment.OSVersion.Platform is PlatformID.Unix)
-        {
-            using var chmod = Utilities.StartProcess("chmod", "+x " + finalFilePath);
-            await chmod.WaitForExitAsync(cToken);
-        }
-
-        return (null, newVersion);
-    }
-
-    /// <inheritdoc />
     public async ValueTask<bool?> CanUpdateAsync(CancellationToken cToken = default)
     {
         var currentVer = await GetCurrentVersionAsync(cToken);
@@ -107,7 +66,7 @@ public sealed class YtdlpResolver : IYtdlpResolver
     /// <inheritdoc />
     public async ValueTask<string> GetLatestVersionAsync(CancellationToken cToken = default)
     {
-        using var http = _httpClientFactory.CreateClient(AppStatics.NoRedirectClient);
+        var http = _httpClientFactory.CreateClient(AppStatics.NoRedirectClient);
 
         var response = await http.GetAsync("https://github.com/yt-dlp/yt-dlp/releases/latest", cToken);
 
@@ -115,6 +74,47 @@ public sealed class YtdlpResolver : IYtdlpResolver
             ?? throw new InvalidOperationException("Failed to get the latest yt-dlp version.");
 
         return response.Headers.Location.OriginalString[(lastSlashIndex + 1)..];
+    }
+
+    /// <inheritdoc />
+    public async ValueTask<(string? OldVersion, string? NewVersion)> InstallOrUpdateAsync(string dependenciesUri, CancellationToken cToken = default)
+    {
+        var currentVersion = await GetCurrentVersionAsync(cToken);
+        var newVersion = await GetLatestVersionAsync(cToken);
+
+        // Update
+        if (currentVersion is not null)
+        {
+            // If the versions are the same, exit.
+            if (currentVersion == newVersion)
+                return (currentVersion, null);
+
+            using var ytdlp = Utilities.StartProcess(_ytdlpProcessName, "-U");
+            await ytdlp.WaitForExitAsync(cToken);
+
+            return (currentVersion, newVersion);
+        }
+
+        // Install
+        Directory.CreateDirectory(dependenciesUri);
+
+        var finalFilePath = Path.Combine(dependenciesUri, FileName);
+        var http = _httpClientFactory.CreateClient();
+        using var downloadStream = await http.GetStreamAsync($"https://github.com/yt-dlp/yt-dlp/releases/download/{newVersion}/{_downloadedFileName}", cToken);
+        using (var fileStream = new FileStream(finalFilePath, FileMode.Create))
+            await downloadStream.CopyToAsync(fileStream, cToken);
+
+        // Update environment variable
+        Utilities.AddPathToPATHEnvar(dependenciesUri);
+
+        // On Linux and MacOS, we need to mark the file as executable.
+        if (Environment.OSVersion.Platform is PlatformID.Unix)
+        {
+            using var chmod = Utilities.StartProcess("chmod", "+x " + finalFilePath);
+            await chmod.WaitForExitAsync(cToken);
+        }
+
+        return (null, newVersion);
     }
 
     /// <summary>

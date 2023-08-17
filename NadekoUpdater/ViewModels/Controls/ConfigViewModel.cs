@@ -7,6 +7,7 @@ using NadekoUpdater.ViewModels.Abstractions;
 using NadekoUpdater.Views.Controls;
 using NadekoUpdater.Views.Windows;
 using NadekoUpdater.Services.Abstractions;
+using MsBox.Avalonia.Dto;
 
 namespace NadekoUpdater.ViewModels.Controls;
 
@@ -97,16 +98,16 @@ public class ConfigViewModel : ViewModelBase<ConfigView>
         var originalStatus = buttonViewModel.Status;
         buttonViewModel.Status = DependencyStatus.Updating;
 
-        var dialogWindowTask = await dependencyResolver.InstallOrUpdateAsync(AppStatics.AppDepsUri) switch
-        {
-            (string oldVer, null) => ShowDialogWindowAsync($"{dependencyResolver.DependencyName} is already up-to-date (version {oldVer})."),
-            (null, string newVer) => ShowDialogWindowAsync($"{dependencyResolver.DependencyName} version {newVer} was successfully installed.", Icon.Success),
-            (string oldVer, string newVer) => ShowDialogWindowAsync($"{dependencyResolver.DependencyName} was successfully updated from version {oldVer} to version {newVer}.", Icon.Success),
-            _ => throw new NotSupportedException($"{nameof(IDependencyResolver.InstallOrUpdateAsync)} returned invalid state.")
-        };
-
         try
         {
+            var dialogWindowTask = await dependencyResolver.InstallOrUpdateAsync(AppStatics.AppDepsUri) switch
+            {
+                (string oldVer, null) => ShowDialogWindowAsync($"{dependencyResolver.DependencyName} is already up-to-date (version {oldVer})."),
+                (null, string newVer) => ShowDialogWindowAsync($"{dependencyResolver.DependencyName} version {newVer} was successfully installed.", Icon.Success),
+                (string oldVer, string newVer) => ShowDialogWindowAsync($"{dependencyResolver.DependencyName} was successfully updated from version {oldVer} to version {newVer}.", Icon.Success),
+                _ => throw new NotSupportedException($"{nameof(IDependencyResolver.InstallOrUpdateAsync)} returned invalid state.")
+            };
+
             await dialogWindowTask;
             buttonViewModel.Status = DependencyStatus.Installed;
         }
@@ -127,10 +128,21 @@ public class ConfigViewModel : ViewModelBase<ConfigView>
     {
         var unixNotice = (Environment.OSVersion.Platform is not PlatformID.Unix)
             ? string.Empty
-            : Environment.NewLine + "To make the dependencies accessible to your NadekoBot instances without this updater, consider installing " +
-            $"them through your package manager of choice or adding the directory \"{AppStatics.AppDepsUri}\" to your PATH environment variable.";
+            : Environment.NewLine + "To make the dependencies accessible to your bot instances without this updater, consider installing " +
+            $"them through your package manager or adding the directory \"{AppStatics.AppDepsUri}\" to your PATH environment variable.";
 
-        var dialogBox = MessageBoxManager.GetMessageBoxStandard(dialogType.ToString(), message + unixNotice, ButtonEnum.Ok, iconType, WindowStartupLocation.CenterOwner);
+        var dialogBox = MessageBoxManager.GetMessageBoxStandard(new()
+        {
+            ButtonDefinitions = ButtonEnum.Ok,
+            ContentMessage = message + unixNotice,
+            ContentTitle = dialogType.ToString(),
+            Icon = iconType,
+            MaxWidth = int.Parse(WindowConstants.DefaultWindowWidth) / 1.7,
+            SizeToContent = SizeToContent.WidthAndHeight,
+            ShowInCenter = true,
+            WindowStartupLocation = WindowStartupLocation.CenterOwner,
+        });
+
         return dialogBox.ShowWindowDialogAsync(_mainWindow);
     }
 }

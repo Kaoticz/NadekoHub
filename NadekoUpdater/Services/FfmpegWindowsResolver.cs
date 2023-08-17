@@ -35,7 +35,7 @@ public sealed class FfmpegWindowsResolver : FfmpegResolver
     /// <inheritdoc />
     public override async ValueTask<string> GetLatestVersionAsync(CancellationToken cToken = default)
     {
-        using var http = _httpClientFactory.CreateClient(AppStatics.NoRedirectClient);
+        var http = _httpClientFactory.CreateClient(AppStatics.NoRedirectClient);
 
         var response = await http.GetAsync("https://github.com/GyanD/codexffmpeg/releases/latest", cToken);
 
@@ -58,16 +58,16 @@ public sealed class FfmpegWindowsResolver : FfmpegResolver
             if (currentVersion == newVersion)
                 return (currentVersion, null);
 
-            File.Delete(Path.Combine(dependenciesUri, FileName));
-            File.Delete(Path.Combine(dependenciesUri, "ffprobe.exe"));
-            //File.Delete(Path.Combine(dependenciesUri, "ffplay.exe"));
+            Utilities.TryDeleteFile(Path.Combine(dependenciesUri, FileName));
+            Utilities.TryDeleteFile(Path.Combine(dependenciesUri, "ffprobe.exe"));
+            //Utilities.TryDeleteFile(Path.Combine(dependenciesUri, "ffplay.exe"));
         }
 
         // Install
         Directory.CreateDirectory(dependenciesUri);
 
         var zipFileName = $"ffmpeg-{newVersion}-full_build.zip";
-        using var http = _httpClientFactory.CreateClient();
+        var http = _httpClientFactory.CreateClient();
         using var downloadStream = await http.GetStreamAsync($"https://github.com/GyanD/codexffmpeg/releases/download/{newVersion}/{zipFileName}", cToken);
 
         // Save zip file to the temporary directory.

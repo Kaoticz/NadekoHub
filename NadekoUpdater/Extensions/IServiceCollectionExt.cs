@@ -68,6 +68,8 @@ public static class IServiceCollectionExt
             serviceCollection.AddSingleton<IFfmpegResolver, FfmpegWindowsResolver>();
         else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
             serviceCollection.AddSingleton<IFfmpegResolver, FfmpegLinuxResolver>();
+        else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+            serviceCollection.AddSingleton<IFfmpegResolver, FfmpegMacResolver>();
 
         return serviceCollection;
     }

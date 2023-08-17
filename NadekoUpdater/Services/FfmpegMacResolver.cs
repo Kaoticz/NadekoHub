@@ -10,7 +10,8 @@ namespace NadekoUpdater.Services;
 /// <remarks>Source: https://evermeet.cx/ffmpeg</remarks>
 public sealed class FfmpegMacResolver : FfmpegResolver
 {
-    private const string _apiInfoEndpoint = "https://evermeet.cx/ffmpeg/info";
+    private const string _apiFfmpegInfoEndpoint = "https://evermeet.cx/ffmpeg/info/ffmpeg/release";
+    private const string _apiFfprobeInfoEndpoint = "https://evermeet.cx/ffmpeg/info/ffprobe/release";
     private readonly string _tempDirectory = Path.GetTempPath();
     private readonly IHttpClientFactory _httpClientFactory;
 
@@ -28,10 +29,9 @@ public sealed class FfmpegMacResolver : FfmpegResolver
     public override async ValueTask<string> GetLatestVersionAsync(CancellationToken cToken = default)
     {
         var http = _httpClientFactory.CreateClient();
-        var response = await http.CallApiAsync<IReadOnlyList<EvermeetInfo>>(_apiInfoEndpoint, cToken);
-        var downloadInfo = response.First(x => x.Name.Equals("ffmpeg", StringComparison.OrdinalIgnoreCase) && x.Type.Equals("release", StringComparison.OrdinalIgnoreCase));
+        var response = await http.CallApiAsync<EvermeetInfo>(_apiFfmpegInfoEndpoint, cToken);
 
-        return downloadInfo.Version;
+        return response.Version;
     }
 
     /// <inheritdoc/>
@@ -55,11 +55,12 @@ public sealed class FfmpegMacResolver : FfmpegResolver
         Directory.CreateDirectory(dependenciesUri);
 
         var http = _httpClientFactory.CreateClient();
-        var response = await http.CallApiAsync<IReadOnlyList<EvermeetInfo>>(_apiInfoEndpoint, cToken);
+        var ffmpegResponse = await http.CallApiAsync<EvermeetInfo>(_apiFfmpegInfoEndpoint, cToken);
+        var ffprobeResponse = await http.CallApiAsync<EvermeetInfo>(_apiFfprobeInfoEndpoint, cToken);
 
         await Task.WhenAll(
-            InstallDependencyAsync(response.First(x => x.Name == "ffmpeg" && x.Type == "release"), dependenciesUri, cToken),
-            InstallDependencyAsync(response.First(x => x.Name == "ffprobe" && x.Type == "release"), dependenciesUri, cToken)
+            InstallDependencyAsync(ffmpegResponse, dependenciesUri, cToken),
+            InstallDependencyAsync(ffprobeResponse, dependenciesUri, cToken)
         );
 
         // Update environment variable

@@ -50,6 +50,7 @@ public interface IDependencyResolver
     /// <param name="cToken">The cancellation token.</param>
     /// <returns>
     /// A tuple that may or may not contain the old and new versions of the dependency. <br />
+    /// (<see langword="null"/>, <see langword="null"/>): the dependency is being updated by another thread, so no operation was performed. <br />
     /// (<see langword="string"/>, <see langword="null"/>): the dependency is already up-to-date, so no operation was performed. <br />
     /// (<see langword="null"/>, <see langword="string"/>): the dependency got installed. <br />
     /// (<see langword="string"/>, <see langword="string"/>): the dependency got updated.

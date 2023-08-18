@@ -13,6 +13,7 @@ public sealed class FfmpegMacResolver : FfmpegResolver
     private const string _apiFfmpegInfoEndpoint = "https://evermeet.cx/ffmpeg/info/ffmpeg/release";
     private const string _apiFfprobeInfoEndpoint = "https://evermeet.cx/ffmpeg/info/ffprobe/release";
     private readonly string _tempDirectory = Path.GetTempPath();
+    private bool _isUpdating = false;
     private readonly IHttpClientFactory _httpClientFactory;
 
     /// <inheritdoc/>
@@ -37,6 +38,10 @@ public sealed class FfmpegMacResolver : FfmpegResolver
     /// <inheritdoc/>
     public override async ValueTask<(string? OldVersion, string? NewVersion)> InstallOrUpdateAsync(string dependenciesUri, CancellationToken cToken = default)
     {
+        if (_isUpdating)
+            return (null, null);
+
+        _isUpdating = true;
         var currentVersion = await GetCurrentVersionAsync(cToken);
         var newVersion = await GetLatestVersionAsync(cToken);
 
@@ -45,7 +50,10 @@ public sealed class FfmpegMacResolver : FfmpegResolver
         {
             // If the versions are the same, exit.
             if (currentVersion == newVersion)
+            {
+                _isUpdating = false;
                 return (currentVersion, null);
+            }
 
             Utilities.TryDeleteFile(Path.Combine(dependenciesUri, FileName));
             Utilities.TryDeleteFile(Path.Combine(dependenciesUri, "ffprobe"));
@@ -66,6 +74,7 @@ public sealed class FfmpegMacResolver : FfmpegResolver
         // Update environment variable
         Utilities.AddPathToPATHEnvar(dependenciesUri);
 
+        _isUpdating = false;
         return (currentVersion, newVersion);
     }
 

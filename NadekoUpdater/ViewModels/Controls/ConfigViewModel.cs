@@ -105,7 +105,7 @@ public class ConfigViewModel : ViewModelBase<ConfigView>
                 (string oldVer, null) => ShowDialogWindowAsync($"{dependencyResolver.DependencyName} is already up-to-date (version {oldVer})."),
                 (null, string newVer) => ShowDialogWindowAsync($"{dependencyResolver.DependencyName} version {newVer} was successfully installed.", Icon.Success),
                 (string oldVer, string newVer) => ShowDialogWindowAsync($"{dependencyResolver.DependencyName} was successfully updated from version {oldVer} to version {newVer}.", Icon.Success),
-                _ => throw new NotSupportedException($"{nameof(IDependencyResolver.InstallOrUpdateAsync)} returned invalid state.")
+                (null, null) => ShowDialogWindowAsync($"Update of {dependencyResolver.DependencyName} is ongoing.", Icon.Warning, DialogType.Warning)
             };
 
             await dialogWindowTask;

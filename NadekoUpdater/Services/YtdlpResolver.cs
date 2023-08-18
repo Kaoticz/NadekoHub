@@ -1,3 +1,4 @@
+using Microsoft.Extensions.Caching.Memory;
 using NadekoUpdater.Services.Abstractions;
 using System.Runtime.InteropServices;
 
@@ -9,12 +10,15 @@ namespace NadekoUpdater.Services;
 /// <remarks>Source: https://github.com/yt-dlp/yt-dlp/releases/latest</remarks>
 public sealed class YtdlpResolver : IYtdlpResolver
 {
+    private const string _cachedCurrentVersionKey = "currentVersion:yt-dlp";
     private const string _ytdlpProcessName = "yt-dlp";
     private readonly string _downloadedFileName = GetFileName();
+    private bool _isUpdating = false;
     private readonly IHttpClientFactory _httpClientFactory;
+    private readonly IMemoryCache _memoryCache;
 
     /// <inheritdoc />
-    public string DependencyName { get; } = "Yt-dlp";
+    public string DependencyName { get; } = "Youtube-dlp";
 
     /// <inheritdoc />
     public string FileName { get; } = (Environment.OSVersion.Platform is PlatformID.Win32NT)
@@ -25,8 +29,12 @@ public sealed class YtdlpResolver : IYtdlpResolver
     /// Creates a service that checks, downloads, installs, and updates yt-dlp.
     /// </summary>
     /// <param name="httpClientFactory">The HTTP client factory.</param>
-    public YtdlpResolver(IHttpClientFactory httpClientFactory)
-        => _httpClientFactory = httpClientFactory;
+    /// <param name="memoryCache">The memory cache.</param>
+    public YtdlpResolver(IHttpClientFactory httpClientFactory, IMemoryCache memoryCache)
+    {
+        _httpClientFactory = httpClientFactory;
+        _memoryCache = memoryCache;
+    }
 
     /// <inheritdoc />
     public async ValueTask<bool?> CanUpdateAsync(CancellationToken cToken = default)
@@ -58,9 +66,16 @@ public sealed class YtdlpResolver : IYtdlpResolver
             return await GetCurrentVersionAsync(cToken);
         }
 
+        // "yt-dlp --version" takes a very long time to return, so we cache the result for 90 seconds.
+        if (_memoryCache.TryGetValue<string>(_cachedCurrentVersionKey, out var currentVersion) && currentVersion is not null)
+            return currentVersion;
+
         using var ytdlp = Utilities.StartProcess(_ytdlpProcessName, "--version");
 
-        return (await ytdlp.StandardOutput.ReadToEndAsync(cToken)).Trim();
+        var currentProcessVersion = (await ytdlp.StandardOutput.ReadToEndAsync(cToken)).Trim();
+        _memoryCache.Set(_cachedCurrentVersionKey, currentProcessVersion, TimeSpan.FromMinutes(1.5));
+
+        return currentProcessVersion;
     }
 
     /// <inheritdoc />
@@ -79,19 +94,29 @@ public sealed class YtdlpResolver : IYtdlpResolver
     /// <inheritdoc />
     public async ValueTask<(string? OldVersion, string? NewVersion)> InstallOrUpdateAsync(string dependenciesUri, CancellationToken cToken = default)
     {
+        if (_isUpdating)
+            return (null, null);
+        
+        _isUpdating = true;
         var currentVersion = await GetCurrentVersionAsync(cToken);
         var newVersion = await GetLatestVersionAsync(cToken);
+
+        _memoryCache.Remove(_cachedCurrentVersionKey);
 
         // Update
         if (currentVersion is not null)
         {
             // If the versions are the same, exit.
             if (currentVersion == newVersion)
+            {
+                _isUpdating = false;
                 return (currentVersion, null);
+            }
 
             using var ytdlp = Utilities.StartProcess(_ytdlpProcessName, "-U");
             await ytdlp.WaitForExitAsync(cToken);
 
+            _isUpdating = false;
             return (currentVersion, newVersion);
         }
 
@@ -114,6 +139,7 @@ public sealed class YtdlpResolver : IYtdlpResolver
             await chmod.WaitForExitAsync(cToken);
         }
 
+        _isUpdating = false;
         return (null, newVersion);
     }
 

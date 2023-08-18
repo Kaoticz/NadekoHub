@@ -12,6 +12,7 @@ public sealed partial class FfmpegLinuxResolver : FfmpegResolver
 {
     private readonly Regex _ffmpegLatestVersionRegex = FfmpegLatestVersionRegexGenerator();
     private readonly string _tempDirectory = Path.GetTempPath();
+    private bool _isUpdating = false;
     private readonly IHttpClientFactory _httpClientFactory;
 
     /// <inheritdoc/>
@@ -47,6 +48,10 @@ public sealed partial class FfmpegLinuxResolver : FfmpegResolver
     /// <inheritdoc/>
     public override async ValueTask<(string? OldVersion, string? NewVersion)> InstallOrUpdateAsync(string dependenciesUri, CancellationToken cToken = default)
     {
+        if (_isUpdating)
+            return (null, null);
+
+        _isUpdating = true;
         var currentVersion = await GetCurrentVersionAsync(cToken);
         var newVersion = await GetLatestVersionAsync(cToken);
 
@@ -93,6 +98,7 @@ public sealed partial class FfmpegLinuxResolver : FfmpegResolver
         // Update environment variable
         Utilities.AddPathToPATHEnvar(dependenciesUri);
 
+        _isUpdating = false;
         return (currentVersion, newVersion);
     }
 

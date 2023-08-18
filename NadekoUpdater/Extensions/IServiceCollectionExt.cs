@@ -47,6 +47,9 @@ public static class IServiceCollectionExt
     /// <returns>This service collection with the services added.</returns>
     public static IServiceCollection RegisterServices(this IServiceCollection serviceCollection)
     {
+        // Internal
+        serviceCollection.AddMemoryCache();
+
         // Web requests
         serviceCollection.AddHttpClient();
         serviceCollection.AddHttpClient(AppStatics.NoRedirectClient)

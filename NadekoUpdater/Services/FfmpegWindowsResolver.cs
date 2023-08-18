@@ -10,8 +10,9 @@ namespace NadekoUpdater.Services;
 /// <remarks>Source: https://github.com/GyanD/codexffmpeg/releases/latest</remarks>
 public sealed class FfmpegWindowsResolver : FfmpegResolver
 {
-    private readonly IHttpClientFactory _httpClientFactory;
     private readonly string _tempDirectory = Path.GetTempPath();
+    private bool _isUpdating = false;
+    private readonly IHttpClientFactory _httpClientFactory;
 
     /// <inheritdoc />
     public override string FileName { get; } = "ffmpeg.exe";
@@ -48,6 +49,10 @@ public sealed class FfmpegWindowsResolver : FfmpegResolver
     /// <inheritdoc />
     public override async ValueTask<(string? OldVersion, string? NewVersion)> InstallOrUpdateAsync(string dependenciesUri, CancellationToken cToken = default)
     {
+        if (_isUpdating)
+            return (null, null);
+
+        _isUpdating = true;
         var currentVersion = await GetCurrentVersionAsync(cToken);
         var newVersion = await GetLatestVersionAsync(cToken);
 
@@ -56,7 +61,10 @@ public sealed class FfmpegWindowsResolver : FfmpegResolver
         {
             // If the versions are the same, exit.
             if (currentVersion == newVersion)
+            {
+                _isUpdating = false;
                 return (currentVersion, null);
+            }
 
             Utilities.TryDeleteFile(Path.Combine(dependenciesUri, FileName));
             Utilities.TryDeleteFile(Path.Combine(dependenciesUri, "ffprobe.exe"));
@@ -91,6 +99,7 @@ public sealed class FfmpegWindowsResolver : FfmpegResolver
         // Update environment variable
         Utilities.AddPathToPATHEnvar(dependenciesUri);
 
+        _isUpdating = false;
         return (currentVersion, newVersion);
     }
 }

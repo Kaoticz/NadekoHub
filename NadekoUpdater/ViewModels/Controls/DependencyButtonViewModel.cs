@@ -35,7 +35,7 @@ public class DependencyButtonViewModel : ViewModelBase<DependencyButton>
     public string DependencyName
     {
         get => _dependencyName;
-        set => this.RaiseAndSetIfChanged(ref _dependencyName, value);
+        init => this.RaiseAndSetIfChanged(ref _dependencyName, value);
     }
 
     /// <summary>

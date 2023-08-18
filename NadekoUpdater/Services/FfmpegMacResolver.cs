@@ -101,11 +101,11 @@ public sealed class FfmpegMacResolver : FfmpegResolver
         ZipFile.ExtractToDirectory(zipFileName, _tempDirectory);
 
         // Move the dependency binary.
-        var destinationUri = Path.Combine(dependenciesUri, downloadInfo.Name);
-        File.Move(Path.Combine(_tempDirectory, downloadInfo.Name), destinationUri);
+        var finalFileUri = Path.Combine(dependenciesUri, downloadInfo.Name);
+        File.Move(Path.Combine(_tempDirectory, downloadInfo.Name), finalFileUri, true);
 
         // Mark binary as executable.
-        using var chmod = Utilities.StartProcess("chmod", $"+x {destinationUri}");
+        using var chmod = Utilities.StartProcess("chmod", $"+x \"{finalFileUri}\"");
         await chmod.WaitForExitAsync(cToken);
 
         // Cleanup.

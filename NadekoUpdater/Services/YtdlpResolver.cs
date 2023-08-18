@@ -135,7 +135,7 @@ public sealed class YtdlpResolver : IYtdlpResolver
         // On Linux and MacOS, we need to mark the file as executable.
         if (Environment.OSVersion.Platform is PlatformID.Unix)
         {
-            using var chmod = Utilities.StartProcess("chmod", "+x " + finalFilePath);
+            using var chmod = Utilities.StartProcess("chmod", $"+x \"{finalFilePath}\"");
             await chmod.WaitForExitAsync(cToken);
         }
 
@@ -153,15 +153,14 @@ public sealed class YtdlpResolver : IYtdlpResolver
         return RuntimeInformation.OSArchitecture switch
         {
             // Windows
-            Architecture.X86 when RuntimeInformation.IsOSPlatform(OSPlatform.Windows) => "yt-dlp_x86.exe",
             Architecture.X64 when RuntimeInformation.IsOSPlatform(OSPlatform.Windows) => "yt-dlp.exe",
 
             // Linux
-            Architecture.X86 or Architecture.X64 when RuntimeInformation.IsOSPlatform(OSPlatform.Linux) => "yt-dlp_linux",
+            Architecture.X64 when RuntimeInformation.IsOSPlatform(OSPlatform.Linux) => "yt-dlp_linux",
             Architecture.Arm64 when RuntimeInformation.IsOSPlatform(OSPlatform.Linux) => "yt-dlp_linux_aarch64",
 
             // MacOS
-            Architecture.X86 or Architecture.X64 when RuntimeInformation.IsOSPlatform(OSPlatform.OSX) => "yt-dlp_macos_legacy",
+            Architecture.X64 when RuntimeInformation.IsOSPlatform(OSPlatform.OSX) => "yt-dlp_macos_legacy",
             Architecture.Arm64 when RuntimeInformation.IsOSPlatform(OSPlatform.OSX) => "yt-dlp_macos",
             _ => throw new NotSupportedException($"Architecture of type {RuntimeInformation.OSArchitecture} is not supported by yt-dlp on this OS.")
         };

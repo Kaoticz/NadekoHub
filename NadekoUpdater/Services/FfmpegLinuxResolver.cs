@@ -84,11 +84,11 @@ public sealed partial class FfmpegLinuxResolver : FfmpegResolver
         await extractProcess.WaitForExitAsync(cToken);
 
         // Move ffmpeg to the dependencies directory.
-        File.Move(Path.Combine(tarExtractDir, FileName), Path.Combine(dependenciesUri, FileName));
-        File.Move(Path.Combine(tarExtractDir, "ffprobe"), Path.Combine(dependenciesUri, "ffprobe"));
+        File.Move(Path.Combine(tarExtractDir, FileName), Path.Combine(dependenciesUri, FileName), true);
+        File.Move(Path.Combine(tarExtractDir, "ffprobe"), Path.Combine(dependenciesUri, "ffprobe"), true);
 
         // Mark the files as executable.
-        using var chmod = Utilities.StartProcess("chmod", $"+x {Path.Combine(dependenciesUri, FileName)} {Path.Combine(dependenciesUri, "ffprobe")}");
+        using var chmod = Utilities.StartProcess("chmod", $"+x \"{Path.Combine(dependenciesUri, FileName)}\" \"{Path.Combine(dependenciesUri, "ffprobe")}\"");
         await chmod.WaitForExitAsync(cToken);
 
         // Cleanup

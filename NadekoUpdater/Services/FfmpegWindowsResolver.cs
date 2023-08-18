@@ -88,8 +88,8 @@ public sealed class FfmpegWindowsResolver : FfmpegResolver
         ZipFile.ExtractToDirectory(zipFilePath, _tempDirectory);
         
         // Move ffmpeg to the dependencies directory.
-        File.Move(Path.Combine(zipExtractDir, "bin", FileName), Path.Combine(dependenciesUri, FileName));
-        File.Move(Path.Combine(zipExtractDir, "bin", "ffprobe.exe"), Path.Combine(dependenciesUri, "ffprobe.exe"));
+        File.Move(Path.Combine(zipExtractDir, "bin", FileName), Path.Combine(dependenciesUri, FileName), true);
+        File.Move(Path.Combine(zipExtractDir, "bin", "ffprobe.exe"), Path.Combine(dependenciesUri, "ffprobe.exe"), true);
         //File.Move(Path.Combine(zipExtractDir, "bin", "ffplay.exe"), Path.Combine(dependenciesUri, "ffplay.exe"));
 
         // Cleanup

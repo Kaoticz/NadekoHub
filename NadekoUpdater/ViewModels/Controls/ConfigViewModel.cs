@@ -23,11 +23,7 @@ public class ConfigViewModel : ViewModelBase<ConfigView>
     /// <summary>
     /// Contains view-models for buttons that install dependencies for Nadeko.
     /// </summary>
-    public IReadOnlyList<DependencyButtonViewModel> DependencyButtons { get; } = new DependencyButtonViewModel[]
-    {
-        new() { DependencyName = "FFMPEG" },
-        new() { DependencyName = "Youtube-dlp" }
-    };
+    public IReadOnlyList<DependencyButtonViewModel> DependencyButtons { get; }
 
     /// <summary>
     /// The bar that defines where the bot instances should be saved to.
@@ -57,6 +53,12 @@ public class ConfigViewModel : ViewModelBase<ConfigView>
         DefaultBotUriBar = defaultBotUriBar;
         DefaultBotUriBar.CurrentUri = appConfigManager.AppConfig.BotsDirectoryUri;
         DefaultBotUriBar.OnValidUri += async (_, eventArgs) => await appConfigManager.UpdateConfigAsync(x => x.BotsDirectoryUri = eventArgs.NewUri);
+
+        DependencyButtons = new DependencyButtonViewModel[]
+        {
+            new() { DependencyName = ffmpegResolver.DependencyName },
+            new() { DependencyName = ytdlpResolver.DependencyName }
+        };
 
         _ = InitializeDependencyButtonAsync(DependencyButtons[0], ffmpegResolver);
         _ = InitializeDependencyButtonAsync(DependencyButtons[1], ytdlpResolver);

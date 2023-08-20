@@ -12,7 +12,7 @@ public sealed class YtdlpResolver : IYtdlpResolver
 {
     private const string _cachedCurrentVersionKey = "currentVersion:yt-dlp";
     private const string _ytdlpProcessName = "yt-dlp";
-    private readonly string _downloadedFileName = GetFileName();
+    private readonly string _downloadedFileName = GetDownloadFileName();
     private bool _isUpdating = false;
     private readonly IHttpClientFactory _httpClientFactory;
     private readonly IMemoryCache _memoryCache;
@@ -148,7 +148,7 @@ public sealed class YtdlpResolver : IYtdlpResolver
     /// </summary>
     /// <returns>The name of the yt-dlp binary file.</returns>
     /// <exception cref="NotSupportedException">Occurs when this method is executed in an unsupported platform.</exception>
-    private static string GetFileName()
+    private static string GetDownloadFileName()
     {
         return RuntimeInformation.OSArchitecture switch
         {

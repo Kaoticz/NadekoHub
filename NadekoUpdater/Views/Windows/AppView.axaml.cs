@@ -3,6 +3,8 @@ using Avalonia.ReactiveUI;
 using Microsoft.Extensions.DependencyInjection;
 using NadekoUpdater.DesignData.Common;
 using NadekoUpdater.Models.Config;
+using NadekoUpdater.Services;
+using NadekoUpdater.Services.Abstractions;
 using NadekoUpdater.ViewModels.Abstractions;
 using NadekoUpdater.ViewModels.Controls;
 using NadekoUpdater.ViewModels.Windows;
@@ -23,10 +25,10 @@ public partial class AppView : ReactiveWindow<AppViewModel>
     /// </summary>
     [Obsolete(WindowConstants.DesignerCtorWarning, true)]
     public AppView() : this(
+            DesignStatics.Services.GetRequiredService<IServiceScopeFactory>(),
             DesignStatics.Services.GetRequiredService<ReadOnlyAppConfig>(),
             DesignStatics.Services.GetRequiredService<AppViewModel>(),
-            DesignStatics.Services.GetRequiredService<LateralBarView>(),
-            DesignStatics.Services.GetRequiredService<IServiceScopeFactory>()
+            DesignStatics.Services.GetRequiredService<LateralBarView>()
         )
     {
     }
@@ -34,11 +36,11 @@ public partial class AppView : ReactiveWindow<AppViewModel>
     /// <summary>
     /// Creates the main window of the application.
     /// </summary>
+    /// <param name="scopeFactory">The IoC scope factory.</param>
     /// <param name="appConfig">The application settings.</param>
     /// <param name="viewModel">The view-model of this view.</param>
     /// <param name="lateralBarView">The lateral bar view.</param>
-    /// <param name="scopeFactory">The IoC scope factory.</param>
-    public AppView(ReadOnlyAppConfig appConfig, AppViewModel viewModel, LateralBarView lateralBarView, IServiceScopeFactory scopeFactory)
+    public AppView(IServiceScopeFactory scopeFactory, ReadOnlyAppConfig appConfig,AppViewModel viewModel, LateralBarView lateralBarView)
     {
         _appConfig = appConfig;
 
@@ -86,7 +88,11 @@ public partial class AppView : ReactiveWindow<AppViewModel>
     /// <exception cref="InvalidOperationException">Occurs when <paramref name="button"/> has an invalid <see cref="ContentControl.Content"/>.</exception>
     private BotConfigViewModel GetBotConfigViewModel(Button button, IServiceScopeFactory scopeFactory)
     {
+        using var scope = scopeFactory.CreateScope();
+        var position = (uint)(button.Content ?? throw new InvalidOperationException("Bot button has no id/position."));
+        var botResolver = scope.ServiceProvider.GetRequiredService<NadekoResolver>(position);
+
         return GetViewModel<BotConfigViewModel>(scopeFactory)
-            .FinishInitialization((uint)(button.Content ?? throw new InvalidOperationException("Bot button has no id/position.")));
+            .FinishInitialization(botResolver);
     }
 }

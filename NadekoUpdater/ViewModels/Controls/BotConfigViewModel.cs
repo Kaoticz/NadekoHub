@@ -1,9 +1,12 @@
 using Avalonia.Media.Imaging;
 using Avalonia.Platform;
+using NadekoUpdater.Enums;
 using NadekoUpdater.Services;
+using NadekoUpdater.Services.Abstractions;
 using NadekoUpdater.ViewModels.Abstractions;
 using NadekoUpdater.Views.Controls;
 using ReactiveUI;
+using System.Diagnostics;
 
 namespace NadekoUpdater.ViewModels.Controls;
 
@@ -18,6 +21,11 @@ public class BotConfigViewModel : ViewModelBase<BotConfigView>
     private readonly AppConfigManager _appConfigManager;
 
     /// <summary>
+    /// The bot resolver to be used.
+    /// </summary>
+    public IBotResolver? Resolver { get; private set; }
+
+    /// <summary>
     /// The position of this bot instance in the lateral bot list.
     /// </summary>
     public uint Position { get; private set; }
@@ -26,6 +34,11 @@ public class BotConfigViewModel : ViewModelBase<BotConfigView>
     /// The bar that defines where the bot instance should be saved to.
     /// </summary>
     public UriInputBarViewModel BotDirectoryUriBar { get; }
+
+    /// <summary>
+    /// The bar to update the bot instance.
+    /// </summary>
+    public DependencyButtonViewModel UpdateBar { get; }
 
     /// <summary>
     /// The bot avatar to be displayed on the front-end.
@@ -63,27 +76,53 @@ public class BotConfigViewModel : ViewModelBase<BotConfigView>
     /// </summary>
     /// <param name="appConfigManager">The app settings manager.</param>
     /// <param name="botDirectoryUriBar">The text box with the path to the directory where the bot instance is.</param>
-    public BotConfigViewModel(AppConfigManager appConfigManager, UriInputBarViewModel botDirectoryUriBar)
+    /// <param name="updateBotBar">The bar for updating the bot.</param>
+    public BotConfigViewModel(AppConfigManager appConfigManager, UriInputBarViewModel botDirectoryUriBar, DependencyButtonViewModel updateBotBar)
     {
         _appConfigManager = appConfigManager;
         BotDirectoryUriBar = botDirectoryUriBar;
+        UpdateBar = updateBotBar;
+
+        UpdateBar.Click += InstallOrUpdateAsync;
     }
 
     /// <summary>
     /// Sets up the appropriate state of this view-model after initialization.
     /// </summary>
-    /// <param name="botEntryPosition">The position of the bot in the lateral bot list.</param>
+    /// <param name="botResolver">The bot resolver to be used by this view-model.</param>
     /// <returns>This view-model.</returns>
-    public BotConfigViewModel FinishInitialization(uint botEntryPosition)
+    public BotConfigViewModel FinishInitialization(IBotResolver botResolver)
     {
-        var botEntry = _appConfigManager.AppConfig.BotEntries[botEntryPosition];
+        var botEntry = _appConfigManager.AppConfig.BotEntries[botResolver.Position];
 
+        Resolver = botResolver;
         BotDirectoryUriBar.CurrentUri = botEntry.InstanceDirectoryUri;
         BotAvatar = LoadLocalImage(botEntry.AvatarUri);
-        BotName = botEntry.Name;
-        Position = botEntryPosition;
+        BotName = botResolver.BotName;
+        Position = botResolver.Position;
+        UpdateBar.DependencyName = "NadekoBot";
+
+        _ = LoadBotVersionAsync(botResolver);
 
         return this;
+    }
+
+    private async Task LoadBotVersionAsync(IBotResolver botResolver)
+    {
+        var canUpdate = await botResolver.CanUpdateAsync();
+
+        UpdateBar.DependencyName = "NadekoBot v" + await botResolver.GetLatestVersionAsync();
+        UpdateBar.Status = (canUpdate is true)
+            ? DependencyStatus.Update
+            : (canUpdate is null)
+                ? DependencyStatus.Install
+                : DependencyStatus.Installed;
+    }
+
+    public Task InstallOrUpdateAsync(DependencyButtonViewModel dependencyButton, EventArgs eventArgs)
+    {
+        Debug.WriteLine("Update button pressed!");
+        return Task.CompletedTask;
     }
 
     /// <summary>

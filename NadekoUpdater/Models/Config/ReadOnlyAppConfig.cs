@@ -14,6 +14,12 @@ public sealed class ReadOnlyAppConfig
         => _appConfig.BotsDirectoryUri;
 
     /// <summary>
+    /// The absolute path to the directory where the bot instances are backed up.
+    /// </summary>
+    public string BotsBackupDirectoryUri
+        => _appConfig.BotsBackupDirectoryUri;
+
+    /// <summary>
     /// Determines whether the application should be minimized to the system tray when closed.
     /// </summary>
     public bool MinimizeToTray

@@ -40,9 +40,10 @@
 
             <!--Top Bot Control Buttons-->
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                <Button Content="Apply" />
+                <Button Content="Move/Rename" />
                 <Button Content="Credentials" />
                 <Button Content="Bot Settings" />
+                <Button Content="Backup" />
                 <Button Content="Delete Bot" />
             </StackPanel>
             
@@ -51,6 +52,8 @@
                 <Button Content="Start" />
                 <Button Content="Stop" />
             </StackPanel>
+
+            <ContentControl Content="{Binding UpdateBar}" />
         </StackPanel>
         
     </Grid>

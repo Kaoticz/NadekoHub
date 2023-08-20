@@ -7,7 +7,7 @@ using NadekoUpdater.ViewModels.Abstractions;
 using NadekoUpdater.Views.Controls;
 using NadekoUpdater.Views.Windows;
 using NadekoUpdater.Services.Abstractions;
-using MsBox.Avalonia.Dto;
+using Avalonia.Platform;
 
 namespace NadekoUpdater.ViewModels.Controls;
 
@@ -16,9 +16,9 @@ namespace NadekoUpdater.ViewModels.Controls;
 /// </summary>
 public class ConfigViewModel : ViewModelBase<ConfigView>
 {
+    private static readonly WindowIcon _dialogWindowIcon = new(AssetLoader.Open(new Uri(AppStatics.ApplicationWindowIcon)));
     private readonly AppConfigManager _appConfigManager;
     private readonly AppView _mainWindow;
-    private readonly IYtdlpResolver _ytdlpResolver;
 
     /// <summary>
     /// Contains view-models for buttons that install dependencies for Nadeko.
@@ -48,7 +48,6 @@ public class ConfigViewModel : ViewModelBase<ConfigView>
     {
         _appConfigManager = appConfigManager;
         _mainWindow = mainWindow;
-        _ytdlpResolver = ytdlpResolver;
 
         DefaultBotUriBar = defaultBotUriBar;
         DefaultBotUriBar.CurrentUri = appConfigManager.AppConfig.BotsDirectoryUri;
@@ -115,7 +114,7 @@ public class ConfigViewModel : ViewModelBase<ConfigView>
         }
         catch (Exception ex)
         {
-            await ShowDialogWindowAsync($"An error occurred when updating {dependencyResolver.DependencyName}:\n{ex.Message}", Icon.Error, DialogType.Error);
+            await ShowDialogWindowAsync($"An error occurred while updating {dependencyResolver.DependencyName}:\n{ex.Message}", Icon.Error, DialogType.Error);
             buttonViewModel.Status = originalStatus;
         }
     }
@@ -139,6 +138,7 @@ public class ConfigViewModel : ViewModelBase<ConfigView>
             ContentMessage = message + unixNotice,
             ContentTitle = dialogType.ToString(),
             Icon = iconType,
+            WindowIcon = _dialogWindowIcon,
             MaxWidth = int.Parse(WindowConstants.DefaultWindowWidth) / 1.7,
             SizeToContent = SizeToContent.WidthAndHeight,
             ShowInCenter = true,

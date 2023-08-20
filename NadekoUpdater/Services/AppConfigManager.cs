@@ -130,7 +130,7 @@ public sealed class AppConfigManager
     private async ValueTask SaveAsync(CancellationToken cToken = default)
     {
         // Create the directory where the config file will be stored, if it doesn't exist.
-        Directory.CreateDirectory(AppStatics.DefaultAppConfigDirectoryUri);
+        Directory.CreateDirectory(AppStatics.AppDefaultConfigDirectoryUri);
 
         // Create the configuration file.
         var json = JsonSerializer.Serialize(_appConfig, _jsonSerializerOptions);

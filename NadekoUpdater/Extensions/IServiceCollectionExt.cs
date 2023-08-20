@@ -66,6 +66,7 @@ public static class IServiceCollectionExt
 
         // Dependency resolvers
         serviceCollection.AddSingleton<IYtdlpResolver, YtdlpResolver>();
+        serviceCollection.AddTransient<IBotResolver, NadekoResolver>();
 
         if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             serviceCollection.AddSingleton<IFfmpegResolver, FfmpegWindowsResolver>();

@@ -15,7 +15,8 @@ public sealed class DesignBotConfigViewModel : BotConfigViewModel
     /// </summary>
     public DesignBotConfigViewModel() : base(
             DesignStatics.Services.GetRequiredService<AppConfigManager>(),
-            DesignStatics.Services.GetRequiredService<UriInputBarViewModel>()
+            DesignStatics.Services.GetRequiredService<UriInputBarViewModel>(),
+            DesignStatics.Services.GetRequiredService<DependencyButtonViewModel>()
         )
     {
     }

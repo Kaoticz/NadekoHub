@@ -19,6 +19,7 @@ public class BotConfigViewModel : ViewModelBase<BotConfigView>
     private Bitmap _botAvatar = LoadLocalImage();
     private string _botName = string.Empty;
     private string _directoryHint = string.Empty;
+    private bool _areButtonsEnabled = true;
     private readonly AppConfigManager _appConfigManager;
     private readonly AppView _mainWindow;
 
@@ -74,6 +75,15 @@ public class BotConfigViewModel : ViewModelBase<BotConfigView>
     }
 
     /// <summary>
+    /// Determines whether if a long-running setting option is currently in progress.
+    /// </summary>
+    public bool IsSettingInProgress
+    {
+        get => _areButtonsEnabled;
+        set => this.RaiseAndSetIfChanged(ref _areButtonsEnabled, value);
+    }
+
+    /// <summary>
     /// Creates a view-model for <see cref="BotConfigView"/>.
     /// </summary>
     /// <param name="appConfigManager">The app settings manager.</param>
@@ -100,6 +110,22 @@ public class BotConfigViewModel : ViewModelBase<BotConfigView>
         UpdateBar.DependencyName = "Checking...";
 
         _ = LoadUpdateBarAsync(botResolver, updateBotBar);
+    }
+
+    /// <summary>
+    /// Creates a backup of the bot instance associated with this view-model.
+    /// </summary>
+    public async ValueTask BackupBotAsync()
+    {
+        IsSettingInProgress = false;
+
+        var backupUri = await Resolver.CreateBackupAsync();
+
+        await ((string.IsNullOrWhiteSpace(backupUri))
+            ? _mainWindow.ShowDialogWindowAsync($"Bot {Resolver.BotName} not found.", DialogType.Error, Icon.Error)
+            : _mainWindow.ShowDialogWindowAsync($"Successfully backed up {Resolver.BotName} to:{Environment.NewLine}{backupUri}", iconType: Icon.Success));
+        
+        IsSettingInProgress = true;
     }
 
     /// <summary>

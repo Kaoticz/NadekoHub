@@ -61,20 +61,23 @@ public sealed partial class NadekoResolver : IBotResolver
     }
 
     /// <inheritdoc/>
-    public string? CreateBackup()
+    public async ValueTask<string?> CreateBackupAsync()
     {
         var botInstance = _appConfigManager.AppConfig.BotEntries[Position];
 
         if (!Directory.Exists(botInstance.InstanceDirectoryUri))
             return null;
 
+        Directory.CreateDirectory(_appConfigManager.AppConfig.BotsBackupDirectoryUri);
+
         var now = DateTimeOffset.Now;
         var date = new DateOnly(now.Year, now.Month, now.Day).ToShortDateString().Replace('/', '-');
         var backupZipName = $"{botInstance.Name}_{date}-{now.ToUnixTimeMilliseconds()}.zip";
         var destinationUri = Path.Combine(_appConfigManager.AppConfig.BotsBackupDirectoryUri, backupZipName);
 
-        Directory.CreateDirectory(_appConfigManager.AppConfig.BotsBackupDirectoryUri);
-        ZipFile.CreateFromDirectory(botInstance.InstanceDirectoryUri, destinationUri, CompressionLevel.SmallestSize, true);
+        // ZipFile does not provide asynchronous implementations, so we have to schedule its
+        // execution to be run in the thread-pool due to how long it takes to finish execution.
+        await Task.Run(() => ZipFile.CreateFromDirectory(botInstance.InstanceDirectoryUri, destinationUri, CompressionLevel.SmallestSize, true));
 
         return destinationUri;
     }
@@ -133,7 +136,7 @@ public sealed partial class NadekoResolver : IBotResolver
             return (currentVersion, null);
         }
         
-        var backupFileUri = CreateBackup();
+        var backupFileUri = await CreateBackupAsync();
 
         if (currentVersion is not null)
             Directory.Delete(installationUri, true);

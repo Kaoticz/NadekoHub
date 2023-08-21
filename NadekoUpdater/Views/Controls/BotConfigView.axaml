@@ -40,11 +40,11 @@
 
             <!--Top Bot Control Buttons-->
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                <Button Content="Move/Rename" />
-                <Button Content="Credentials" />
-                <Button Content="Bot Settings" />
-                <Button Content="Backup" />
-                <Button Content="Delete Bot" />
+                <Button Content="Move/Rename" IsEnabled="{Binding IsSettingInProgress}" />
+                <Button Content="Credentials" IsEnabled="{Binding IsSettingInProgress}" />
+                <Button Content="Bot Settings" IsEnabled="{Binding IsSettingInProgress}" />
+                <Button Content="Backup" Command="{Binding BackupBotAsync}" IsEnabled="{Binding IsSettingInProgress}" />
+                <Button Content="Delete Bot" IsEnabled="{Binding IsSettingInProgress}" />
             </StackPanel>
             
             <!--Bottom Bot Control Buttons-->

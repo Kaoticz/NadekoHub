@@ -19,5 +19,5 @@ public interface IBotResolver : IDependencyResolver
     /// Creates a backup of the bot instance associated with this resolver.
     /// </summary>
     /// <returns>The absolute path to the backup file or <see langword="null"/> if the backup failed.</returns>
-    string? CreateBackup();
+    ValueTask<string?> CreateBackupAsync();
 }

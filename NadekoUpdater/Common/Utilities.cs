@@ -81,6 +81,28 @@ internal static class Utilities
     }
 
     /// <summary>
+    /// Safely deletes a directory.
+    /// </summary>
+    /// <param name="directoryUri">The absolute path to the directory.</param>
+    /// <returns><see langword="true"/> if the directory was deleted, <see langword="false"/> otherwise.</returns>
+    /// <exception cref="ArgumentException" />
+    /// <exception cref="ArgumentNullException" />
+    /// <exception cref="IOException" />
+    /// <exception cref="DirectoryNotFoundException" />
+    /// <exception cref="PathTooLongException" />
+    /// <exception cref="UnauthorizedAccessException" />
+    public static bool TryDeleteDirectory(string directoryUri)
+    {
+        ArgumentException.ThrowIfNullOrEmpty(directoryUri, nameof(directoryUri));
+
+        if (!Directory.Exists(directoryUri))
+            return false;
+
+        Directory.Delete(directoryUri, true);
+        return true;
+    }
+
+    /// <summary>
     /// Adds a directory path to the PATH environment variable.
     /// </summary>
     /// <param name="directoryUri">The absolute path to a directory.</param>
@@ -110,5 +132,5 @@ internal static class Utilities
         Environment.SetEnvironmentVariable("PATH", newPathEnvValue, EnvironmentVariableTarget.Process);
 
         return true;
-    }
+    }    
 }

@@ -41,7 +41,7 @@
             <Separator HorizontalAlignment="Stretch" />
 
             <!--Application Settings-->
-            <TextBlock Text="Default App Directory:" ToolTip.Tip="Defines the base directory the updater suggests bot instances should be installed to."/>
+            <TextBlock Text="Default Bot Directory:" ToolTip.Tip="Defines the base directory the updater suggests bot instances should be installed to."/>
             <ContentControl Content="{Binding DefaultBotUriBar}" />
 
             <CheckBox Content="Minimize to system tray." ToolTip.Tip="Defines whether the updater should be minimized to the system tray rather than closed."

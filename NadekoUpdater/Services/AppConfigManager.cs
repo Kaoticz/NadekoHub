@@ -25,7 +25,7 @@ public sealed class AppConfigManager
         _appConfig = appConfig;
         AppConfig = readOnlyAppConfig;
 
-        Directory.CreateDirectory(appConfig.BotsDirectoryUri);  // Create the directory where the bot instances will be stored.
+        Directory.CreateDirectory(AppStatics.AppDefaultConfigDirectoryUri);  // Create the directory where the app settings will be stored.
     }
 
     /// <summary>
@@ -38,7 +38,7 @@ public sealed class AppConfigManager
     {
         var newPosition = (_appConfig.BotEntries.Count is 0) ? 0 : _appConfig.BotEntries.Keys.Max() + 1;
         var newBotName = "NewBot_" + newPosition;
-        var newEntry = new BotInstanceInfo(newBotName, AppStatics.GenerateBotLocationUri(newBotName));
+        var newEntry = new BotInstanceInfo(newBotName, Path.Combine(_appConfig.BotsDirectoryUri, newBotName));
 
         if (!_appConfig.BotEntries.TryAdd(newPosition, newEntry))
             throw new InvalidOperationException($"Could not create a new bot entry at position {newPosition}.");
@@ -58,8 +58,8 @@ public sealed class AppConfigManager
     {
         if (!_appConfig.BotEntries.TryRemove(position, out var removedEntry))
             return null;
-        else if (Directory.Exists(removedEntry.InstanceDirectoryUri))
-            Directory.Delete(removedEntry.InstanceDirectoryUri, true);
+
+        Utilities.TryDeleteDirectory(removedEntry.InstanceDirectoryUri);
 
         await SaveAsync(cToken);
 

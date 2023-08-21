@@ -13,10 +13,11 @@ namespace NadekoUpdater.Services;
 /// <remarks>Source: https://gitlab.com/Kwoth/nadekobot/-/releases/permalink/latest</remarks>
 public sealed partial class NadekoResolver : IBotResolver
 {
+    private static readonly HashSet<uint> _updateIdOngoing = new();
     private static readonly string _tempDirectory = Path.GetTempPath();
     private static readonly Regex _unzipedDirRegex = GenerateUnzipedDirRegex();
     private readonly IHttpClientFactory _httpClientFactory;
-    private readonly ReadOnlyAppConfig _appConfig;
+    private readonly AppConfigManager _appConfigManager;
 
     /// <inheritdoc/>
     public string DependencyName { get; } = "NadekoBot";
@@ -36,14 +37,14 @@ public sealed partial class NadekoResolver : IBotResolver
     /// Creates a service that checks, downloads, installs, and updates a NadekoBot instance
     /// </summary>
     /// <param name="httpClientFactory">The HTTP client factory.</param>
-    /// <param name="appConfig">The application's settings.</param>
+    /// <param name="appConfigManager">The application's settings.</param>
     /// <param name="position">The position of the bot instance on the lateral bar.</param>
-    public NadekoResolver(IHttpClientFactory httpClientFactory, ReadOnlyAppConfig appConfig, uint position)
+    public NadekoResolver(IHttpClientFactory httpClientFactory, AppConfigManager appConfigManager, uint position)
     {
         _httpClientFactory = httpClientFactory;
-        _appConfig = appConfig;
+        _appConfigManager = appConfigManager;
         Position = position;
-        BotName = _appConfig.BotEntries[Position].Name;
+        BotName = _appConfigManager.AppConfig.BotEntries[Position].Name;
     }
 
     /// <inheritdoc/>
@@ -62,7 +63,7 @@ public sealed partial class NadekoResolver : IBotResolver
     /// <inheritdoc/>
     public string? CreateBackup()
     {
-        var botInstance = _appConfig.BotEntries[Position];
+        var botInstance = _appConfigManager.AppConfig.BotEntries[Position];
 
         if (!Directory.Exists(botInstance.InstanceDirectoryUri))
             return null;
@@ -70,26 +71,35 @@ public sealed partial class NadekoResolver : IBotResolver
         var now = DateTimeOffset.Now;
         var date = new DateOnly(now.Year, now.Month, now.Day).ToShortDateString().Replace('/', '-');
         var backupZipName = $"{botInstance.Name}_{date}-{now.ToUnixTimeMilliseconds()}.zip";
-        var destinationUri = Path.Combine(_appConfig.BotsBackupDirectoryUri, backupZipName);
+        var destinationUri = Path.Combine(_appConfigManager.AppConfig.BotsBackupDirectoryUri, backupZipName);
 
-        Directory.CreateDirectory(_appConfig.BotsBackupDirectoryUri);
+        Directory.CreateDirectory(_appConfigManager.AppConfig.BotsBackupDirectoryUri);
         ZipFile.CreateFromDirectory(botInstance.InstanceDirectoryUri, destinationUri, CompressionLevel.SmallestSize, true);
 
         return destinationUri;
     }
 
     /// <inheritdoc/>
-    public ValueTask<string?> GetCurrentVersionAsync(CancellationToken cToken = default)
+    public async ValueTask<string?> GetCurrentVersionAsync(CancellationToken cToken = default)
     {
-        var assemblyUri = Path.Combine(_appConfig.BotEntries[Position].InstanceDirectoryUri, "NadekoBot.dll");
+        var botEntry = _appConfigManager.AppConfig.BotEntries[Position];
+
+        if (!string.IsNullOrWhiteSpace(botEntry.Version))
+            return botEntry.Version;
+
+        var assemblyUri = Path.Combine(botEntry.InstanceDirectoryUri, "NadekoBot.dll");
 
         if (!File.Exists(assemblyUri))
-            return ValueTask.FromResult<string?>(null);
+            return null;
         var nadekoAssembly = Assembly.LoadFile(assemblyUri);
         var version = nadekoAssembly.GetName().Version
             ?? throw new InvalidOperationException($"Could not find version of the assembly at {assemblyUri}.");
 
-        return ValueTask.FromResult<string?>($"{version.Major}.{version.Minor}.{version.Build}");
+        var currentVersion = $"{version.Major}.{version.Minor}.{version.Build}";
+
+        await _appConfigManager.UpdateConfigAsync(x => x.BotEntries[Position] = x.BotEntries[Position] with { Version = currentVersion }, cToken);
+
+        return currentVersion;
     }
 
     /// <inheritdoc/>
@@ -108,12 +118,20 @@ public sealed partial class NadekoResolver : IBotResolver
     /// <inheritdoc/>
     public async ValueTask<(string? OldVersion, string? NewVersion)> InstallOrUpdateAsync(string installationUri, CancellationToken cToken = default)
     {
+        if (_updateIdOngoing.Contains(Position))
+            return (null, null);
+
+        _updateIdOngoing.Add(Position);
+
         var currentVersion = await GetCurrentVersionAsync(cToken);
         var latestVersion = await GetLatestVersionAsync(cToken);
 
         // Update
         if (latestVersion == currentVersion)
+        {
+            _updateIdOngoing.Remove(Position);
             return (currentVersion, null);
+        }
         
         var backupFileUri = CreateBackup();
 
@@ -121,50 +139,61 @@ public sealed partial class NadekoResolver : IBotResolver
             Directory.Delete(installationUri, true);
 
         // Install
-        Directory.CreateDirectory(installationUri);
+        Directory.CreateDirectory(_appConfigManager.AppConfig.BotsDirectoryUri);
 
         var http = _httpClientFactory.CreateClient();
         var zipFileName = GetDownloadFileName(latestVersion);
-        var botTempLocation = Path.Combine(_tempDirectory, "nadekobot-" + _unzipedDirRegex.Match(zipFileName).Value);
+        var botTempLocation = Path.Combine(_tempDirectory, "nadekobot-" + _unzipedDirRegex.Match(zipFileName).Groups[1].Value);
         var zipTempLocation = Path.Combine(_tempDirectory, zipFileName);
-        var zipStream = await http.GetStreamAsync(
-            $"https://gitlab.com/api/v4/projects/9321079/packages/generic/NadekoBot-build/{latestVersion}/{zipFileName}",
-            cToken
-        );
 
-        using (var fileStream = new FileStream(zipTempLocation, FileMode.Create))
-            await zipStream.CopyToAsync(fileStream, cToken);
-
-        // Extract the zip file
-        ZipFile.ExtractToDirectory(zipTempLocation, _tempDirectory);
-
-        // Move the bot root directory while renaming it
-        Directory.Move(botTempLocation, installationUri);
-
-        // Cleanup
-        File.Delete(zipTempLocation);
-
-        // Reapply bot settings
-        if (File.Exists(backupFileUri))
+        try
         {
-            using var zipFile = ZipFile.OpenRead(backupFileUri);
-            var zippedFiles = zipFile.Entries
-                .Where(x =>
-                    x.Name is "creds.yml" or "creds_example.yml"
-                    || (!string.IsNullOrWhiteSpace(x.Name) && x.FullName.Contains("data/"))
-                );
+            var zipStream = await http.GetStreamAsync(
+                $"https://gitlab.com/api/v4/projects/9321079/packages/generic/NadekoBot-build/{latestVersion}/{zipFileName}",
+                cToken
+            );
+            using (var fileStream = new FileStream(zipTempLocation, FileMode.Create))
+                await zipStream.CopyToAsync(fileStream, cToken);
 
-            foreach (var zippedFile in zippedFiles)
+            // Extract the zip file
+            ZipFile.ExtractToDirectory(zipTempLocation, _tempDirectory);
+
+            // Move the bot root directory while renaming it
+            Directory.Move(botTempLocation, installationUri);
+
+            // Reapply bot settings
+            if (File.Exists(backupFileUri))
             {
-                var fileDestinationPath = zippedFile.FullName.Split('/')
-                    .Prepend(installationUri)
-                    .ToArray();
+                using var zipFile = ZipFile.OpenRead(backupFileUri);
+                var zippedFiles = zipFile.Entries
+                    .Where(x =>
+                        x.Name is "creds.yml" or "creds_example.yml"
+                        || (!string.IsNullOrWhiteSpace(x.Name) && x.FullName.Contains("data/"))
+                    );
 
-                await RestoreFileAsync(zippedFile, Path.Combine(fileDestinationPath), cToken);
+                foreach (var zippedFile in zippedFiles)
+                {
+                    var fileDestinationPath = zippedFile.FullName.Split('/')
+                        .Prepend(Directory.GetParent(installationUri)?.FullName ?? string.Empty)
+                        .ToArray();
+
+                    await RestoreFileAsync(zippedFile, Path.Combine(fileDestinationPath), cToken);
+                }
             }
-        }
 
-        return (currentVersion, latestVersion);
+            // Update settings
+            await _appConfigManager.UpdateConfigAsync(x => x.BotEntries[Position] = x.BotEntries[Position] with { Version = latestVersion }, cToken);
+
+            return (currentVersion, latestVersion);
+        }
+        finally
+        {
+            _updateIdOngoing.Remove(Position);
+
+            // Cleanup
+            Utilities.TryDeleteFile(zipTempLocation);
+            Utilities.TryDeleteDirectory(botTempLocation);
+        }
     }
 
     /// <summary>

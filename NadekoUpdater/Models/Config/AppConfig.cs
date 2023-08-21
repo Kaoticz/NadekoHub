@@ -11,7 +11,7 @@ public sealed class AppConfig
     /// <summary>
     /// The absolute path to the directory where the bot instances will be stored.
     /// </summary>
-    public string BotsDirectoryUri { get; set; } = AppStatics.AppDefaultConfigDirectoryUri;
+    public string BotsDirectoryUri { get; set; } = AppStatics.AppDefaultBotDirectoryUri;
 
     /// <summary>
     /// The absolute path to the directory where the bot instances are backed up.

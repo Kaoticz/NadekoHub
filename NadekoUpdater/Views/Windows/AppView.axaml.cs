@@ -4,7 +4,6 @@ using Microsoft.Extensions.DependencyInjection;
 using NadekoUpdater.DesignData.Common;
 using NadekoUpdater.Models.Config;
 using NadekoUpdater.Services;
-using NadekoUpdater.Services.Abstractions;
 using NadekoUpdater.ViewModels.Abstractions;
 using NadekoUpdater.ViewModels.Controls;
 using NadekoUpdater.ViewModels.Windows;
@@ -40,7 +39,7 @@ public partial class AppView : ReactiveWindow<AppViewModel>
     /// <param name="appConfig">The application settings.</param>
     /// <param name="viewModel">The view-model of this view.</param>
     /// <param name="lateralBarView">The lateral bar view.</param>
-    public AppView(IServiceScopeFactory scopeFactory, ReadOnlyAppConfig appConfig,AppViewModel viewModel, LateralBarView lateralBarView)
+    public AppView(IServiceScopeFactory scopeFactory, ReadOnlyAppConfig appConfig, AppViewModel viewModel, LateralBarView lateralBarView)
     {
         _appConfig = appConfig;
 
@@ -86,13 +85,12 @@ public partial class AppView : ReactiveWindow<AppViewModel>
     /// <returns>The view-model associated with the pressed <paramref name="button"/>.</returns>
     /// <exception cref="InvalidCastException">Occurs when <paramref name="button"/> has a <see cref="ContentControl.Content"/> that is not an <see langword="uint"/>.</exception>
     /// <exception cref="InvalidOperationException">Occurs when <paramref name="button"/> has an invalid <see cref="ContentControl.Content"/>.</exception>
-    private BotConfigViewModel GetBotConfigViewModel(Button button, IServiceScopeFactory scopeFactory)
+    private static BotConfigViewModel GetBotConfigViewModel(Button button, IServiceScopeFactory scopeFactory)
     {
         using var scope = scopeFactory.CreateScope();
         var position = (uint)(button.Content ?? throw new InvalidOperationException("Bot button has no id/position."));
-        var botResolver = scope.ServiceProvider.GetRequiredService<NadekoResolver>(position);
+        var botResolver = scope.ServiceProvider.GetParameterizedService<NadekoResolver>(position);
 
-        return GetViewModel<BotConfigViewModel>(scopeFactory)
-            .FinishInitialization(botResolver);
+        return scope.ServiceProvider.GetParameterizedService<BotConfigViewModel>(botResolver);
     }
 }

@@ -1,12 +1,13 @@
 using Avalonia.Media.Imaging;
 using Avalonia.Platform;
+using MsBox.Avalonia.Enums;
 using NadekoUpdater.Enums;
 using NadekoUpdater.Services;
 using NadekoUpdater.Services.Abstractions;
 using NadekoUpdater.ViewModels.Abstractions;
 using NadekoUpdater.Views.Controls;
+using NadekoUpdater.Views.Windows;
 using ReactiveUI;
-using System.Diagnostics;
 
 namespace NadekoUpdater.ViewModels.Controls;
 
@@ -19,16 +20,17 @@ public class BotConfigViewModel : ViewModelBase<BotConfigView>
     private string _botName = string.Empty;
     private string _directoryHint = string.Empty;
     private readonly AppConfigManager _appConfigManager;
+    private readonly AppView _mainWindow;
 
     /// <summary>
     /// The bot resolver to be used.
     /// </summary>
-    public IBotResolver? Resolver { get; private set; }
+    public IBotResolver Resolver { get; }
 
     /// <summary>
     /// The position of this bot instance in the lateral bot list.
     /// </summary>
-    public uint Position { get; private set; }
+    public uint Position { get; }
 
     /// <summary>
     /// The bar that defines where the bot instance should be saved to.
@@ -75,24 +77,19 @@ public class BotConfigViewModel : ViewModelBase<BotConfigView>
     /// Creates a view-model for <see cref="BotConfigView"/>.
     /// </summary>
     /// <param name="appConfigManager">The app settings manager.</param>
+    /// <param name="mainWindow">The main window of the application.</param>
     /// <param name="botDirectoryUriBar">The text box with the path to the directory where the bot instance is.</param>
     /// <param name="updateBotBar">The bar for updating the bot.</param>
-    public BotConfigViewModel(AppConfigManager appConfigManager, UriInputBarViewModel botDirectoryUriBar, DependencyButtonViewModel updateBotBar)
+    /// <param name="botResolver">The bot resolver to be used.</param>
+    public BotConfigViewModel(AppConfigManager appConfigManager, AppView mainWindow, UriInputBarViewModel botDirectoryUriBar, DependencyButtonViewModel updateBotBar, IBotResolver botResolver)
     {
         _appConfigManager = appConfigManager;
+        _mainWindow = mainWindow;
         BotDirectoryUriBar = botDirectoryUriBar;
         UpdateBar = updateBotBar;
 
         UpdateBar.Click += InstallOrUpdateAsync;
-    }
 
-    /// <summary>
-    /// Sets up the appropriate state of this view-model after initialization.
-    /// </summary>
-    /// <param name="botResolver">The bot resolver to be used by this view-model.</param>
-    /// <returns>This view-model.</returns>
-    public BotConfigViewModel FinishInitialization(IBotResolver botResolver)
-    {
         var botEntry = _appConfigManager.AppConfig.BotEntries[botResolver.Position];
 
         Resolver = botResolver;
@@ -100,29 +97,59 @@ public class BotConfigViewModel : ViewModelBase<BotConfigView>
         BotAvatar = LoadLocalImage(botEntry.AvatarUri);
         BotName = botResolver.BotName;
         Position = botResolver.Position;
-        UpdateBar.DependencyName = "NadekoBot";
+        UpdateBar.DependencyName = "Checking...";
 
-        _ = LoadBotVersionAsync(botResolver);
-
-        return this;
+        _ = LoadUpdateBarAsync(botResolver, updateBotBar);
     }
 
-    private async Task LoadBotVersionAsync(IBotResolver botResolver)
+    /// <summary>
+    /// Installs or updates the bot instance associated with this view-model.
+    /// </summary>
+    /// <param name="dependencyButton">The view-model of the dependency button that was pressed.</param>
+    /// <param name="eventArgs">The event arguments.</param>
+    public async Task InstallOrUpdateAsync(DependencyButtonViewModel dependencyButton, EventArgs eventArgs)
     {
-        var canUpdate = await botResolver.CanUpdateAsync();
+        var originalStatus = UpdateBar.Status;
+        UpdateBar.Status = DependencyStatus.Updating;
 
-        UpdateBar.DependencyName = "NadekoBot v" + await botResolver.GetLatestVersionAsync();
-        UpdateBar.Status = (canUpdate is true)
+        try
+        {
+            var dialogWindowTask = await Resolver.InstallOrUpdateAsync(_appConfigManager.AppConfig.BotEntries[Resolver.Position].InstanceDirectoryUri) switch
+            {
+                (string oldVer, null) => _mainWindow.ShowDialogWindowAsync($"{Resolver.DependencyName} is already up-to-date (v{oldVer})."),
+                (null, string newVer) => _mainWindow.ShowDialogWindowAsync($"{Resolver.DependencyName} v{newVer} was successfully installed.", iconType: Icon.Success),
+                (string oldVer, string newVer) => _mainWindow.ShowDialogWindowAsync($"{Resolver.DependencyName} was successfully updated from version {oldVer} to version {newVer}.", iconType: Icon.Success),
+                (null, null) => _mainWindow.ShowDialogWindowAsync($"Update of {Resolver.DependencyName} is ongoing.", DialogType.Warning, Icon.Warning)
+            };
+
+            await dialogWindowTask;
+            UpdateBar.Status = DependencyStatus.Installed;
+        }
+        catch (Exception ex)
+        {
+            await _mainWindow.ShowDialogWindowAsync($"An error occurred while updating {Resolver.DependencyName}:\n{ex.Message}", DialogType.Error, Icon.Error);
+            UpdateBar.Status = originalStatus;
+        }
+    }
+
+    /// <summary>
+    /// Loads the bot update bar.
+    /// </summary>
+    /// <param name="botResolver">The bot resolver.</param>
+    /// <param name="updateBotBar">The update bar.</param>
+    private static async Task LoadUpdateBarAsync(IBotResolver botResolver, DependencyButtonViewModel updateBotBar)
+    {
+        var currentVersion = await botResolver.GetCurrentVersionAsync();
+        updateBotBar.DependencyName = (string.IsNullOrWhiteSpace(currentVersion))
+            ? "Not Installed"
+            : "NadekoBot v" + currentVersion;
+
+        var canUpdate = await botResolver.CanUpdateAsync();
+        updateBotBar.Status = (canUpdate is true)
             ? DependencyStatus.Update
             : (canUpdate is null)
                 ? DependencyStatus.Install
                 : DependencyStatus.Installed;
-    }
-
-    public Task InstallOrUpdateAsync(DependencyButtonViewModel dependencyButton, EventArgs eventArgs)
-    {
-        Debug.WriteLine("Update button pressed!");
-        return Task.CompletedTask;
     }
 
     /// <summary>

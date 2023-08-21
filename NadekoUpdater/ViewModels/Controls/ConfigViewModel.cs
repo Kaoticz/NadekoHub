@@ -17,6 +17,11 @@ namespace NadekoUpdater.ViewModels.Controls;
 public class ConfigViewModel : ViewModelBase<ConfigView>
 {
     private static readonly WindowIcon _dialogWindowIcon = new(AssetLoader.Open(new Uri(AppStatics.ApplicationWindowIcon)));
+    private static readonly string _unixNotice = (Environment.OSVersion.Platform is not PlatformID.Unix)
+        ? string.Empty
+        : Environment.NewLine + "To make the dependencies accessible to your bot instances without this updater, consider installing " +
+        $"them through your package manager or adding the directory \"{AppStatics.AppDepsUri}\" to your PATH environment variable.";
+
     private readonly AppConfigManager _appConfigManager;
     private readonly AppView _mainWindow;
 
@@ -103,10 +108,10 @@ public class ConfigViewModel : ViewModelBase<ConfigView>
         {
             var dialogWindowTask = await dependencyResolver.InstallOrUpdateAsync(AppStatics.AppDepsUri) switch
             {
-                (string oldVer, null) => ShowDialogWindowAsync($"{dependencyResolver.DependencyName} is already up-to-date (version {oldVer})."),
-                (null, string newVer) => ShowDialogWindowAsync($"{dependencyResolver.DependencyName} version {newVer} was successfully installed.", Icon.Success),
-                (string oldVer, string newVer) => ShowDialogWindowAsync($"{dependencyResolver.DependencyName} was successfully updated from version {oldVer} to version {newVer}.", Icon.Success),
-                (null, null) => ShowDialogWindowAsync($"Update of {dependencyResolver.DependencyName} is ongoing.", Icon.Warning, DialogType.Warning)
+                (string oldVer, null) => _mainWindow.ShowDialogWindowAsync($"{dependencyResolver.DependencyName} is already up-to-date (version {oldVer})." + _unixNotice),
+                (null, string newVer) => _mainWindow.ShowDialogWindowAsync($"{dependencyResolver.DependencyName} version {newVer} was successfully installed." + _unixNotice, iconType: Icon.Success),
+                (string oldVer, string newVer) => _mainWindow.ShowDialogWindowAsync($"{dependencyResolver.DependencyName} was successfully updated from version {oldVer} to version {newVer}." + _unixNotice, iconType: Icon.Success),
+                (null, null) => _mainWindow.ShowDialogWindowAsync($"Update of {dependencyResolver.DependencyName} is ongoing.", DialogType.Warning, Icon.Warning)
             };
 
             await dialogWindowTask;
@@ -114,37 +119,8 @@ public class ConfigViewModel : ViewModelBase<ConfigView>
         }
         catch (Exception ex)
         {
-            await ShowDialogWindowAsync($"An error occurred while updating {dependencyResolver.DependencyName}:\n{ex.Message}", Icon.Error, DialogType.Error);
+            await _mainWindow.ShowDialogWindowAsync($"An error occurred while updating {dependencyResolver.DependencyName}:\n{ex.Message}", DialogType.Error, Icon.Error);
             buttonViewModel.Status = originalStatus;
         }
-    }
-
-    /// <summary>
-    /// Shows a dialog window that blocks the main window.
-    /// </summary>
-    /// <param name="message">The message to be displayed.</param>
-    /// <param name="iconType">The icon to be displayed.</param>
-    /// <param name="dialogType">The type of dialog window to display.</param>
-    private Task ShowDialogWindowAsync(string message, Icon iconType = Icon.None, DialogType dialogType = DialogType.Notification)
-    {
-        var unixNotice = (Environment.OSVersion.Platform is not PlatformID.Unix)
-            ? string.Empty
-            : Environment.NewLine + "To make the dependencies accessible to your bot instances without this updater, consider installing " +
-            $"them through your package manager or adding the directory \"{AppStatics.AppDepsUri}\" to your PATH environment variable.";
-
-        var dialogBox = MessageBoxManager.GetMessageBoxStandard(new()
-        {
-            ButtonDefinitions = ButtonEnum.Ok,
-            ContentMessage = message + unixNotice,
-            ContentTitle = dialogType.ToString(),
-            Icon = iconType,
-            WindowIcon = _dialogWindowIcon,
-            MaxWidth = int.Parse(WindowConstants.DefaultWindowWidth) / 1.7,
-            SizeToContent = SizeToContent.WidthAndHeight,
-            ShowInCenter = true,
-            WindowStartupLocation = WindowStartupLocation.CenterOwner,
-        });
-
-        return dialogBox.ShowWindowDialogAsync(_mainWindow);
     }
 }

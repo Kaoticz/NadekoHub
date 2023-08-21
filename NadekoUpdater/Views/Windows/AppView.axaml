@@ -15,8 +15,8 @@
         Title="{x:Static const:WindowConstants.WindowTitle}"
         Width="{x:Static const:WindowConstants.DefaultWindowWidth}"
         Height="{x:Static const:WindowConstants.DefaultWindowHeight}"
-        MinWidth="150"
-        MinHeight="100">
+        MinWidth="540"
+        MinHeight="420">
 
     <Design.DataContext>
         <dd:DesignAppViewModel/>

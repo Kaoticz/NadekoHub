@@ -8,6 +8,7 @@ using NadekoUpdater.ViewModels.Abstractions;
 using NadekoUpdater.Views.Controls;
 using NadekoUpdater.Views.Windows;
 using ReactiveUI;
+using System.Diagnostics;
 
 namespace NadekoUpdater.ViewModels.Controls;
 
@@ -111,7 +112,7 @@ public class BotConfigViewModel : ViewModelBase<BotConfigView>
 
         _ = LoadUpdateBarAsync(botResolver, updateBotBar);
     }
-
+ 
     /// <summary>
     /// Moves or renames the bot instance associated with this view-model.
     /// </summary>
@@ -149,6 +150,30 @@ public class BotConfigViewModel : ViewModelBase<BotConfigView>
         finally
         {
             AreButtonsUnlocked = true;
+        }
+    }
+
+    /// <summary>
+    /// Opens a file in the bot directory with the default program associated with it.
+    /// </summary>
+    /// <param name="fileName">The name of the file.</param>
+    /// <exception cref="InvalidOperationException">Occurs when there is no program available to open the specified file.</exception>
+    public async ValueTask OpenFileAsync(string fileName)
+    {
+        try
+        {
+            var fileUri = Directory.EnumerateFiles(_appConfigManager.AppConfig.BotEntries[Resolver.Position].InstanceDirectoryUri, fileName, SearchOption.AllDirectories)
+                .First(x => x.Contains(fileName, StringComparison.Ordinal));
+
+            _ = Process.Start(new ProcessStartInfo()
+            {
+                FileName = fileUri,
+                UseShellExecute = true,
+            }) ?? throw new InvalidOperationException($"Failed opening {fileName}. There is no program association for files of type '{fileName[(fileName.LastIndexOf('.') + 1)..]}'.");
+        }
+        catch (Exception ex)
+        {
+            await _mainWindow.ShowDialogWindowAsync($"An error occurred while opening {fileName}:\n{ex.Message}", DialogType.Error, Icon.Error);
         }
     }
 

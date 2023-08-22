@@ -187,6 +187,12 @@ public sealed partial class NadekoResolver : IBotResolver
             // Update settings
             await _appConfigManager.UpdateConfigAsync(x => x.BotEntries[Position] = x.BotEntries[Position] with { Version = latestVersion }, cToken);
 
+            // Create creds.yml
+            var credsUri = Path.Combine(installationUri, "creds.yml");
+
+            if (!File.Exists(credsUri))
+                File.Copy(Path.Combine(installationUri, "creds_example.yml"), credsUri);
+
             return (currentVersion, latestVersion);
         }
         finally

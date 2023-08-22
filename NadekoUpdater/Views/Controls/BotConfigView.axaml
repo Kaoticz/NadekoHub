@@ -40,17 +40,17 @@
 
             <!--Top Bot Control Buttons-->
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                <Button Content="Move/Rename" Command="{Binding MoveOrRenameAsync}" IsEnabled="{Binding AreButtonsUnlocked}" />
+                <Button Content="Move/Rename" Command="{Binding MoveOrRenameAsync}" IsEnabled="{Binding IsIdle}" />
                 <Button Content="Credentials" Command="{Binding OpenFileAsync}" CommandParameter="creds.yml" IsEnabled="{Binding AreButtonsUnlocked}" />
                 <Button Content="Bot Settings" Command="{Binding OpenFileAsync}" CommandParameter="bot.yml" IsEnabled="{Binding AreButtonsUnlocked}" />
                 <Button Content="Backup" Command="{Binding BackupBotAsync}" IsEnabled="{Binding AreButtonsUnlocked}" />
-                <Button Content="Delete Bot" IsEnabled="{Binding AreButtonsUnlocked}" />
+                <Button Content="Delete Bot" Command="{Binding DeleteBotAsync}" IsEnabled="{Binding IsIdle}" />
             </StackPanel>
             
             <!--Bottom Bot Control Buttons-->
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                <Button Content="Start" />
-                <Button Content="Stop" />
+                <Button Content="Start" IsEnabled="{Binding AreButtonsUnlocked}" />
+                <Button Content="Stop" IsEnabled="{Binding AreButtonsUnlocked}" />
             </StackPanel>
 
             <ContentControl Content="{Binding UpdateBar}" />

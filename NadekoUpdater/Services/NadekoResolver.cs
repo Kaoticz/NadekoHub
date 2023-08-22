@@ -1,4 +1,3 @@
-using NadekoUpdater.Models.Config;
 using NadekoUpdater.Services.Abstractions;
 using System.IO.Compression;
 using System.Reflection;

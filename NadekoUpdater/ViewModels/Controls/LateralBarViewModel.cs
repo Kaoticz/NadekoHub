@@ -45,11 +45,21 @@ public class LateralBarViewModel : ViewModelBase<LateralBarView>
     /// <summary>
     /// Adds a new bot button to the lateral bar.
     /// </summary>
-    public async Task AddBotButtonAsync()
+    public async ValueTask AddBotButtonAsync()
     {
         var botEntry = await _botEntryManager.CreateBotEntryAsync();
 
         BotButtonList.Add(new() { Content = botEntry.Position });
+        this.RaisePropertyChanged(nameof(BotButtonList));
+    }
+
+    public async ValueTask RemoveBotButtonAsync(uint position)
+    {
+        await _botEntryManager.DeleteBotEntryAsync(position);
+        
+        var toRemove = BotButtonList.First(x => x.Content?.Equals(position) is true);
+        BotButtonList.Remove(toRemove);
+
         this.RaisePropertyChanged(nameof(BotButtonList));
     }
 

@@ -1,3 +1,5 @@
+using Avalonia.Controls;
+using Avalonia.Platform;
 using System.Text.RegularExpressions;
 
 namespace NadekoUpdater.Common;
@@ -41,6 +43,11 @@ public static partial class AppStatics
     /// </summary>
     /// <remarks>Pattern: ^(?:\S+\s+\D*?){2}(git\S+|[\d\.]+)</remarks>
     public static Regex FfmpegVersionRegex { get; } = FfmpegVersionRegexGenerator();
+
+    /// <summary>
+    /// Represents the window icon to be used on dialog windows.
+    /// </summary>
+    public static WindowIcon DialogWindowIcon { get; } = new(AssetLoader.Open(new Uri(ApplicationWindowIcon)));
 
     /// <summary>
     /// Defines the location of the application window icon.

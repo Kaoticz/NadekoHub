@@ -1,5 +1,8 @@
+using Avalonia.Controls;
 using Avalonia.Media.Imaging;
 using Avalonia.Platform;
+using Kotz.Events;
+using MsBox.Avalonia;
 using MsBox.Avalonia.Enums;
 using NadekoUpdater.Enums;
 using NadekoUpdater.Services;
@@ -20,9 +23,15 @@ public class BotConfigViewModel : ViewModelBase<BotConfigView>
     private Bitmap _botAvatar = LoadLocalImage();
     private string _botName = string.Empty;
     private string _directoryHint = string.Empty;
-    private bool _areButtonsUnlocked = true;
+    private bool _areButtonsUnlocked;
+    private bool _isIdle;
     private readonly AppConfigManager _appConfigManager;
     private readonly AppView _mainWindow;
+
+    /// <summary>
+    /// Triggered when the user deletes the bot instance associated with this view-model.
+    /// </summary>
+    public event AsyncEventHandler<BotConfigViewModel, EventArgs>? BotDeleted;
 
     /// <summary>
     /// The bot resolver to be used.
@@ -81,7 +90,16 @@ public class BotConfigViewModel : ViewModelBase<BotConfigView>
     public bool AreButtonsUnlocked
     {
         get => _areButtonsUnlocked;
-        set => this.RaiseAndSetIfChanged(ref _areButtonsUnlocked, value);
+        private set => this.RaiseAndSetIfChanged(ref _areButtonsUnlocked, value);
+    }
+
+    /// <summary>
+    /// Determines whether this view-model is undergoing an operation or not.
+    /// </summary>
+    public bool IsIdle
+    {
+        get => _isIdle;
+        private set => this.RaiseAndSetIfChanged(ref _isIdle, value);
     }
 
     /// <summary>
@@ -110,6 +128,7 @@ public class BotConfigViewModel : ViewModelBase<BotConfigView>
         Position = botResolver.Position;
         UpdateBar.DependencyName = "Checking...";
 
+        EnableButtons(!Directory.Exists(botEntry.InstanceDirectoryUri), true);
         _ = LoadUpdateBarAsync(botResolver, updateBotBar);
     }
  
@@ -118,7 +137,9 @@ public class BotConfigViewModel : ViewModelBase<BotConfigView>
     /// </summary>
     public async ValueTask MoveOrRenameAsync()
     {
-        AreButtonsUnlocked = false;
+        var wereButtonsUnlocked = AreButtonsUnlocked;
+        EnableButtons(true, false);
+
         var botEntry = _appConfigManager.AppConfig.BotEntries[Resolver.Position];
         var oldName = botEntry.Name;
         var oldUri = botEntry.InstanceDirectoryUri;
@@ -149,7 +170,7 @@ public class BotConfigViewModel : ViewModelBase<BotConfigView>
         }
         finally
         {
-            AreButtonsUnlocked = true;
+            EnableButtons(!wereButtonsUnlocked, true);
         }
     }
 
@@ -182,15 +203,50 @@ public class BotConfigViewModel : ViewModelBase<BotConfigView>
     /// </summary>
     public async ValueTask BackupBotAsync()
     {
-        AreButtonsUnlocked = false;
+        EnableButtons(true, false);
 
         var backupUri = await Resolver.CreateBackupAsync();
 
         await ((string.IsNullOrWhiteSpace(backupUri))
             ? _mainWindow.ShowDialogWindowAsync($"Bot {Resolver.BotName} not found.", DialogType.Error, Icon.Error)
             : _mainWindow.ShowDialogWindowAsync($"Successfully backed up {Resolver.BotName} to:{Environment.NewLine}{backupUri}", iconType: Icon.Success));
-        
-        AreButtonsUnlocked = true;
+
+        EnableButtons(false, true);
+    }
+
+    /// <summary>
+    /// Deletes the bot instance associated with this view-model.
+    /// </summary>
+    public async ValueTask DeleteBotAsync()
+    {
+        var buttonPressed = await MessageBoxManager.GetMessageBoxStandard(new()
+        {
+            ButtonDefinitions = ButtonEnum.OkCancel,
+            ContentTitle = "Are you sure?",
+            ContentMessage = $"Are you sure you want to delete {Resolver.BotName}?{Environment.NewLine}This action cannot be undone.",
+            MaxWidth = int.Parse(WindowConstants.DefaultWindowWidth) / 2.0,
+            SizeToContent = SizeToContent.WidthAndHeight,
+            ShowInCenter = true,
+            WindowIcon = AppStatics.DialogWindowIcon,
+            WindowStartupLocation = WindowStartupLocation.CenterOwner
+        }).ShowWindowDialogAsync(_mainWindow);
+
+        if (buttonPressed is not ButtonResult.Ok)
+            return;
+
+        EnableButtons(true, false);
+
+        // Delete the bot instance
+        var botUri = _appConfigManager.AppConfig.BotEntries[Position].InstanceDirectoryUri;
+
+        if (Directory.Exists(botUri))
+            Directory.Delete(botUri, true);
+
+        // Update settings
+        await _appConfigManager.DeleteBotEntryAsync(Position);
+
+        // Trigger delete event
+        BotDeleted?.Invoke(this, EventArgs.Empty);
     }
 
     /// <summary>
@@ -200,6 +256,8 @@ public class BotConfigViewModel : ViewModelBase<BotConfigView>
     /// <param name="eventArgs">The event arguments.</param>
     public async Task InstallOrUpdateAsync(DependencyButtonViewModel dependencyButton, EventArgs eventArgs)
     {
+        EnableButtons(true, false);
+
         var originalStatus = UpdateBar.Status;
         UpdateBar.Status = DependencyStatus.Updating;
 
@@ -214,7 +272,9 @@ public class BotConfigViewModel : ViewModelBase<BotConfigView>
             };
 
             await dialogWindowTask;
-            UpdateBar.Status = DependencyStatus.Installed;
+            _ = LoadUpdateBarAsync(Resolver, UpdateBar);
+
+            EnableButtons(false, true);
         }
         catch (Exception ex)
         {
@@ -253,5 +313,16 @@ public class BotConfigViewModel : ViewModelBase<BotConfigView>
         return (File.Exists(uri))
             ? new(AssetLoader.Open(new Uri(uri)))
             : new(AssetLoader.Open(new Uri(AppStatics.BotAvatarPlaceholderUri)));
+    }
+
+    /// <summary>
+    /// Locks or unlocks the settings buttons of this view-model.
+    /// </summary>
+    /// <param name="lockButtons">Whether the settings buttons should be locked.</param>
+    /// <param name="isIdle">Whether this view-model is currently undergoing an operation.</param>
+    private void EnableButtons(bool lockButtons, bool isIdle)
+    {
+        AreButtonsUnlocked = !lockButtons;
+        IsIdle = isIdle;
     }
 }

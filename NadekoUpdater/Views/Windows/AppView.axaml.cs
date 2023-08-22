@@ -45,7 +45,18 @@ public partial class AppView : ReactiveWindow<AppViewModel>
 
         lateralBarView.ConfigButton.Click += (_, _) => viewModel.ContentViewModel = GetViewModel<ConfigViewModel>(scopeFactory);
         lateralBarView.HomeButton.Click += (_, _) => viewModel.ContentViewModel = GetViewModel<HomeViewModel>(scopeFactory);
-        lateralBarView.BotButtonClick += (button, _) => viewModel.ContentViewModel = GetBotConfigViewModel(button, scopeFactory);
+        lateralBarView.BotButtonClick += (button, _) =>
+        {
+            var botConfigViewModel = GetBotConfigViewModel(button, scopeFactory);
+            viewModel.ContentViewModel = botConfigViewModel;
+
+            // If the bot instance is deleted, load the Home view.
+            botConfigViewModel.BotDeleted += async (_, _) =>
+            {
+                viewModel.ContentViewModel = GetViewModel<HomeViewModel>(scopeFactory);
+                await viewModel.LateralBarInstance.RemoveBotButtonAsync(botConfigViewModel.Position);
+            };
+        };
 
         this.WhenActivated(_ => base.ViewModel = viewModel);    // Sets the view-model to the one in the IoC container.
         InitializeComponent();

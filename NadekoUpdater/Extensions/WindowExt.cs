@@ -1,5 +1,4 @@
 using Avalonia.Controls;
-using Avalonia.Platform;
 using MsBox.Avalonia;
 using MsBox.Avalonia.Enums;
 
@@ -10,8 +9,6 @@ namespace NadekoUpdater.Extensions;
 /// </summary>
 public static class WindowExt
 {
-    private static readonly WindowIcon _dialogWindowIcon = new(AssetLoader.Open(new Uri(AppStatics.ApplicationWindowIcon)));
-
     /// <summary>
     /// Shows a dialog window that blocks the main window.
     /// </summary>
@@ -37,11 +34,11 @@ public static class WindowExt
             ContentMessage = message,
             ContentTitle = title,
             Icon = iconType,
-            WindowIcon = _dialogWindowIcon,
+            WindowIcon = AppStatics.DialogWindowIcon,
             MaxWidth = int.Parse(WindowConstants.DefaultWindowWidth) / 1.7,
             SizeToContent = SizeToContent.WidthAndHeight,
             ShowInCenter = true,
-            WindowStartupLocation = WindowStartupLocation.CenterOwner,
+            WindowStartupLocation = WindowStartupLocation.CenterOwner
         });
 
         return dialogBox.ShowWindowDialogAsync(activeView);

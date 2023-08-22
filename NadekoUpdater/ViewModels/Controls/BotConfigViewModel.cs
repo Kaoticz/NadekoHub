@@ -19,7 +19,7 @@ public class BotConfigViewModel : ViewModelBase<BotConfigView>
     private Bitmap _botAvatar = LoadLocalImage();
     private string _botName = string.Empty;
     private string _directoryHint = string.Empty;
-    private bool _areButtonsEnabled = true;
+    private bool _areButtonsUnlocked = true;
     private readonly AppConfigManager _appConfigManager;
     private readonly AppView _mainWindow;
 
@@ -77,10 +77,10 @@ public class BotConfigViewModel : ViewModelBase<BotConfigView>
     /// <summary>
     /// Determines whether if a long-running setting option is currently in progress.
     /// </summary>
-    public bool IsSettingInProgress
+    public bool AreButtonsUnlocked
     {
-        get => _areButtonsEnabled;
-        set => this.RaiseAndSetIfChanged(ref _areButtonsEnabled, value);
+        get => _areButtonsUnlocked;
+        set => this.RaiseAndSetIfChanged(ref _areButtonsUnlocked, value);
     }
 
     /// <summary>
@@ -113,11 +113,51 @@ public class BotConfigViewModel : ViewModelBase<BotConfigView>
     }
 
     /// <summary>
+    /// Moves or renames the bot instance associated with this view-model.
+    /// </summary>
+    public async ValueTask MoveOrRenameAsync()
+    {
+        AreButtonsUnlocked = false;
+        var botEntry = _appConfigManager.AppConfig.BotEntries[Resolver.Position];
+        var oldName = botEntry.Name;
+        var oldUri = botEntry.InstanceDirectoryUri;
+        var hasNewUri = !BotDirectoryUriBar.CurrentUri.Equals(oldUri, StringComparison.OrdinalIgnoreCase);
+
+        try
+        {
+            // Move/Rename the directory.
+            if (hasNewUri && Directory.Exists(oldUri))
+            {
+                Directory.CreateDirectory(Directory.GetParent(BotDirectoryUriBar.CurrentUri)?.FullName ?? string.Empty);
+                Directory.Move(oldUri, BotDirectoryUriBar.CurrentUri);
+            }
+
+            // Update the application settings.
+            if (hasNewUri || !BotName.Equals(oldName, StringComparison.OrdinalIgnoreCase))
+            {
+                await _appConfigManager.UpdateConfigAsync(x => x.BotEntries[Position] = x.BotEntries[Position] with
+                {
+                    Name = BotName,
+                    InstanceDirectoryUri = BotDirectoryUriBar.CurrentUri
+                });
+            }
+        }
+        catch (Exception ex)
+        {
+            await _mainWindow.ShowDialogWindowAsync($"An error occurred while moving/renaming {oldName}:\n{ex.Message}", DialogType.Error, Icon.Error);
+        }
+        finally
+        {
+            AreButtonsUnlocked = true;
+        }
+    }
+
+    /// <summary>
     /// Creates a backup of the bot instance associated with this view-model.
     /// </summary>
     public async ValueTask BackupBotAsync()
     {
-        IsSettingInProgress = false;
+        AreButtonsUnlocked = false;
 
         var backupUri = await Resolver.CreateBackupAsync();
 
@@ -125,7 +165,7 @@ public class BotConfigViewModel : ViewModelBase<BotConfigView>
             ? _mainWindow.ShowDialogWindowAsync($"Bot {Resolver.BotName} not found.", DialogType.Error, Icon.Error)
             : _mainWindow.ShowDialogWindowAsync($"Successfully backed up {Resolver.BotName} to:{Environment.NewLine}{backupUri}", iconType: Icon.Success));
         
-        IsSettingInProgress = true;
+        AreButtonsUnlocked = true;
     }
 
     /// <summary>

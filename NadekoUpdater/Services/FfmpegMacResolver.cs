@@ -1,6 +1,7 @@
 using NadekoUpdater.Models.Api;
 using NadekoUpdater.Services.Abstractions;
 using System.IO.Compression;
+using System.Runtime.Versioning;
 
 namespace NadekoUpdater.Services;
 
@@ -8,6 +9,7 @@ namespace NadekoUpdater.Services;
 /// Service that checks, downloads, installs, and updates ffmpeg on MacOS.
 /// </summary>
 /// <remarks>Source: https://evermeet.cx/ffmpeg</remarks>
+[SupportedOSPlatform("osx")]
 public sealed class FfmpegMacResolver : FfmpegResolver
 {
     private const string _apiFfmpegInfoEndpoint = "https://evermeet.cx/ffmpeg/info/ffmpeg/release";

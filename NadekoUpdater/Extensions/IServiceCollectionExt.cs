@@ -51,6 +51,7 @@ public static class IServiceCollectionExt
     {
         // Internal
         serviceCollection.AddMemoryCache();
+        serviceCollection.AddSingleton<NadekoOrchestrator>();
         serviceCollection.AddSingleton(x => x.GetRequiredService<AppView>().StorageProvider);
 
         // Web requests
@@ -71,11 +72,11 @@ public static class IServiceCollectionExt
         serviceCollection.AddSingleton<IYtdlpResolver, YtdlpResolver>();
         serviceCollection.AddTransient<IBotResolver, NadekoResolver>();
 
-        if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+        if (OperatingSystem.IsWindows())
             serviceCollection.AddSingleton<IFfmpegResolver, FfmpegWindowsResolver>();
-        else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+        else if (OperatingSystem.IsLinux())
             serviceCollection.AddSingleton<IFfmpegResolver, FfmpegLinuxResolver>();
-        else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+        else if (OperatingSystem.IsMacOS())
             serviceCollection.AddSingleton<IFfmpegResolver, FfmpegMacResolver>();
         else
             serviceCollection.AddSingleton<IFfmpegResolver, FfmpegMockResolver>();

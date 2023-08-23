@@ -49,8 +49,8 @@
             
             <!--Bottom Bot Control Buttons-->
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                <Button Content="Start" IsEnabled="{Binding AreButtonsUnlocked}" />
-                <Button Content="Stop" IsEnabled="{Binding AreButtonsUnlocked}" />
+                <Button Content="Start" Command="{Binding StartBot}" IsEnabled="{Binding !IsBotRunning}" />
+                <Button Content="Stop" Command="{Binding StopBot}" IsEnabled="{Binding IsBotRunning}" />
             </StackPanel>
 
             <ContentControl Content="{Binding UpdateBar}" />

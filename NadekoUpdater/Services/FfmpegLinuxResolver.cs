@@ -1,5 +1,6 @@
 using NadekoUpdater.Services.Abstractions;
 using System.Runtime.InteropServices;
+using System.Runtime.Versioning;
 using System.Text.RegularExpressions;
 
 namespace NadekoUpdater.Services;
@@ -8,6 +9,7 @@ namespace NadekoUpdater.Services;
 /// Service that checks, downloads, installs, and updates ffmpeg on Linux.
 /// </summary>
 /// <remarks>Source: https://johnvansickle.com/ffmpeg</remarks>
+[SupportedOSPlatform("linux")]
 public sealed partial class FfmpegLinuxResolver : FfmpegResolver
 {
     private readonly Regex _ffmpegLatestVersionRegex = FfmpegLatestVersionRegexGenerator();

@@ -22,9 +22,7 @@ public sealed partial class NadekoResolver : IBotResolver
     public string DependencyName { get; } = "NadekoBot";
 
     /// <inheritdoc/>
-    public string FileName { get; } = Environment.OSVersion.Platform is PlatformID.Win32NT
-        ? "NadekoBot.exe"
-        : "NadekoBot";
+    public string FileName { get; } = (OperatingSystem.IsWindows()) ? "NadekoBot.exe" : "NadekoBot";
 
     /// <inheritdoc/>
     public uint Position { get; }
@@ -229,16 +227,16 @@ public sealed partial class NadekoResolver : IBotResolver
         return version + RuntimeInformation.OSArchitecture switch
         {
             // Windows
-            Architecture.X64 when RuntimeInformation.IsOSPlatform(OSPlatform.Windows) => "-windows-x64-build.zip",
-            Architecture.Arm64 when RuntimeInformation.IsOSPlatform(OSPlatform.Windows) => "-windows-arm64-build.zip",
+            Architecture.X64 when OperatingSystem.IsWindows() => "-windows-x64-build.zip",
+            Architecture.Arm64 when OperatingSystem.IsWindows() => "-windows-arm64-build.zip",
 
             // Linux
-            Architecture.X64 when RuntimeInformation.IsOSPlatform(OSPlatform.Linux) => "-linux-x64-build.zip",
-            Architecture.Arm64 when RuntimeInformation.IsOSPlatform(OSPlatform.Linux) => "-linux-arm64-build.zip",
+            Architecture.X64 when OperatingSystem.IsLinux() => "-linux-x64-build.zip",
+            Architecture.Arm64 when OperatingSystem.IsLinux() => "-linux-arm64-build.zip",
 
             // MacOS
-            Architecture.X64 when RuntimeInformation.IsOSPlatform(OSPlatform.OSX) => "-osx-x64-build.zip",
-            Architecture.Arm64 when RuntimeInformation.IsOSPlatform(OSPlatform.OSX) => "-osx-arm64-build.zip",
+            Architecture.X64 when OperatingSystem.IsMacOS() => "-osx-x64-build.zip",
+            Architecture.Arm64 when OperatingSystem.IsMacOS() => "-osx-arm64-build.zip",
             _ => throw new NotSupportedException($"Architecture of type {RuntimeInformation.OSArchitecture} is not supported by NadekoBot on this OS.")
         };
     }

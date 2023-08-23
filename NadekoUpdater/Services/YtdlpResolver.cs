@@ -21,9 +21,7 @@ public sealed class YtdlpResolver : IYtdlpResolver
     public string DependencyName { get; } = "Youtube-dlp";
 
     /// <inheritdoc />
-    public string FileName { get; } = (Environment.OSVersion.Platform is PlatformID.Win32NT)
-        ? "yt-dlp.exe"
-        : "yt-dlp";
+    public string FileName { get; } = (OperatingSystem.IsWindows()) ? "yt-dlp.exe" : "yt-dlp";
 
     /// <summary>
     /// Creates a service that checks, downloads, installs, and updates yt-dlp.
@@ -153,15 +151,15 @@ public sealed class YtdlpResolver : IYtdlpResolver
         return RuntimeInformation.OSArchitecture switch
         {
             // Windows
-            Architecture.X64 when RuntimeInformation.IsOSPlatform(OSPlatform.Windows) => "yt-dlp.exe",
+            Architecture.X64 when OperatingSystem.IsWindows() => "yt-dlp.exe",
 
             // Linux
-            Architecture.X64 when RuntimeInformation.IsOSPlatform(OSPlatform.Linux) => "yt-dlp_linux",
-            Architecture.Arm64 when RuntimeInformation.IsOSPlatform(OSPlatform.Linux) => "yt-dlp_linux_aarch64",
+            Architecture.X64 when OperatingSystem.IsLinux() => "yt-dlp_linux",
+            Architecture.Arm64 when OperatingSystem.IsLinux() => "yt-dlp_linux_aarch64",
 
             // MacOS
-            Architecture.X64 when RuntimeInformation.IsOSPlatform(OSPlatform.OSX) => "yt-dlp_macos_legacy",
-            Architecture.Arm64 when RuntimeInformation.IsOSPlatform(OSPlatform.OSX) => "yt-dlp_macos",
+            Architecture.X64 when OperatingSystem.IsMacOS() => "yt-dlp_macos_legacy",
+            Architecture.Arm64 when OperatingSystem.IsMacOS() => "yt-dlp_macos",
             _ => throw new NotSupportedException($"Architecture of type {RuntimeInformation.OSArchitecture} is not supported by yt-dlp on this OS.")
         };
     }

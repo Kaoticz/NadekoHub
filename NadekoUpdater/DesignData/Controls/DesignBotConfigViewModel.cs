@@ -19,7 +19,8 @@ public sealed class DesignBotConfigViewModel : BotConfigViewModel
             DesignStatics.Services.GetRequiredService<AppView>(),
             DesignStatics.Services.GetRequiredService<UriInputBarViewModel>(),
             DesignStatics.Services.GetRequiredService<DependencyButtonViewModel>(),
-            DesignStatics.Services.GetParameterizedService<NadekoResolver>(0u)
+            DesignStatics.Services.GetParameterizedService<NadekoResolver>(0u),
+            DesignStatics.Services.GetRequiredService<NadekoOrchestrator>()
         )
     {
     }

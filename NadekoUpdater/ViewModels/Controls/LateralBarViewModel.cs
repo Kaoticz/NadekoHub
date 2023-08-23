@@ -53,6 +53,10 @@ public class LateralBarViewModel : ViewModelBase<LateralBarView>
         this.RaisePropertyChanged(nameof(BotButtonList));
     }
 
+    /// <summary>
+    /// Removes a bot button from the lateral bar.
+    /// </summary>
+    /// <param name="position">The position of the button to be removed.</param>
     public async ValueTask RemoveBotButtonAsync(uint position)
     {
         await _botEntryManager.DeleteBotEntryAsync(position);

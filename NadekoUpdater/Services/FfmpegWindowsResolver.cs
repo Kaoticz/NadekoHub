@@ -1,6 +1,7 @@
 using NadekoUpdater.Services.Abstractions;
 using System.IO.Compression;
 using System.Runtime.InteropServices;
+using System.Runtime.Versioning;
 
 namespace NadekoUpdater.Services;
 
@@ -8,6 +9,7 @@ namespace NadekoUpdater.Services;
 /// Service that checks, downloads, installs, and updates ffmpeg on Windows.
 /// </summary>
 /// <remarks>Source: https://github.com/GyanD/codexffmpeg/releases/latest</remarks>
+[SupportedOSPlatform("windows")]
 public sealed class FfmpegWindowsResolver : FfmpegResolver
 {
     private readonly string _tempDirectory = Path.GetTempPath();

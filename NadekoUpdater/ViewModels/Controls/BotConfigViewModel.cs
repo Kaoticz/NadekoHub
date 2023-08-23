@@ -25,8 +25,10 @@ public class BotConfigViewModel : ViewModelBase<BotConfigView>
     private string _directoryHint = string.Empty;
     private bool _areButtonsUnlocked;
     private bool _isIdle;
+    private bool _isBotRunning;
     private readonly AppConfigManager _appConfigManager;
     private readonly AppView _mainWindow;
+    private readonly NadekoOrchestrator _botOrchestrator;
 
     /// <summary>
     /// Triggered when the user deletes the bot instance associated with this view-model.
@@ -103,6 +105,15 @@ public class BotConfigViewModel : ViewModelBase<BotConfigView>
     }
 
     /// <summary>
+    /// Determines whether the bot associated with this view-model is running or not.
+    /// </summary>
+    public bool IsBotRunning
+    {
+        get => _isBotRunning;
+        private set => this.RaiseAndSetIfChanged(ref _isBotRunning, value);
+    }
+
+    /// <summary>
     /// Creates a view-model for <see cref="BotConfigView"/>.
     /// </summary>
     /// <param name="appConfigManager">The app settings manager.</param>
@@ -110,10 +121,13 @@ public class BotConfigViewModel : ViewModelBase<BotConfigView>
     /// <param name="botDirectoryUriBar">The text box with the path to the directory where the bot instance is.</param>
     /// <param name="updateBotBar">The bar for updating the bot.</param>
     /// <param name="botResolver">The bot resolver to be used.</param>
-    public BotConfigViewModel(AppConfigManager appConfigManager, AppView mainWindow, UriInputBarViewModel botDirectoryUriBar, DependencyButtonViewModel updateBotBar, IBotResolver botResolver)
+    /// <param name="botOrchestrator">The bot orchestrator.</param>
+    public BotConfigViewModel(AppConfigManager appConfigManager, AppView mainWindow, UriInputBarViewModel botDirectoryUriBar, DependencyButtonViewModel updateBotBar,
+        IBotResolver botResolver, NadekoOrchestrator botOrchestrator)
     {
         _appConfigManager = appConfigManager;
         _mainWindow = mainWindow;
+        _botOrchestrator = botOrchestrator;
         BotDirectoryUriBar = botDirectoryUriBar;
         UpdateBar = updateBotBar;
 
@@ -127,8 +141,13 @@ public class BotConfigViewModel : ViewModelBase<BotConfigView>
         BotName = botResolver.BotName;
         Position = botResolver.Position;
         UpdateBar.DependencyName = "Checking...";
+        IsBotRunning = botOrchestrator.IsBotRunning(botResolver.Position);
 
-        EnableButtons(!Directory.Exists(botEntry.InstanceDirectoryUri), true);
+        if (IsBotRunning)
+            EnableButtons(true, false);
+        else
+            EnableButtons(!Directory.Exists(botEntry.InstanceDirectoryUri), true);
+
         _ = LoadUpdateBarAsync(botResolver, updateBotBar);
     }
  
@@ -281,6 +300,28 @@ public class BotConfigViewModel : ViewModelBase<BotConfigView>
             await _mainWindow.ShowDialogWindowAsync($"An error occurred while updating {Resolver.DependencyName}:\n{ex.Message}", DialogType.Error, Icon.Error);
             UpdateBar.Status = originalStatus;
         }
+    }
+
+    /// <summary>
+    /// Starts the bot instance associated with this view-model.
+    /// </summary>
+    public void StartBot()
+    {
+        IsBotRunning = _botOrchestrator.Start(Position);
+
+        if (IsBotRunning)
+            EnableButtons(true, false);
+    }
+
+    /// <summary>
+    /// Stops the bot instance associated with this view-model.
+    /// </summary>
+    public void StopBot()
+    {
+        IsBotRunning = !_botOrchestrator.Stop(Position);
+
+        if (!IsBotRunning)
+            EnableButtons(false, true);
     }
 
     /// <summary>

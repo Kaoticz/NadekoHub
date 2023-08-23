@@ -20,11 +20,10 @@
         <!--Settings Title-->
         <TextBlock Grid.Row="0" Text="Settings" FontSize="28" HorizontalAlignment="Left" VerticalAlignment="Center"/>
 
-        <!--Dependencies-->
         <StackPanel Grid.Row="1">
-            <!--Text-->
+            <!--Dependencies Text-->
             <TextBlock Text="Dependencies" FontSize="22" />
-            <TextBlock Text="Make sure the dependencies below are installed." />
+            <TextBlock Text="Make sure the dependencies below are installed if you want to use NadekoBot to play music." />
             
             <!--Dependency Buttons-->
             <ItemsRepeater ItemsSource="{Binding DependencyButtons}">

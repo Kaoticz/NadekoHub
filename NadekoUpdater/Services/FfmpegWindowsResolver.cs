@@ -84,17 +84,22 @@ public sealed class FfmpegWindowsResolver : FfmpegResolver
         using (var fileStream = new FileStream(zipFilePath, FileMode.Create))
             await downloadStream.CopyToAsync(fileStream, cToken);
 
-        // Extract the zip file.
-        ZipFile.ExtractToDirectory(zipFilePath, _tempDirectory);
+        // Schedule installation to the thread-pool because ffmpeg is pretty
+        // large and doing I/O with it can potentially block the UI thread.
+        await Task.Run(() =>
+        {
+            // Extract the zip file.
+            ZipFile.ExtractToDirectory(zipFilePath, _tempDirectory);
         
-        // Move ffmpeg to the dependencies directory.
-        File.Move(Path.Combine(zipExtractDir, "bin", FileName), Path.Combine(dependenciesUri, FileName), true);
-        File.Move(Path.Combine(zipExtractDir, "bin", "ffprobe.exe"), Path.Combine(dependenciesUri, "ffprobe.exe"), true);
-        //File.Move(Path.Combine(zipExtractDir, "bin", "ffplay.exe"), Path.Combine(dependenciesUri, "ffplay.exe"));
+            // Move ffmpeg to the dependencies directory.
+            File.Move(Path.Combine(zipExtractDir, "bin", FileName), Path.Combine(dependenciesUri, FileName), true);
+            File.Move(Path.Combine(zipExtractDir, "bin", "ffprobe.exe"), Path.Combine(dependenciesUri, "ffprobe.exe"), true);
+            //File.Move(Path.Combine(zipExtractDir, "bin", "ffplay.exe"), Path.Combine(dependenciesUri, "ffplay.exe"));
 
-        // Cleanup
-        File.Delete(zipFilePath);
-        Directory.Delete(zipExtractDir, true);
+            // Cleanup
+            File.Delete(zipFilePath);
+            Directory.Delete(zipExtractDir, true);
+        }, cToken);
 
         // Update environment variable
         Utilities.AddPathToPATHEnvar(dependenciesUri);

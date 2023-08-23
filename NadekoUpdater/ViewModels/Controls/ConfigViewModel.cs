@@ -47,7 +47,8 @@ public class ConfigViewModel : ViewModelBase<ConfigView>
     /// </summary>
     /// <param name="appConfigManager">The service that manages the application's settings.</param>
     /// <param name="mainWindow">The main window of the application.</param>
-    /// <param name="defaultBotUriBar">The bar that defines where the bot instances should be saved to.</param>
+    /// <param name="defaultBotUriBar">The bar that defines where the bot instances should be stored.</param>
+    /// <param name="defaultBotBackupUriBar">The bar that defines where the backups of the bot instances should be stored.</param>
     /// <param name="ffmpegResolver">The service that manages ffmpeg on the system.</param>
     /// <param name="ytdlpResolver">The service that manages yt-dlp on the system.</param>
     public ConfigViewModel(AppConfigManager appConfigManager, AppView mainWindow, UriInputBarViewModel defaultBotUriBar, UriInputBarViewModel defaultBotBackupUriBar,

@@ -28,7 +28,7 @@ public sealed partial class FfmpegLinuxResolver : FfmpegResolver
     /// <inheritdoc/>
     public override ValueTask<bool?> CanUpdateAsync(CancellationToken cToken = default)
     {
-        return (RuntimeInformation.OSArchitecture is Architecture.X86 or Architecture.Arm64)
+        return (RuntimeInformation.OSArchitecture is Architecture.X64 or Architecture.Arm64)
             ? base.CanUpdateAsync(cToken)
             : ValueTask.FromResult<bool?>(false);
     }
@@ -41,7 +41,7 @@ public sealed partial class FfmpegLinuxResolver : FfmpegResolver
         var match = _ffmpegLatestVersionRegex.Match(pageContent);
 
         return (match.Success)
-            ? match.Value
+            ? match.Groups[1].Value
             : throw new InvalidOperationException("Regex did not match the web page content.");
     }
 
@@ -69,13 +69,14 @@ public sealed partial class FfmpegLinuxResolver : FfmpegResolver
         // Install
         Directory.CreateDirectory(dependenciesUri);
 
-        var tarFileName = $"ffmpeg-release-{((RuntimeInformation.OSArchitecture is Architecture.X64) ? "amd" : "arm")}64-static.tar.xz";
+        var architecture = (RuntimeInformation.OSArchitecture is Architecture.X64) ? "amd" : "arm";
+        var tarFileName = $"ffmpeg-release-{architecture}64-static.tar.xz";
         var http = _httpClientFactory.CreateClient();
         using var downloadStream = await http.GetStreamAsync($"https://johnvansickle.com/ffmpeg/releases/{tarFileName}", cToken);
 
         // Save tar file to the temporary directory.
         var tarFilePath = Path.Combine(_tempDirectory, tarFileName);
-        var tarExtractDir = Path.Combine(_tempDirectory, tarFileName[..^7]);
+        var tarExtractDir = Path.Combine(_tempDirectory, $"ffmpeg-{newVersion}-{architecture}64-static");
         using (var fileStream = new FileStream(tarFilePath, FileMode.Create))
             await downloadStream.CopyToAsync(fileStream, cToken);
 

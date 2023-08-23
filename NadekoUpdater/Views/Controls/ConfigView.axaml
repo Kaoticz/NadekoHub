@@ -38,15 +38,29 @@
             </ItemsRepeater>
             
             <!--Separator-->
-            <Separator HorizontalAlignment="Stretch" />
+            <Separator Margin="0 8 0 8" HorizontalAlignment="Stretch" />
 
             <!--Application Settings-->
-            <TextBlock Text="Default Bot Directory:" ToolTip.Tip="Defines the base directory the updater suggests bot instances should be installed to."/>
-            <ContentControl Content="{Binding DefaultBotUriBar}" />
+            <!--I tried referencing the control directly, but it doesn't work for some reason-->
+            <!--So I had to 'rewrite' the control in here-->
+            <Grid RowDefinitions="Auto,Auto,Auto,Auto" ColumnDefinitions="*,Auto,Auto" ShowGridLines="True">
+                <TextBlock Grid.Row="0" Text="Bot Directory:" ToolTip.Tip="Defines the directory the updater is going to install the bot instances."/>
+                <TextBox Grid.Row="1" Grid.Column="0" Margin="0 0 2 0" Text="{Binding DefaultBotUriBar.CurrentUri}" Watermark="Enter a directory" />
+                <Button Grid.Row="1" Grid.Column="1" Margin="2 0 2 0" Content="Browse"
+                        Command="{Binding DefaultBotUriBar.SelectFolderAsync}"/>
+                <Button Grid.Row="1" Grid.Column="2" Margin="2 0 0 0" Content="Open" IsEnabled="{Binding DefaultBotUriBar.IsValidUri}"
+                        Command="{Binding DefaultBotUriBar.OpenFolder}" CommandParameter="{Binding DefaultBotUriBar.CurrentUri}" />
+                
+                <TextBlock Grid.Row="2" Margin="0 8 0 0" Text="Backup Directory:" ToolTip.Tip="Defines the directory the updater is going to store the backup of the bot instances."/>
+                <TextBox Grid.Row="3" Grid.Column="0" Margin="0 0 2 0" Text="{Binding DefaultBotBackupUriBar.CurrentUri}" Watermark="Enter a directory" />
+                <Button Grid.Row="3" Grid.Column="1" Margin="2 0 2 0" Content="Browse"
+                        Command="{Binding DefaultBotBackupUriBar.SelectFolderAsync}"/>
+                <Button Grid.Row="3" Grid.Column="2" Margin="2 0 0 0" Content="Open" IsEnabled="{Binding DefaultBotBackupUriBar.IsValidUri}"
+                        Command="{Binding DefaultBotBackupUriBar.OpenFolder}" CommandParameter="{Binding DefaultBotBackupUriBar.CurrentUri}" />
+            </Grid>
 
             <CheckBox Content="Minimize to system tray." ToolTip.Tip="Defines whether the updater should be minimized to the system tray rather than closed."
                       IsChecked="{Binding MinimizeToTray}" Command="{Binding ToggleMinimizeToTrayAsync}" />
-                
         </StackPanel>
     </Grid>
 </UserControl>

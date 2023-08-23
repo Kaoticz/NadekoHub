@@ -1,7 +1,9 @@
+using Avalonia.Platform.Storage;
 using Microsoft.Extensions.DependencyInjection;
 using NadekoUpdater.Models.Config;
 using NadekoUpdater.Services;
 using NadekoUpdater.Services.Abstractions;
+using NadekoUpdater.Views.Windows;
 using ReactiveUI;
 using System.Reflection;
 using System.Runtime.InteropServices;
@@ -49,6 +51,7 @@ public static class IServiceCollectionExt
     {
         // Internal
         serviceCollection.AddMemoryCache();
+        serviceCollection.AddSingleton(x => x.GetRequiredService<AppView>().StorageProvider);
 
         // Web requests
         serviceCollection.AddHttpClient();

@@ -1,13 +1,10 @@
-using Avalonia.Controls;
 using MsBox.Avalonia.Enums;
-using MsBox.Avalonia;
 using NadekoUpdater.Enums;
 using NadekoUpdater.Services;
 using NadekoUpdater.ViewModels.Abstractions;
 using NadekoUpdater.Views.Controls;
 using NadekoUpdater.Views.Windows;
 using NadekoUpdater.Services.Abstractions;
-using Avalonia.Platform;
 
 namespace NadekoUpdater.ViewModels.Controls;
 
@@ -16,7 +13,6 @@ namespace NadekoUpdater.ViewModels.Controls;
 /// </summary>
 public class ConfigViewModel : ViewModelBase<ConfigView>
 {
-    private static readonly WindowIcon _dialogWindowIcon = new(AssetLoader.Open(new Uri(AppStatics.ApplicationWindowIcon)));
     private static readonly string _unixNotice = (Environment.OSVersion.Platform is not PlatformID.Unix)
         ? string.Empty
         : Environment.NewLine + "To make the dependencies accessible to your bot instances without this updater, consider installing " +
@@ -31,9 +27,14 @@ public class ConfigViewModel : ViewModelBase<ConfigView>
     public IReadOnlyList<DependencyButtonViewModel> DependencyButtons { get; }
 
     /// <summary>
-    /// The bar that defines where the bot instances should be saved to.
+    /// The bar that defines where the bot instances should be stored.
     /// </summary>
     public UriInputBarViewModel DefaultBotUriBar { get; }
+
+    /// <summary>
+    /// The bar that defines where the backup of the bot instances should be stored.
+    /// </summary>
+    public UriInputBarViewModel DefaultBotBackupUriBar { get; }
 
     /// <summary>
     /// Determines whether the application should minimize to the system tray when closed.
@@ -49,7 +50,8 @@ public class ConfigViewModel : ViewModelBase<ConfigView>
     /// <param name="defaultBotUriBar">The bar that defines where the bot instances should be saved to.</param>
     /// <param name="ffmpegResolver">The service that manages ffmpeg on the system.</param>
     /// <param name="ytdlpResolver">The service that manages yt-dlp on the system.</param>
-    public ConfigViewModel(AppConfigManager appConfigManager, AppView mainWindow, UriInputBarViewModel defaultBotUriBar, IFfmpegResolver ffmpegResolver, IYtdlpResolver ytdlpResolver)
+    public ConfigViewModel(AppConfigManager appConfigManager, AppView mainWindow, UriInputBarViewModel defaultBotUriBar, UriInputBarViewModel defaultBotBackupUriBar,
+        IFfmpegResolver ffmpegResolver, IYtdlpResolver ytdlpResolver)
     {
         _appConfigManager = appConfigManager;
         _mainWindow = mainWindow;
@@ -57,6 +59,10 @@ public class ConfigViewModel : ViewModelBase<ConfigView>
         DefaultBotUriBar = defaultBotUriBar;
         DefaultBotUriBar.CurrentUri = appConfigManager.AppConfig.BotsDirectoryUri;
         DefaultBotUriBar.OnValidUri += async (_, eventArgs) => await appConfigManager.UpdateConfigAsync(x => x.BotsDirectoryUri = eventArgs.NewUri);
+
+        DefaultBotBackupUriBar = defaultBotBackupUriBar;
+        DefaultBotBackupUriBar.CurrentUri = appConfigManager.AppConfig.BotsBackupDirectoryUri;
+        DefaultBotBackupUriBar.OnValidUri += async (_, eventArgs) => await appConfigManager.UpdateConfigAsync(x => x.BotsBackupDirectoryUri = eventArgs.NewUri);
 
         DependencyButtons = new DependencyButtonViewModel[]
         {

@@ -2,7 +2,6 @@ using NadekoUpdater.ViewModels.Abstractions;
 using NadekoUpdater.Views.Controls;
 using System.Diagnostics;
 using Avalonia.Platform.Storage;
-using NadekoUpdater.Views.Windows;
 using ReactiveUI;
 using Kotz.Events;
 using NadekoUpdater.Models.EventArguments;
@@ -56,9 +55,9 @@ public class UriInputBarViewModel : ViewModelBase<UriInputBar>
     /// <summary>
     /// Creates a text box for inputting the absolute path of a directory.
     /// </summary>
-    /// <param name="mainWindow">The application's main window.</param>
-    public UriInputBarViewModel(AppView mainWindow)
-        => _storageProvider = mainWindow.StorageProvider;
+    /// <param name="storageProvider">The storage provider of the active window.</param>
+    public UriInputBarViewModel(IStorageProvider storageProvider)
+        => _storageProvider = storageProvider;
 
     /// <summary>
     /// Opens the directory at <paramref name="directoryUri"/>.

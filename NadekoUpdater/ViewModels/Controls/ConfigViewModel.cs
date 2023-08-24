@@ -5,6 +5,8 @@ using NadekoUpdater.ViewModels.Abstractions;
 using NadekoUpdater.Views.Controls;
 using NadekoUpdater.Views.Windows;
 using NadekoUpdater.Services.Abstractions;
+using ReactiveUI;
+using Avalonia.Controls;
 
 namespace NadekoUpdater.ViewModels.Controls;
 
@@ -20,6 +22,16 @@ public class ConfigViewModel : ViewModelBase<ConfigView>
 
     private readonly AppConfigManager _appConfigManager;
     private readonly AppView _mainWindow;
+    private double _maxLogSize;
+
+    /// <summary>
+    /// Defines the maximum size a log file can have, in MB.
+    /// </summary>
+    public double MaxLogSize
+    {
+        get => _maxLogSize;
+        private set => this.RaiseAndSetIfChanged(ref _maxLogSize, value);
+    }
 
     /// <summary>
     /// Contains view-models for buttons that install dependencies for Nadeko.
@@ -29,12 +41,17 @@ public class ConfigViewModel : ViewModelBase<ConfigView>
     /// <summary>
     /// The bar that defines where the bot instances should be stored.
     /// </summary>
-    public UriInputBarViewModel DefaultBotUriBar { get; }
+    public UriInputBarViewModel BotsUriBar { get; }
 
     /// <summary>
     /// The bar that defines where the backup of the bot instances should be stored.
     /// </summary>
-    public UriInputBarViewModel DefaultBotBackupUriBar { get; }
+    public UriInputBarViewModel BackupsUriBar { get; }
+
+    /// <summary>
+    /// The bar that defines where the backup of the bot instances should be stored.
+    /// </summary>
+    public UriInputBarViewModel LogsUriBar { get; }
 
     /// <summary>
     /// Determines whether the application should minimize to the system tray when closed.
@@ -47,23 +64,29 @@ public class ConfigViewModel : ViewModelBase<ConfigView>
     /// </summary>
     /// <param name="appConfigManager">The service that manages the application's settings.</param>
     /// <param name="mainWindow">The main window of the application.</param>
-    /// <param name="defaultBotUriBar">The bar that defines where the bot instances should be stored.</param>
-    /// <param name="defaultBotBackupUriBar">The bar that defines where the backups of the bot instances should be stored.</param>
+    /// <param name="botsUriBar">The bar that defines where the bot instances should be stored.</param>
+    /// <param name="backupsUriBar">The bar that defines where the backups of the bot instances should be stored.</param>
+    /// <param name="logsUriBar">The bar that defines where the logs of the bot instances should be stored.</param>
     /// <param name="ffmpegResolver">The service that manages ffmpeg on the system.</param>
     /// <param name="ytdlpResolver">The service that manages yt-dlp on the system.</param>
-    public ConfigViewModel(AppConfigManager appConfigManager, AppView mainWindow, UriInputBarViewModel defaultBotUriBar, UriInputBarViewModel defaultBotBackupUriBar,
-        IFfmpegResolver ffmpegResolver, IYtdlpResolver ytdlpResolver)
+    public ConfigViewModel(AppConfigManager appConfigManager, AppView mainWindow, UriInputBarViewModel botsUriBar, UriInputBarViewModel backupsUriBar,
+        UriInputBarViewModel logsUriBar, IFfmpegResolver ffmpegResolver, IYtdlpResolver ytdlpResolver)
     {
         _appConfigManager = appConfigManager;
         _mainWindow = mainWindow;
+        MaxLogSize = _appConfigManager.AppConfig.LogMaxSizeMb;
 
-        DefaultBotUriBar = defaultBotUriBar;
-        DefaultBotUriBar.CurrentUri = appConfigManager.AppConfig.BotsDirectoryUri;
-        DefaultBotUriBar.OnValidUri += async (_, eventArgs) => await appConfigManager.UpdateConfigAsync(x => x.BotsDirectoryUri = eventArgs.NewUri);
+        BotsUriBar = botsUriBar;
+        BotsUriBar.CurrentUri = appConfigManager.AppConfig.BotsDirectoryUri;
+        BotsUriBar.OnValidUri += async (_, eventArgs) => await appConfigManager.UpdateConfigAsync(x => x.BotsDirectoryUri = eventArgs.NewUri);
 
-        DefaultBotBackupUriBar = defaultBotBackupUriBar;
-        DefaultBotBackupUriBar.CurrentUri = appConfigManager.AppConfig.BotsBackupDirectoryUri;
-        DefaultBotBackupUriBar.OnValidUri += async (_, eventArgs) => await appConfigManager.UpdateConfigAsync(x => x.BotsBackupDirectoryUri = eventArgs.NewUri);
+        BackupsUriBar = backupsUriBar;
+        BackupsUriBar.CurrentUri = appConfigManager.AppConfig.BotsBackupDirectoryUri;
+        BackupsUriBar.OnValidUri += async (_, eventArgs) => await appConfigManager.UpdateConfigAsync(x => x.BotsBackupDirectoryUri = eventArgs.NewUri);
+
+        LogsUriBar = logsUriBar;
+        LogsUriBar.CurrentUri = appConfigManager.AppConfig.LogsDirectoryUri;
+        LogsUriBar.OnValidUri += async (_, eventArgs) => await appConfigManager.UpdateConfigAsync(x => x.LogsDirectoryUri = eventArgs.NewUri);
 
         DependencyButtons = new DependencyButtonViewModel[]
         {
@@ -80,6 +103,22 @@ public class ConfigViewModel : ViewModelBase<ConfigView>
     /// </summary>
     public ValueTask ToggleMinimizeToTrayAsync()
         => _appConfigManager.UpdateConfigAsync(x => x.MinimizeToTray = !x.MinimizeToTray);
+
+    /// <summary>
+    /// Sets the value of the button spinner.
+    /// </summary>
+    /// <param name="spinDirection">The direction the user spun the button.</param>
+    public async Task SpinMaxLogSizeAsync(SpinDirection spinDirection)
+    {
+        if (MaxLogSize is 0.0 && spinDirection is SpinDirection.Decrease)
+            return;
+
+        MaxLogSize = (spinDirection is SpinDirection.Increase)
+            ? Math.Round(Math.Max(0.0, MaxLogSize + 0.1), 2)
+            : Math.Round(Math.Max(0.0, MaxLogSize - 0.1), 2);
+
+        await _appConfigManager.UpdateConfigAsync(x => x.LogMaxSizeMb = MaxLogSize);
+    }
 
     /// <summary>
     /// Sets a dependency button to its appropriate state.

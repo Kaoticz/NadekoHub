@@ -16,13 +16,13 @@ public sealed class NadekoOrchestrator : IBotOrchestrator
     private readonly string _fileName = (OperatingSystem.IsWindows()) ? "NadekoBot.exe" : "NadekoBot";
 
     /// <inheritdoc/>
-    public event EventHandler<NadekoOrchestrator, BotExitEventArgs>? OnBotExit;
+    public event EventHandler<IBotOrchestrator, BotExitEventArgs>? OnBotExit;
 
     /// <inheritdoc/>
-    public event EventHandler<NadekoOrchestrator, ProcessStdWriteEventArgs>? OnStderr;
+    public event EventHandler<IBotOrchestrator, ProcessStdWriteEventArgs>? OnStderr;
 
     /// <inheritdoc/>    
-    public event EventHandler<NadekoOrchestrator, ProcessStdWriteEventArgs>? OnStdout;   
+    public event EventHandler<IBotOrchestrator, ProcessStdWriteEventArgs>? OnStdout;   
 
     /// <summary>
     /// Creates an object that coordinates multiple running processes of NadekoBot.

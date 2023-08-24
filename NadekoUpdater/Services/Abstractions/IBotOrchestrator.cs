@@ -11,17 +11,17 @@ public interface IBotOrchestrator
     /// <summary>
     /// Raised when a bot process exits.
     /// </summary>
-    event EventHandler<NadekoOrchestrator, BotExitEventArgs>? OnBotExit;
+    event EventHandler<IBotOrchestrator, BotExitEventArgs>? OnBotExit;
 
     /// <summary>
     /// Raised when a bot process prints data to stderr.
     /// </summary>
-    event EventHandler<NadekoOrchestrator, ProcessStdWriteEventArgs>? OnStderr;
+    event EventHandler<IBotOrchestrator, ProcessStdWriteEventArgs>? OnStderr;
 
     /// <summary>
     /// Raised when a bot process prints data to stdout.
     /// </summary>
-    event EventHandler<NadekoOrchestrator, ProcessStdWriteEventArgs>? OnStdout;
+    event EventHandler<IBotOrchestrator, ProcessStdWriteEventArgs>? OnStdout;
 
     /// <summary>
     /// Determines whether the bot with the specified

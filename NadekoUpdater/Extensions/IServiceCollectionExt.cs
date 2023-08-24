@@ -1,4 +1,3 @@
-using Avalonia.Platform.Storage;
 using Microsoft.Extensions.DependencyInjection;
 using NadekoUpdater.Models.Config;
 using NadekoUpdater.Services;
@@ -6,7 +5,6 @@ using NadekoUpdater.Services.Abstractions;
 using NadekoUpdater.Views.Windows;
 using ReactiveUI;
 using System.Reflection;
-using System.Runtime.InteropServices;
 using System.Text.Json;
 
 namespace NadekoUpdater.Extensions;
@@ -73,6 +71,7 @@ public static class IServiceCollectionExt
         serviceCollection.AddSingleton<IYtdlpResolver, YtdlpResolver>();
         serviceCollection.AddTransient<IBotResolver, NadekoResolver>();
 
+        // Platform-dependent services
         if (OperatingSystem.IsWindows())
             serviceCollection.AddSingleton<IFfmpegResolver, FfmpegWindowsResolver>();
         else if (OperatingSystem.IsLinux())

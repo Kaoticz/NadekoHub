@@ -45,7 +45,7 @@ public sealed class LogWriter : ILogWriter
             return false;
 
         Directory.CreateDirectory(_appConfig.LogsDirectoryUri);
-        var stringByteSize = (logStringBuilder.Length * 2) + 1;
+        var logByteSize = (logStringBuilder.Length * 2) + 1;
         var botEntry = _appConfig.BotEntries[botPosition];
         var now = DateTimeOffset.Now;
         var date = new DateOnly(now.Year, now.Month, now.Day).ToShortDateString().Replace('/', '-');
@@ -55,7 +55,7 @@ public sealed class LogWriter : ILogWriter
 
         logStringBuilder.Clear();
 
-        OnLogCreated?.Invoke(this, new(fileUri, stringByteSize, now));
+        OnLogCreated?.Invoke(this, new(fileUri, logByteSize, now));
 
         return true;
     }
@@ -63,7 +63,7 @@ public sealed class LogWriter : ILogWriter
     /// <inheritdoc/>
     public bool TryAdd(uint botPosition, string message)
     {
-        if (string.IsNullOrWhiteSpace(message) || _appConfig.LogMaxSizeMb is 0.0)
+        if (string.IsNullOrWhiteSpace(message) || _appConfig.LogMaxSizeMb <= 0.0)
             return false;
 
         if (!_botLogs.TryGetValue(botPosition, out var logStringBuilder))
@@ -74,7 +74,7 @@ public sealed class LogWriter : ILogWriter
 
         logStringBuilder.AppendLine(message);
 
-        if ((logStringBuilder.Length * 2) + 1 > _appConfig.LogMaxSizeMb * 1_000_000)
+        if ((logStringBuilder.Length > _appConfig.LogMaxSizeMb * 1_000_000))
             _ = FlushAsync(botPosition);
 
         return true;

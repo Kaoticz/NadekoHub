@@ -16,7 +16,7 @@
         Width="{x:Static const:WindowConstants.DefaultWindowWidth}"
         Height="{x:Static const:WindowConstants.DefaultWindowHeight}"
         MinWidth="540"
-        MinHeight="420">
+        MinHeight="450">
 
     <Design.DataContext>
         <dd:DesignAppViewModel/>

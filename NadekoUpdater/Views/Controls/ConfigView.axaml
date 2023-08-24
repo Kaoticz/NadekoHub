@@ -42,21 +42,30 @@
             <!--Application Settings-->
             <!--I tried referencing the control directly, but it doesn't work for some reason-->
             <!--So I had to 'rewrite' the control in here-->
-            <Grid RowDefinitions="Auto,Auto,Auto,Auto" ColumnDefinitions="*,Auto,Auto" ShowGridLines="True">
+            <Grid RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto" ColumnDefinitions="*,Auto,Auto" ShowGridLines="True">
                 <TextBlock Grid.Row="0" Text="Bot Directory:" ToolTip.Tip="Defines the directory the updater is going to install the bot instances."/>
-                <TextBox Grid.Row="1" Grid.Column="0" Margin="0 0 2 0" Text="{Binding DefaultBotUriBar.CurrentUri}" Watermark="Enter a directory" />
+                <TextBox Grid.Row="1" Grid.Column="0" Margin="0 0 2 0" Text="{Binding BotsUriBar.CurrentUri}" Watermark="Enter a directory" />
                 <Button Grid.Row="1" Grid.Column="1" Margin="2 0 2 0" Content="Browse"
-                        Command="{Binding DefaultBotUriBar.SelectFolderAsync}"/>
-                <Button Grid.Row="1" Grid.Column="2" Margin="2 0 0 0" Content="Open" IsEnabled="{Binding DefaultBotUriBar.IsValidUri}"
-                        Command="{Binding DefaultBotUriBar.OpenFolder}" CommandParameter="{Binding DefaultBotUriBar.CurrentUri}" />
+                        Command="{Binding BotsUriBar.SelectFolderAsync}"/>
+                <Button Grid.Row="1" Grid.Column="2" Margin="2 0 0 0" Content="Open" IsEnabled="{Binding BotsUriBar.IsValidUri}"
+                        Command="{Binding BotsUriBar.OpenFolder}" CommandParameter="{Binding BotsUriBar.CurrentUri}" />
                 
                 <TextBlock Grid.Row="2" Margin="0 8 0 0" Text="Backup Directory:" ToolTip.Tip="Defines the directory the updater is going to store the backup of the bot instances."/>
-                <TextBox Grid.Row="3" Grid.Column="0" Margin="0 0 2 0" Text="{Binding DefaultBotBackupUriBar.CurrentUri}" Watermark="Enter a directory" />
+                <TextBox Grid.Row="3" Grid.Column="0" Margin="0 0 2 0" Text="{Binding BackupsUriBar.CurrentUri}" Watermark="Enter a directory" />
                 <Button Grid.Row="3" Grid.Column="1" Margin="2 0 2 0" Content="Browse"
-                        Command="{Binding DefaultBotBackupUriBar.SelectFolderAsync}"/>
-                <Button Grid.Row="3" Grid.Column="2" Margin="2 0 0 0" Content="Open" IsEnabled="{Binding DefaultBotBackupUriBar.IsValidUri}"
-                        Command="{Binding DefaultBotBackupUriBar.OpenFolder}" CommandParameter="{Binding DefaultBotBackupUriBar.CurrentUri}" />
+                        Command="{Binding BackupsUriBar.SelectFolderAsync}"/>
+                <Button Grid.Row="3" Grid.Column="2" Margin="2 0 0 0" Content="Open" IsEnabled="{Binding BackupsUriBar.IsValidUri}"
+                        Command="{Binding BackupsUriBar.OpenFolder}" CommandParameter="{Binding BackupsUriBar.CurrentUri}" />
+                <TextBlock Grid.Row="4" Margin="0 8 0 0" Text="Logs Directory:" ToolTip.Tip="Defines the directory the updater is going to store the logs of the bot instances."/>
+                <TextBox Grid.Row="5" Grid.Column="0" Margin="0 0 2 0" Text="{Binding LogsUriBar.CurrentUri}" Watermark="Enter a directory" />
+                <Button Grid.Row="5" Grid.Column="1" Margin="2 0 2 0" Content="Browse"
+                        Command="{Binding LogsUriBar.SelectFolderAsync}"/>
+                <Button Grid.Row="5" Grid.Column="2" Margin="2 0 0 0" Content="Open" IsEnabled="{Binding LogsUriBar.IsValidUri}"
+                        Command="{Binding LogsUriBar.OpenFolder}" CommandParameter="{Binding LogsUriBar.CurrentUri}" />
             </Grid>
+            
+            <TextBlock Margin="0 8 0 0" Text="Maximum log file size (in MB):" ToolTip.Tip="Defines the maximum size a log file is allowed to have. Set to 0 to disable logging." />
+            <ButtonSpinner Content="{Binding MaxLogSize}" Spin="ButtonSpun" ButtonSpinnerLocation="Right" HorizontalAlignment="Left" />
 
             <CheckBox Content="Minimize to system tray." ToolTip.Tip="Defines whether the updater should be minimized to the system tray rather than closed."
                       IsChecked="{Binding MinimizeToTray}" Command="{Binding ToggleMinimizeToTrayAsync}" />

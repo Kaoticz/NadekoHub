@@ -1,6 +1,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using NadekoUpdater.DesignData.Common;
 using NadekoUpdater.Services;
+using NadekoUpdater.Services.Abstractions;
 using NadekoUpdater.ViewModels.Controls;
 using NadekoUpdater.Views.Windows;
 
@@ -20,8 +21,8 @@ public sealed class DesignBotConfigViewModel : BotConfigViewModel
             DesignStatics.Services.GetRequiredService<UriInputBarViewModel>(),
             DesignStatics.Services.GetRequiredService<DependencyButtonViewModel>(),
             DesignStatics.Services.GetParameterizedService<NadekoResolver>(0u),
-            DesignStatics.Services.GetRequiredService<NadekoOrchestrator>(),
-            DesignStatics.Services.GetRequiredService<LogWriter>()
+            DesignStatics.Services.GetRequiredService<IBotOrchestrator>(),
+            DesignStatics.Services.GetRequiredService<ILogWriter>()
         )
     {
     }

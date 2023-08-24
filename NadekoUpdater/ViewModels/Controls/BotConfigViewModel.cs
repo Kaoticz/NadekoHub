@@ -392,15 +392,15 @@ public class BotConfigViewModel : ViewModelBase<BotConfigView>
     /// </summary>
     /// <param name="botOrchestrator">The bot orchestrator.</param>
     /// <param name="eventArgs">The event arguments.</param>
-    private void WriteLog(NadekoOrchestrator botOrchestrator, ProcessStdWriteEventArgs eventArgs)
+    private void WriteLog(IBotOrchestrator botOrchestrator, ProcessStdWriteEventArgs eventArgs)
     {
         if (eventArgs.Position != Resolver.Position)
             return;
 
         _logWriter.TryAdd(eventArgs.Position, eventArgs.Output);
 
-        LogContent = (LogContent.Length > 200_000)
-            ? LogContent[LogContent.IndexOf(Environment.NewLine, 100_000)..] + eventArgs.Output + Environment.NewLine
+        LogContent = (LogContent.Length > 100_000)
+            ? LogContent[LogContent.IndexOf(Environment.NewLine, 60_000)..] + eventArgs.Output + Environment.NewLine
             : LogContent + eventArgs.Output + Environment.NewLine;
     }
 
@@ -409,7 +409,7 @@ public class BotConfigViewModel : ViewModelBase<BotConfigView>
     /// </summary>
     /// <param name="botOrchestrator">The bot orchestrator.</param>
     /// <param name="eventArgs">The event arguments.</param>
-    private void LogBotExit(NadekoOrchestrator botOrchestrator, BotExitEventArgs eventArgs)
+    private void LogBotExit(IBotOrchestrator botOrchestrator, BotExitEventArgs eventArgs)
     {
         if (eventArgs.Position != Resolver.Position)
             return;
@@ -425,7 +425,7 @@ public class BotConfigViewModel : ViewModelBase<BotConfigView>
     /// </summary>
     /// <param name="botOrchestrator">The bot orchestrator.</param>
     /// <param name="eventArgs">The event arguments.</param>
-    private void ReenableButtonsOnBotExit(NadekoOrchestrator botOrchestrator, BotExitEventArgs eventArgs)
+    private void ReenableButtonsOnBotExit(IBotOrchestrator botOrchestrator, BotExitEventArgs eventArgs)
     {
         if (eventArgs.Position != Resolver.Position)
             return;

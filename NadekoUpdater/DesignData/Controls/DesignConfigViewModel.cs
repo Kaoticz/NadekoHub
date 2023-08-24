@@ -20,6 +20,7 @@ public sealed class DesignConfigViewModel : ConfigViewModel
             DesignStatics.Services.GetRequiredService<AppView>(),
             DesignStatics.Services.GetRequiredService<UriInputBarViewModel>(),
             DesignStatics.Services.GetRequiredService<UriInputBarViewModel>(),
+            DesignStatics.Services.GetRequiredService<UriInputBarViewModel>(),
             DesignStatics.Services.GetRequiredService<IFfmpegResolver>(),
             DesignStatics.Services.GetRequiredService<IYtdlpResolver>()
         )

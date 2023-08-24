@@ -30,7 +30,8 @@ public class BotConfigViewModel : ViewModelBase<BotConfigView>
     private bool _areButtonsUnlocked;
     private readonly AppConfigManager _appConfigManager;
     private readonly AppView _mainWindow;
-    private readonly NadekoOrchestrator _botOrchestrator;
+    private readonly IBotOrchestrator _botOrchestrator;
+    private readonly ILogWriter _logWriter;
 
     /// <summary>
     /// Triggered when the user deletes the bot instance associated with this view-model.
@@ -133,29 +134,33 @@ public class BotConfigViewModel : ViewModelBase<BotConfigView>
     /// <param name="updateBotBar">The bar for updating the bot.</param>
     /// <param name="botResolver">The bot resolver to be used.</param>
     /// <param name="botOrchestrator">The bot orchestrator.</param>
+    /// <param name="logWriter">The service responsible for creating log files.</param>
     public BotConfigViewModel(AppConfigManager appConfigManager, AppView mainWindow, UriInputBarViewModel botDirectoryUriBar, DependencyButtonViewModel updateBotBar,
-        IBotResolver botResolver, NadekoOrchestrator botOrchestrator)
+        IBotResolver botResolver, IBotOrchestrator botOrchestrator, ILogWriter logWriter)
     {
         _appConfigManager = appConfigManager;
         _mainWindow = mainWindow;
         _botOrchestrator = botOrchestrator;
+        _logWriter = logWriter;
         BotDirectoryUriBar = botDirectoryUriBar;
         UpdateBar = updateBotBar;
 
         UpdateBar.Click += InstallOrUpdateAsync;
         _botOrchestrator.OnStdout += WriteLog;
         _botOrchestrator.OnStderr += WriteLog;
+        _botOrchestrator.OnBotExit += LogBotExit;
         _botOrchestrator.OnBotExit += ReenableButtonsOnBotExit;
 
         var botEntry = _appConfigManager.AppConfig.BotEntries[botResolver.Position];
 
+        _logWriter.TryRead(botResolver.Position, out var logContent);
+        LogContent = logContent ?? string.Empty;
         Resolver = botResolver;
         BotDirectoryUriBar.CurrentUri = botEntry.InstanceDirectoryUri;
         BotAvatar = LoadLocalImage(botEntry.AvatarUri);
         BotName = botResolver.BotName;
         Position = botResolver.Position;
         UpdateBar.DependencyName = "Checking...";
-        LogContent = _botOrchestrator.GetLogs(botResolver.Position);
         IsBotRunning = botOrchestrator.IsBotRunning(botResolver.Position);
 
         if (IsBotRunning)
@@ -271,6 +276,7 @@ public class BotConfigViewModel : ViewModelBase<BotConfigView>
         EnableButtons(true, false);
 
         // Delete the bot instance
+        _botOrchestrator.Stop(Resolver.Position);
         var botUri = _appConfigManager.AppConfig.BotEntries[Position].InstanceDirectoryUri;
 
         if (Directory.Exists(botUri))
@@ -280,9 +286,8 @@ public class BotConfigViewModel : ViewModelBase<BotConfigView>
         await _appConfigManager.DeleteBotEntryAsync(Position);
 
         // Cleanup
-        _botOrchestrator.Stop(Resolver.Position);
-        _botOrchestrator.ClearLogs(Resolver.Position);
         LogContent = string.Empty;
+        await _logWriter.FlushAsync(Resolver.Position, true);
 
         // Trigger delete event
         BotDeleted?.Invoke(this, EventArgs.Empty);
@@ -382,14 +387,37 @@ public class BotConfigViewModel : ViewModelBase<BotConfigView>
         IsIdle = isIdle;
     }
 
+    /// <summary>
+    /// Writes stdout and stderr to the fake console and the log writer.
+    /// </summary>
+    /// <param name="botOrchestrator">The bot orchestrator.</param>
+    /// <param name="eventArgs">The event arguments.</param>
     private void WriteLog(NadekoOrchestrator botOrchestrator, ProcessStdWriteEventArgs eventArgs)
     {
-        if (eventArgs.Position != Resolver.Position || eventArgs.Output == string.Empty)
+        if (eventArgs.Position != Resolver.Position)
             return;
 
+        _logWriter.TryAdd(eventArgs.Position, eventArgs.Output);
+
         LogContent = (LogContent.Length > 200_000)
-            ? LogContent[(LogContent.IndexOf(Environment.NewLine, 100_000)..] + eventArgs.Output + Environment.NewLine
+            ? LogContent[LogContent.IndexOf(Environment.NewLine, 100_000)..] + eventArgs.Output + Environment.NewLine
             : LogContent + eventArgs.Output + Environment.NewLine;
+    }
+
+    /// <summary>
+    /// Logs when the bot associated with this view-model stops executing.
+    /// </summary>
+    /// <param name="botOrchestrator">The bot orchestrator.</param>
+    /// <param name="eventArgs">The event arguments.</param>
+    private void LogBotExit(NadekoOrchestrator botOrchestrator, BotExitEventArgs eventArgs)
+    {
+        if (eventArgs.Position != Resolver.Position)
+            return;
+
+        var message = Environment.NewLine + Resolver.BotName + " stopped." + Environment.NewLine;
+
+        _logWriter.TryAdd(Resolver.Position, message);
+        LogContent += message;
     }
 
     /// <summary>

@@ -4,6 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 using NadekoUpdater.DesignData.Common;
 using NadekoUpdater.Models.Config;
 using NadekoUpdater.Services;
+using NadekoUpdater.Services.Abstractions;
 using NadekoUpdater.ViewModels.Abstractions;
 using NadekoUpdater.ViewModels.Controls;
 using NadekoUpdater.ViewModels.Windows;
@@ -18,6 +19,8 @@ namespace NadekoUpdater.Views.Windows;
 public partial class AppView : ReactiveWindow<AppViewModel>
 {
     private readonly ReadOnlyAppConfig _appConfig;
+    private readonly IBotOrchestrator _botOrchestrator;
+    private readonly ILogWriter _logWriter;
 
     /// <summary>
     /// Designer's constructor. Use the parameterized constructor instead.
@@ -25,6 +28,8 @@ public partial class AppView : ReactiveWindow<AppViewModel>
     [Obsolete(WindowConstants.DesignerCtorWarning, true)]
     public AppView() : this(
             DesignStatics.Services.GetRequiredService<IServiceScopeFactory>(),
+            DesignStatics.Services.GetRequiredService<IBotOrchestrator>(),
+            DesignStatics.Services.GetRequiredService<ILogWriter>(),
             DesignStatics.Services.GetRequiredService<ReadOnlyAppConfig>(),
             DesignStatics.Services.GetRequiredService<AppViewModel>(),
             DesignStatics.Services.GetRequiredService<LateralBarView>()
@@ -36,12 +41,17 @@ public partial class AppView : ReactiveWindow<AppViewModel>
     /// Creates the main window of the application.
     /// </summary>
     /// <param name="scopeFactory">The IoC scope factory.</param>
+    /// <param name="botOrchestrator">The bot orchestrator.</param>
+    /// <param name="logWriter">The service responsible for creating log files.</param>
     /// <param name="appConfig">The application settings.</param>
     /// <param name="viewModel">The view-model of this view.</param>
     /// <param name="lateralBarView">The lateral bar view.</param>
-    public AppView(IServiceScopeFactory scopeFactory, ReadOnlyAppConfig appConfig, AppViewModel viewModel, LateralBarView lateralBarView)
+    public AppView(IServiceScopeFactory scopeFactory, IBotOrchestrator botOrchestrator, ILogWriter logWriter,
+        ReadOnlyAppConfig appConfig, AppViewModel viewModel, LateralBarView lateralBarView)
     {
         _appConfig = appConfig;
+        _botOrchestrator = botOrchestrator;
+        _logWriter = logWriter;
 
         lateralBarView.ConfigButton.Click += (_, _) => viewModel.ContentViewModel = GetViewModel<ConfigViewModel>(scopeFactory);
         lateralBarView.HomeButton.Click += (_, _) => viewModel.ContentViewModel = GetViewModel<HomeViewModel>(scopeFactory);
@@ -73,6 +83,16 @@ public partial class AppView : ReactiveWindow<AppViewModel>
             base.Hide();
 
         base.OnClosing(eventArgs);
+    }
+
+    /// <inheritdoc/>
+    protected override async void OnClosed(EventArgs e)
+    {
+        // When the updater is closed, kill all bots and write their logs.
+        _botOrchestrator.StopAll();
+        await _logWriter.FlushAllAsync(true);
+
+        base.OnClosed(e);
     }
 
     /// <summary>

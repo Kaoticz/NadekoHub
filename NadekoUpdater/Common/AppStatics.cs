@@ -29,6 +29,11 @@ public static partial class AppStatics
     public static string AppDefaultBotBackupDirectoryUri { get; } = Path.Combine(AppDefaultConfigDirectoryUri, "Backups");
 
     /// <summary>
+    /// Defines the default location where the logs of bot instances are stored.
+    /// </summary>
+    public static string AppDefaultLogDirectoryUri { get; } = Path.Combine(AppDefaultConfigDirectoryUri, "Logs");
+
+    /// <summary>
     /// Defines the location of the application's configuration file.
     /// </summary>
     public static string AppConfigUri { get; } = Path.Combine(AppDefaultConfigDirectoryUri, "config.json");

@@ -51,7 +51,8 @@ public static class IServiceCollectionExt
     {
         // Internal
         serviceCollection.AddMemoryCache();
-        serviceCollection.AddSingleton<NadekoOrchestrator>();
+        serviceCollection.AddSingleton<ILogWriter, LogWriter>();
+        serviceCollection.AddSingleton<IBotOrchestrator, NadekoOrchestrator>();
         serviceCollection.AddSingleton(x => x.GetRequiredService<AppView>().StorageProvider);
 
         // Web requests

@@ -23,7 +23,6 @@
     </Design.DataContext>
 
     <!--Add vertical and horizontal scrolling bars when the window is too small-->
-    <ScrollViewer VerticalAlignment="Stretch" VerticalScrollBarVisibility="Auto">
         <Grid RowDefinitions="*" ColumnDefinitions="65,*" ShowGridLines="True">
             <!--Left Lateral Bar-->
             <ContentControl Grid.Row="0" Grid.Column="0" Grid.RowSpan="5" Content="{Binding LateralBarInstance}" />
@@ -31,5 +30,4 @@
             <!--View-->
             <ContentControl Grid.Row="0" Grid.Column="1" Content="{Binding ContentViewModel}" Padding="5 0 5 0" />
         </Grid>
-    </ScrollViewer>
 </Window>

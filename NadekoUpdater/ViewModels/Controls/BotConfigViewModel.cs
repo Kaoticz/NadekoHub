@@ -5,6 +5,7 @@ using Kotz.Events;
 using MsBox.Avalonia;
 using MsBox.Avalonia.Enums;
 using NadekoUpdater.Enums;
+using NadekoUpdater.Models.EventArguments;
 using NadekoUpdater.Services;
 using NadekoUpdater.Services.Abstractions;
 using NadekoUpdater.ViewModels.Abstractions;
@@ -23,9 +24,10 @@ public class BotConfigViewModel : ViewModelBase<BotConfigView>
     private Bitmap _botAvatar = LoadLocalImage();
     private string _botName = string.Empty;
     private string _directoryHint = string.Empty;
-    private bool _areButtonsUnlocked;
-    private bool _isIdle;
+    private string _logContent = string.Empty;
     private bool _isBotRunning;
+    private bool _isIdle;
+    private bool _areButtonsUnlocked;
     private readonly AppConfigManager _appConfigManager;
     private readonly AppView _mainWindow;
     private readonly NadekoOrchestrator _botOrchestrator;
@@ -62,6 +64,15 @@ public class BotConfigViewModel : ViewModelBase<BotConfigView>
     {
         get => _botAvatar;
         set => this.RaiseAndSetIfChanged(ref _botAvatar, value);
+    }
+
+    /// <summary>
+    /// The content of the fake console.
+    /// </summary>
+    public string LogContent
+    {
+        get => _logContent;
+        private set => this.RaiseAndSetIfChanged(ref _logContent, value);
     }
 
     /// <summary>
@@ -132,6 +143,9 @@ public class BotConfigViewModel : ViewModelBase<BotConfigView>
         UpdateBar = updateBotBar;
 
         UpdateBar.Click += InstallOrUpdateAsync;
+        _botOrchestrator.OnStdout += WriteLog;
+        _botOrchestrator.OnStderr += WriteLog;
+        _botOrchestrator.OnBotExit += ReenableButtonsOnBotExit;
 
         var botEntry = _appConfigManager.AppConfig.BotEntries[botResolver.Position];
 
@@ -141,6 +155,7 @@ public class BotConfigViewModel : ViewModelBase<BotConfigView>
         BotName = botResolver.BotName;
         Position = botResolver.Position;
         UpdateBar.DependencyName = "Checking...";
+        LogContent = _botOrchestrator.GetLogs(botResolver.Position);
         IsBotRunning = botOrchestrator.IsBotRunning(botResolver.Position);
 
         if (IsBotRunning)
@@ -264,6 +279,11 @@ public class BotConfigViewModel : ViewModelBase<BotConfigView>
         // Update settings
         await _appConfigManager.DeleteBotEntryAsync(Position);
 
+        // Cleanup
+        _botOrchestrator.Stop(Resolver.Position);
+        _botOrchestrator.ClearLogs(Resolver.Position);
+        LogContent = string.Empty;
+
         // Trigger delete event
         BotDeleted?.Invoke(this, EventArgs.Empty);
     }
@@ -317,19 +337,14 @@ public class BotConfigViewModel : ViewModelBase<BotConfigView>
     /// Stops the bot instance associated with this view-model.
     /// </summary>
     public void StopBot()
-    {
-        IsBotRunning = !_botOrchestrator.Stop(Position);
-
-        if (!IsBotRunning)
-            EnableButtons(false, true);
-    }
+        => _botOrchestrator.Stop(Position);
 
     /// <summary>
     /// Loads the bot update bar.
     /// </summary>
     /// <param name="botResolver">The bot resolver.</param>
     /// <param name="updateBotBar">The update bar.</param>
-    private static async Task LoadUpdateBarAsync(IBotResolver botResolver, DependencyButtonViewModel updateBotBar)
+    private async static Task LoadUpdateBarAsync(IBotResolver botResolver, DependencyButtonViewModel updateBotBar)
     {
         var currentVersion = await botResolver.GetCurrentVersionAsync();
         updateBotBar.DependencyName = (string.IsNullOrWhiteSpace(currentVersion))
@@ -365,5 +380,29 @@ public class BotConfigViewModel : ViewModelBase<BotConfigView>
     {
         AreButtonsUnlocked = !lockButtons;
         IsIdle = isIdle;
+    }
+
+    private void WriteLog(NadekoOrchestrator botOrchestrator, ProcessStdWriteEventArgs eventArgs)
+    {
+        if (eventArgs.Position != Resolver.Position || eventArgs.Output == string.Empty)
+            return;
+
+        LogContent = (LogContent.Length > 200_000)
+            ? LogContent[(LogContent.IndexOf(Environment.NewLine, 100_000)..] + eventArgs.Output + Environment.NewLine
+            : LogContent + eventArgs.Output + Environment.NewLine;
+    }
+
+    /// <summary>
+    /// Reenables the buttons when the bot instance associated with this view-model exits.
+    /// </summary>
+    /// <param name="botOrchestrator">The bot orchestrator.</param>
+    /// <param name="eventArgs">The event arguments.</param>
+    private void ReenableButtonsOnBotExit(NadekoOrchestrator botOrchestrator, BotExitEventArgs eventArgs)
+    {
+        if (eventArgs.Position != Resolver.Position)
+            return;
+
+        IsBotRunning = false;
+        EnableButtons(false, true);
     }
 }

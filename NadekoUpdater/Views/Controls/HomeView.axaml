@@ -6,8 +6,8 @@
              xmlns:const="using:NadekoUpdater.Common"
              xmlns:dd="using:NadekoUpdater.DesignData.Controls"
              mc:Ignorable="d"
-             d:DesignWidth="{x:Static const:WindowConstants.DefaultWindowWidth}"
-             d:DesignHeight="{x:Static const:WindowConstants.DefaultWindowHeight}"
+             d:DesignWidth="{x:Static const:WindowConstants.MinWindowWidth}"
+             d:DesignHeight="{x:Static const:WindowConstants.MinWindowHeight}"
              x:Class="NadekoUpdater.Views.Controls.HomeView"
              x:DataType="vm:HomeViewModel">
     <Design.DataContext>

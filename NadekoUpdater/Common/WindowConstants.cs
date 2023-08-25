@@ -6,14 +6,24 @@ namespace NadekoUpdater.Common;
 public static class WindowConstants
 {
     /// <summary>
-    /// Defines the minimum width of the window.
+    /// Defines the default width of the window.
     /// </summary>
     public const string DefaultWindowWidth = "800";
 
     /// <summary>
-    /// Defines the minimum height of the window.
+    /// Defines the default height of the window.
     /// </summary>
     public const string DefaultWindowHeight = "500";
+
+    /// <summary>
+    /// Defines the minimum height of the window.
+    /// </summary>
+    public const string MinWindowWidth = "540";
+
+    /// <summary>
+    /// Defines the minimum height of the window.
+    /// </summary>
+    public const string MinWindowHeight = "450";
 
     /// <summary>
     /// Defines the default window title.

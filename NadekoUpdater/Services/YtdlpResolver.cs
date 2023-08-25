@@ -79,7 +79,7 @@ public sealed class YtdlpResolver : IYtdlpResolver
     /// <inheritdoc />
     public async ValueTask<string> GetLatestVersionAsync(CancellationToken cToken = default)
     {
-        var http = _httpClientFactory.CreateClient(AppStatics.NoRedirectClient);
+        var http = _httpClientFactory.CreateClient(AppConstants.NoRedirectClient);
 
         var response = await http.GetAsync("https://github.com/yt-dlp/yt-dlp/releases/latest", cToken);
 

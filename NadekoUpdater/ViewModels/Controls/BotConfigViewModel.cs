@@ -1,6 +1,4 @@
 using Avalonia.Controls;
-using Avalonia.Media.Imaging;
-using Avalonia.Platform;
 using Kotz.Events;
 using MsBox.Avalonia;
 using MsBox.Avalonia.Enums;
@@ -12,6 +10,7 @@ using NadekoUpdater.ViewModels.Abstractions;
 using NadekoUpdater.Views.Controls;
 using NadekoUpdater.Views.Windows;
 using ReactiveUI;
+using SkiaSharp;
 using System.Diagnostics;
 
 namespace NadekoUpdater.ViewModels.Controls;
@@ -19,15 +18,15 @@ namespace NadekoUpdater.ViewModels.Controls;
 /// <summary>
 /// View-model for <see cref="BotConfigView"/>, the window with settings and controls for a specific bot instance.
 /// </summary>
-public class BotConfigViewModel : ViewModelBase<BotConfigView>
+public class BotConfigViewModel : ViewModelBase<BotConfigView>, IDisposable
 {
-    private Bitmap _botAvatar = LoadLocalImage();
     private string _botName = string.Empty;
     private string _directoryHint = string.Empty;
     private string _logContent = string.Empty;
     private bool _isBotRunning;
     private bool _isIdle;
     private bool _areButtonsUnlocked;
+    private SKBitmap _botAvatar;
     private readonly AppConfigManager _appConfigManager;
     private readonly AppView _mainWindow;
     private readonly IBotOrchestrator _botOrchestrator;
@@ -61,7 +60,7 @@ public class BotConfigViewModel : ViewModelBase<BotConfigView>
     /// <summary>
     /// The bot avatar to be displayed on the front-end.
     /// </summary>
-    public Bitmap BotAvatar
+    public SKBitmap BotAvatar
     {
         get => _botAvatar;
         set => this.RaiseAndSetIfChanged(ref _botAvatar, value);
@@ -157,7 +156,7 @@ public class BotConfigViewModel : ViewModelBase<BotConfigView>
         LogContent = logContent ?? string.Empty;
         Resolver = botResolver;
         BotDirectoryUriBar.CurrentUri = botEntry.InstanceDirectoryUri;
-        BotAvatar = LoadLocalImage(botEntry.AvatarUri);
+        _botAvatar = Utilities.LoadLocalImage(botEntry.AvatarUri);
         BotName = botResolver.BotName;
         Position = botResolver.Position;
         UpdateBar.DependencyName = "Checking...";
@@ -235,6 +234,24 @@ public class BotConfigViewModel : ViewModelBase<BotConfigView>
         {
             await _mainWindow.ShowDialogWindowAsync($"An error occurred while opening {fileName}:\n{ex.Message}", DialogType.Error, Icon.Error);
         }
+    }
+
+    /// <summary>
+    /// Associates an avatar to the bot instance of this view-model.
+    /// </summary>
+    public async ValueTask SaveAvatarAsync()
+    {
+        var imageFileStorage = await _mainWindow.StorageProvider.OpenFilePickerAsync(AppStatics.ImageFilePickerOptions);
+
+        if (imageFileStorage.Count is 0)
+            return;
+
+        var botEntry = _appConfigManager.AppConfig.BotEntries[Resolver.Position];
+        var imageUri = Path.Combine(imageFileStorage[0].Path.AbsolutePath.Split('/'));
+        await _appConfigManager.UpdateConfigAsync(x => x.BotEntries[Resolver.Position] = botEntry with { AvatarUri = imageUri });
+
+        BotAvatar.Dispose();
+        BotAvatar = Utilities.LoadLocalImage(imageUri);
     }
 
     /// <summary>
@@ -371,18 +388,6 @@ public class BotConfigViewModel : ViewModelBase<BotConfigView>
     }
 
     /// <summary>
-    /// Loads the image at the specified location or the bot avatar placeholder one if it was not found.
-    /// </summary>
-    /// <param name="uri">The absolute path to the image file or <see langword="null"/> to get the avatar placeholder.</param>
-    /// <returns>The requested image or the default bot avatar placeholder.</returns>
-    private static Bitmap LoadLocalImage(string? uri = default)
-    {
-        return (File.Exists(uri))
-            ? new(AssetLoader.Open(new Uri(uri)))
-            : new(AssetLoader.Open(new Uri(AppStatics.BotAvatarPlaceholderUri)));
-    }
-
-    /// <summary>
     /// Locks or unlocks the settings buttons of this view-model.
     /// </summary>
     /// <param name="lockButtons">Whether the settings buttons should be locked.</param>
@@ -438,5 +443,12 @@ public class BotConfigViewModel : ViewModelBase<BotConfigView>
 
         IsBotRunning = false;
         EnableButtons(false, true);
+    }
+    
+    /// <inheritdoc/>
+    public void Dispose()
+    {
+        BotAvatar?.Dispose();
+        GC.SuppressFinalize(this);
     }
 }

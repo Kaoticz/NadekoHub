@@ -1,3 +1,5 @@
+using Avalonia.Platform;
+using SkiaSharp;
 using System.ComponentModel;
 using System.Diagnostics;
 
@@ -13,6 +15,33 @@ internal static class Utilities
     private static readonly EnvironmentVariableTarget _envTarget = (Environment.OSVersion.Platform is PlatformID.Win32NT)
         ? EnvironmentVariableTarget.User
         : EnvironmentVariableTarget.Process;
+
+    /// <summary>
+    /// Loads an image embeded with this application.
+    /// </summary>
+    /// <param name="uri">An uri that starts with "avares://"</param>
+    /// <remarks>Valid uris must start with "avares://".</remarks>
+    /// <returns>The embeded image or the default bot avatar placeholder.</returns>
+    /// <exception cref="FileNotFoundException">Occurs when the embeded resource does not exist.</exception>
+    public static SKBitmap LoadEmbededImage(string? uri = default)
+    {
+        return (string.IsNullOrWhiteSpace(uri) || !uri.StartsWith("avares://"))
+            ? SKBitmap.Decode(AssetLoader.Open(new Uri(AppConstants.BotAvatarPlaceholderUri)))
+            : SKBitmap.Decode(AssetLoader.Open(new Uri(uri)));
+    }
+
+    /// <summary>
+    /// Loads the image at the specified location or the bot avatar placeholder if it was not found.
+    /// </summary>
+    /// <param name="uri">The absolute path to the image file or <see langword="null"/> to get the avatar placeholder.</param>
+    /// <remarks>This fallsback to <see cref="LoadEmbededImage(string?)"/> if <paramref name="uri"/> doesn't point to a valid image.</remarks>
+    /// <returns>The requested image or the default bot avatar placeholder.</returns>
+    public static SKBitmap LoadLocalImage(string? uri = default)
+    {
+        return (File.Exists(uri))
+            ? SKBitmap.Decode(uri)
+            : LoadEmbededImage(uri);
+    }
 
     /// <summary>
     /// Starts the specified program.

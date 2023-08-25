@@ -38,7 +38,7 @@ public sealed class FfmpegWindowsResolver : FfmpegResolver
     /// <inheritdoc />
     public override async ValueTask<string> GetLatestVersionAsync(CancellationToken cToken = default)
     {
-        var http = _httpClientFactory.CreateClient(AppStatics.NoRedirectClient);
+        var http = _httpClientFactory.CreateClient(AppConstants.NoRedirectClient);
 
         var response = await http.GetAsync("https://github.com/GyanD/codexffmpeg/releases/latest", cToken);
 

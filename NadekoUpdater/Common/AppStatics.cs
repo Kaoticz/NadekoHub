@@ -1,5 +1,6 @@
 using Avalonia.Controls;
 using Avalonia.Platform;
+using Avalonia.Platform.Storage;
 using System.Text.RegularExpressions;
 
 namespace NadekoUpdater.Common;
@@ -44,30 +45,28 @@ public static partial class AppStatics
     public static string AppDepsUri { get; } = Path.Combine(AppDefaultConfigDirectoryUri, "Dependencies");
 
     /// <summary>
+    /// Represents the window icon to be used on dialog windows.
+    /// </summary>
+    public static WindowIcon DialogWindowIcon { get; } = new(AssetLoader.Open(new Uri(AppConstants.ApplicationWindowIcon)));
+
+    /// <summary>
+    /// Represents the image formats supported by the views of this application.
+    /// </summary>
+    public static FilePickerOpenOptions ImageFilePickerOptions { get; } = new()
+    {
+        AllowMultiple = false,
+        FileTypeFilter = new FilePickerFileType[]
+        {
+            new("Image") { Patterns = new[] { "*.png", "*.jpg", "*.jpeg", "*.gif", "*.webp" } },
+            new("All") { Patterns = new[] { "*.*" } }
+        }
+    };
+
+    /// <summary>
     /// Matches the version of Ffmpeg from its CLI output.
     /// </summary>
     /// <remarks>Pattern: ^(?:\S+\s+\D*?){2}(git\S+|[\d\.]+)</remarks>
     public static Regex FfmpegVersionRegex { get; } = FfmpegVersionRegexGenerator();
-
-    /// <summary>
-    /// Represents the window icon to be used on dialog windows.
-    /// </summary>
-    public static WindowIcon DialogWindowIcon { get; } = new(AssetLoader.Open(new Uri(ApplicationWindowIcon)));
-
-    /// <summary>
-    /// Defines the location of the application window icon.
-    /// </summary>
-    public const string ApplicationWindowIcon = "avares://NadekoUpdater/Assets/nadekoupdatericon.ico";
-
-    /// <summary>
-    /// Defines the location of the default image for the bot avatar.
-    /// </summary>
-    public const string BotAvatarPlaceholderUri = "avares://NadekoUpdater/Assets/bot.png";
-
-    /// <summary>
-    /// The name for an <see cref="HttpClient"/> that does not automatically follow redirect responses.
-    /// </summary>
-    public const string NoRedirectClient = "NoRedirect";
 
     [GeneratedRegex(@"^(?:\S+\s+\D*?){2}(git\S+|[\d\.]+)", RegexOptions.Compiled)]
     private static partial Regex FfmpegVersionRegexGenerator();

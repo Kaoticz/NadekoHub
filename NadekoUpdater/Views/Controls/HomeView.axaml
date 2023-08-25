@@ -17,7 +17,7 @@
     <Grid RowDefinitions="*,40,*,*,30" ColumnDefinitions="*,*,*,*,*" ShowGridLines="True">
         <!--Top Banner-->
         <Border Grid.Row="0" Grid.Column="0" ClipToBounds="True" CornerRadius="70" Margin="10">
-            <Image Stretch="UniformToFill" Source="{x:Static const:AppStatics.BotAvatarPlaceholderUri}" />
+            <Image Stretch="UniformToFill" Source="{x:Static const:AppConstants.BotAvatarPlaceholderUri}" />
         </Border>
         <TextBlock Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="3" Text="Welcome to NadekoBot v4" FontSize="28"
                    FontStyle="Oblique" TextWrapping="WrapWithOverflow" HorizontalAlignment="Center" VerticalAlignment="Center"/>

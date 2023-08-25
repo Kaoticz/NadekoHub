@@ -55,7 +55,7 @@ public static class IServiceCollectionExt
 
         // Web requests
         serviceCollection.AddHttpClient();
-        serviceCollection.AddHttpClient(AppStatics.NoRedirectClient)
+        serviceCollection.AddHttpClient(AppConstants.NoRedirectClient)
             .ConfigureHttpMessageHandlerBuilder(builder => builder.PrimaryHandler = _httpHandler);
 
         // App settings

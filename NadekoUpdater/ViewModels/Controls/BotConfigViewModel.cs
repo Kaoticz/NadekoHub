@@ -58,21 +58,17 @@ public class BotConfigViewModel : ViewModelBase<BotConfigView>, IDisposable
     public DependencyButtonViewModel UpdateBar { get; }
 
     /// <summary>
+    /// The fake console that displays the bot's output.
+    /// </summary>
+    public FakeConsoleViewModel FakeConsole { get; }
+
+    /// <summary>
     /// The bot avatar to be displayed on the front-end.
     /// </summary>
     public SKBitmap BotAvatar
     {
         get => _botAvatar;
         set => this.RaiseAndSetIfChanged(ref _botAvatar, value);
-    }
-
-    /// <summary>
-    /// The content of the fake console.
-    /// </summary>
-    public string LogContent
-    {
-        get => _logContent;
-        private set => this.RaiseAndSetIfChanged(ref _logContent, value);
     }
 
     /// <summary>
@@ -131,11 +127,12 @@ public class BotConfigViewModel : ViewModelBase<BotConfigView>, IDisposable
     /// <param name="mainWindow">The main window of the application.</param>
     /// <param name="botDirectoryUriBar">The text box with the path to the directory where the bot instance is.</param>
     /// <param name="updateBotBar">The bar for updating the bot.</param>
+    /// <param name="fakeConsole">The fake console to write the bot's output to.</param>
     /// <param name="botResolver">The bot resolver to be used.</param>
     /// <param name="botOrchestrator">The bot orchestrator.</param>
     /// <param name="logWriter">The service responsible for creating log files.</param>
     public BotConfigViewModel(AppConfigManager appConfigManager, AppView mainWindow, UriInputBarViewModel botDirectoryUriBar, DependencyButtonViewModel updateBotBar,
-        IBotResolver botResolver, IBotOrchestrator botOrchestrator, ILogWriter logWriter)
+        FakeConsoleViewModel fakeConsole, IBotResolver botResolver, IBotOrchestrator botOrchestrator, ILogWriter logWriter)
     {
         _appConfigManager = appConfigManager;
         _mainWindow = mainWindow;
@@ -143,6 +140,7 @@ public class BotConfigViewModel : ViewModelBase<BotConfigView>, IDisposable
         _logWriter = logWriter;
         BotDirectoryUriBar = botDirectoryUriBar;
         UpdateBar = updateBotBar;
+        FakeConsole = fakeConsole;
 
         UpdateBar.Click += InstallOrUpdateAsync;
         _botOrchestrator.OnStdout += WriteLog;
@@ -153,7 +151,8 @@ public class BotConfigViewModel : ViewModelBase<BotConfigView>, IDisposable
         var botEntry = _appConfigManager.AppConfig.BotEntries[botResolver.Position];
 
         _logWriter.TryRead(botResolver.Position, out var logContent);
-        LogContent = logContent ?? string.Empty;
+        FakeConsole.Content = logContent ?? string.Empty;
+        FakeConsole.Watermark = "Waiting for the bot to start...";
         Resolver = botResolver;
         BotDirectoryUriBar.CurrentUri = botEntry.InstanceDirectoryUri;
         _botAvatar = Utilities.LoadLocalImage(botEntry.AvatarUri);
@@ -303,7 +302,7 @@ public class BotConfigViewModel : ViewModelBase<BotConfigView>, IDisposable
         await _appConfigManager.DeleteBotEntryAsync(Position);
 
         // Cleanup
-        LogContent = string.Empty;
+        FakeConsole.Content = string.Empty;
         await _logWriter.FlushAsync(Resolver.Position, true);
 
         UpdateBar.Click -= InstallOrUpdateAsync;
@@ -416,9 +415,9 @@ public class BotConfigViewModel : ViewModelBase<BotConfigView>, IDisposable
 
         _logWriter.TryAdd(eventArgs.Position, eventArgs.Output);
 
-        LogContent = (LogContent.Length > 100_000)
-            ? LogContent[LogContent.IndexOf(Environment.NewLine, 60_000)..] + eventArgs.Output + Environment.NewLine
-            : LogContent + eventArgs.Output + Environment.NewLine;
+        FakeConsole.Content = (FakeConsole.Content.Length > 100_000)
+            ? FakeConsole.Content[FakeConsole.Content.IndexOf(Environment.NewLine, 60_000)..] + eventArgs.Output + Environment.NewLine
+            : FakeConsole.Content + eventArgs.Output + Environment.NewLine;
     }
 
     /// <summary>
@@ -434,7 +433,7 @@ public class BotConfigViewModel : ViewModelBase<BotConfigView>, IDisposable
         var message = Environment.NewLine + Resolver.BotName + " stopped." + Environment.NewLine;
 
         _logWriter.TryAdd(Resolver.Position, message);
-        LogContent += message;
+        FakeConsole.Content += message;
     }
 
     /// <summary>

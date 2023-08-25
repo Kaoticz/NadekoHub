@@ -63,47 +63,7 @@
         
         <!--Fake Console-->
         <Expander Grid.Row="2" Header="Logs" Padding="1" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
-            <TextBox Watermark="Waiting for the bot to start..." IsReadOnly="True" TextWrapping="Wrap" AcceptsReturn="True" AcceptsTab="True"
-                     Text="{Binding LogContent}" CaretIndex="{Binding LogContent.Length}">
-                <!--In order to make the text box look like a terminal, we need to change its style-->
-                <TextBox.Styles>
-                    <!--Set the default colors-->
-                    <Style Selector="TextBox">
-                        <Setter Property="Background" Value="Black" />
-                        <Setter Property="Foreground" Value="LightGray" />
-                    </Style>
-                    <!--Set the colors for when the mouse pointer goes over the text box-->
-                    <Style Selector="TextBox:pointerover">
-                        <!--Set the text color-->
-                        <Setter Property="Foreground" Value="LightGray" />
-
-                        <!--Set the background color-->
-                        <Style Selector="^ /template/ Border#PART_BorderElement">
-                            <Setter Property="Background" Value="Black" />
-                        </Style>
-                        
-                        <!--Set the watermark color-->
-                        <Style Selector="^ /template/ TextBlock#PART_Watermark">
-                            <Setter Property="Foreground" Value="LightGray" />
-                        </Style>
-                    </Style>
-                    <!--Set the colors for when the text box has text selected in it-->
-                    <Style Selector="TextBox:focus">
-                        <!--Set the text color-->
-                        <Setter Property="Foreground" Value="LightGray" />
-                        
-                        <!--Set the background color-->
-                        <Style Selector="^ /template/ Border#PART_BorderElement">
-                            <Setter Property="Background" Value="Black"/>
-                        </Style>
-                        
-                        <!--Set the watermark color-->
-                        <Style Selector="^ /template/ TextBlock#PART_Watermark">
-                            <Setter Property="Foreground" Value="LightGray" />
-                        </Style>
-                    </Style>
-                </TextBox.Styles>
-            </TextBox>
+            <ContentControl Content="{Binding FakeConsole}" />
         </Expander>
     </Grid>
 </UserControl>

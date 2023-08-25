@@ -300,6 +300,12 @@ public class BotConfigViewModel : ViewModelBase<BotConfigView>
     /// <param name="eventArgs">The event arguments.</param>
     public async Task InstallOrUpdateAsync(DependencyButtonViewModel dependencyButton, EventArgs eventArgs)
     {
+        if (_botOrchestrator.IsBotRunning(Resolver.Position))
+        {
+            await _mainWindow.ShowDialogWindowAsync("Please, stop the bot before updating it.", DialogType.Warning, Icon.Warning);
+            return;
+        }
+
         EnableButtons(true, false);
 
         var originalStatus = UpdateBar.Status;

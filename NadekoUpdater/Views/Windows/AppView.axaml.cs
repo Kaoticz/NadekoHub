@@ -72,6 +72,16 @@ public partial class AppView : ReactiveWindow<AppViewModel>
         InitializeComponent();
     }
 
+    /// <inheritdoc/>
+    protected override void OnOpened(EventArgs eventArgs)
+    {
+        // Ensure that bots on Unix system have access to the dependencies.
+        if (Environment.OSVersion.Platform is PlatformID.Unix)
+            Utilities.AddPathToPATHEnvar(AppStatics.AppDepsUri);
+
+        base.OnOpened(eventArgs);
+    }
+
     /// <inheritdoc />
     protected override void OnClosing(WindowClosingEventArgs eventArgs)
     {

@@ -34,7 +34,7 @@ internal static class Utilities
     /// Loads the image at the specified location or the bot avatar placeholder if it was not found.
     /// </summary>
     /// <param name="uri">The absolute path to the image file or <see langword="null"/> to get the avatar placeholder.</param>
-    /// <remarks>This fallsback to <see cref="LoadEmbededImage(string?)"/> if <paramref name="uri"/> doesn't point to a valid image.</remarks>
+    /// <remarks>This fallsback to <see cref="LoadEmbededImage(string?)"/> if <paramref name="uri"/> doesn't point to a valid image file.</remarks>
     /// <returns>The requested image or the default bot avatar placeholder.</returns>
     public static SKBitmap LoadLocalImage(string? uri = default)
     {
@@ -135,6 +135,10 @@ internal static class Utilities
     /// Adds a directory path to the PATH environment variable.
     /// </summary>
     /// <param name="directoryUri">The absolute path to a directory.</param>
+    /// <remarks>
+    /// On Windows, this needs to be called once and the dependencies will be available for the user forever. <br />
+    /// On Unix systems, we can only add to the PATH on a process basis, so this needs to be called at least once everytime the application is opened.
+    /// </remarks>
     /// <returns><see langword="true"/> if <paramref name="directoryUri"/> got successfully added to the PATH envar, <see langword="false"/> otherwise.</returns>
     /// <exception cref="ArgumentException" />
     /// <exception cref="ArgumentNullException" />

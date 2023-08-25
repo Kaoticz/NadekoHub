@@ -306,6 +306,12 @@ public class BotConfigViewModel : ViewModelBase<BotConfigView>, IDisposable
         LogContent = string.Empty;
         await _logWriter.FlushAsync(Resolver.Position, true);
 
+        UpdateBar.Click -= InstallOrUpdateAsync;
+        _botOrchestrator.OnStdout -= WriteLog;
+        _botOrchestrator.OnStderr -= WriteLog;
+        _botOrchestrator.OnBotExit -= LogBotExit;
+        _botOrchestrator.OnBotExit -= ReenableButtonsOnBotExit;
+
         // Trigger delete event
         BotDeleted?.Invoke(this, EventArgs.Empty);
     }

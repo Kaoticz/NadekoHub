@@ -44,7 +44,7 @@ internal static class Utilities
     }
 
     /// <summary>
-    /// Starts the specified program.
+    /// Starts the specified program in the background.
     /// </summary>
     /// <param name="program">
     /// The name of the program in the PATH environment variable,

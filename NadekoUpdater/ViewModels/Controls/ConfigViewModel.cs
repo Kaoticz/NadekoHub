@@ -1,6 +1,5 @@
 using MsBox.Avalonia.Enums;
 using NadekoUpdater.Enums;
-using NadekoUpdater.Services;
 using NadekoUpdater.ViewModels.Abstractions;
 using NadekoUpdater.Views.Controls;
 using NadekoUpdater.Views.Windows;
@@ -97,6 +96,12 @@ public class ConfigViewModel : ViewModelBase<ConfigView>
         _ = InitializeDependencyButtonAsync(DependencyButtons[0], ffmpegResolver);
         _ = InitializeDependencyButtonAsync(DependencyButtons[1], ytdlpResolver);
     }
+
+    /// <summary>
+    /// Shows the "About Me" window as a dialog window.
+    /// </summary>
+    public async ValueTask OpenAboutMeAsync()
+        => await new AboutMeView().ShowDialog(_mainWindow); // This looks weird, but AboutMeView is rendered useless once this method exits.
 
     /// <summary>
     /// Saves the minimize preference to the configuration file.

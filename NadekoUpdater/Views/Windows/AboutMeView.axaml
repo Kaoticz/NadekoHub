@@ -1,0 +1,38 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:vm="using:NadekoUpdater.ViewModels.Windows"
+        xmlns:const="using:NadekoUpdater.Common"
+        xmlns:dd="using:NadekoUpdater.DesignData.Windows"
+        mc:Ignorable="d" d:DesignWidth="400" d:DesignHeight="285"
+        Width="400" Height="285"
+        x:Class="NadekoUpdater.Views.Windows.AboutMeView"
+        x:DataType="vm:AboutMeViewModel"
+        Title="About NadekoUpdater"
+        Icon="/Assets/nadekoupdatericon.ico"
+        WindowStartupLocation="CenterOwner"
+        CanResize="False">
+    <Design.DataContext>
+        <dd:DesignAboutMeViewModel/>
+    </Design.DataContext>
+
+    <StackPanel Margin="10 20 10 20">
+        <TextBlock TextAlignment="Center" TextWrapping="WrapWithOverflow" Margin="0 0 0 10"
+            Text="NadekoBot is a general purpose open-source Discord bot created by Kwoth. Support the project!" />
+
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+            <Button Content="Paypal" Command="{Binding OpenUrl}" CommandParameter="https://www.paypal.com/paypalme/kwoth" />
+            <Button Content="Official Website" Margin="10 0 10 0" Command="{Binding OpenUrl}" CommandParameter="https://nadeko.bot" />
+            <Button Content="Patreon" Command="{Binding OpenUrl}" CommandParameter="https://www.patreon.com/nadekobot" />
+        </StackPanel>
+        
+        <Separator Margin="20" HorizontalAlignment="Stretch" />
+
+        <TextBlock TextWrapping="WrapWithOverflow" Margin="0 0 0 10"
+            Text="This tool was made by Kotz. If it has been useful to you, consider showing your support by buying me a coffee." />
+        <Button Content="Buy me a Ko-fi" HorizontalAlignment="Center" Command="{Binding OpenUrl}" CommandParameter="https://ko-fi.com/kaoticz" />
+        <TextBlock Text="© 2023 NadekoUpdater" FontSize="11" HorizontalAlignment="Center" Margin="0 30 0 0" />
+        <TextBlock Text="License: to-do" FontSize="11" HorizontalAlignment="Center" />
+    </StackPanel>
+</Window>

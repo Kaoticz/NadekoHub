@@ -31,6 +31,7 @@
   <ItemGroup>
     <Watch Remove="Views\Controls\BotConfigView.axaml" />
     <Watch Remove="Views\Controls\FakeConsole.axaml" />
+    <Watch Remove="Views\Windows\AboutMeView.axaml" />
   </ItemGroup>
 
   <ItemGroup>

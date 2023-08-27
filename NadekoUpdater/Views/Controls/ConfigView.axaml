@@ -63,12 +63,17 @@
                 <Button Grid.Row="5" Grid.Column="2" Margin="2 0 0 0" Content="Open" IsEnabled="{Binding LogsUriBar.IsValidUri}"
                         Command="{Binding LogsUriBar.OpenFolder}" CommandParameter="{Binding LogsUriBar.CurrentUri}" />
             </Grid>
-            
-            <TextBlock Margin="0 8 0 0" Text="Maximum log file size (in MB):" ToolTip.Tip="Defines the maximum size a log file is allowed to have. Set to 0 to disable logging." />
-            <ButtonSpinner Content="{Binding MaxLogSize}" Spin="ButtonSpun" ButtonSpinnerLocation="Right" HorizontalAlignment="Left" />
 
-            <CheckBox Content="Minimize to system tray." ToolTip.Tip="Defines whether the updater should be minimized to the system tray rather than closed."
-                      IsChecked="{Binding MinimizeToTray}" Command="{Binding ToggleMinimizeToTrayAsync}" />
+            <Grid RowDefinitions="Auto,Auto,Auto" ColumnDefinitions="*,Auto" ShowGridLines="True">
+                <TextBlock Grid.Row="0" Grid.Column="0" Margin="0 8 0 0" Text="Maximum log file size (in MB):" ToolTip.Tip="Defines the maximum size a log file is allowed to have. Set to 0 to disable logging." />
+                <ButtonSpinner Grid.Row="1" Grid.Column="0" Content="{Binding MaxLogSize}" Spin="ButtonSpun" ButtonSpinnerLocation="Right" HorizontalAlignment="Left" />
+
+                <CheckBox Grid.Row="2" Grid.Column="0" Content="Minimize to system tray." ToolTip.Tip="Defines whether the updater should be minimized to the system tray rather than closed."
+                          IsChecked="{Binding MinimizeToTray}" Command="{Binding ToggleMinimizeToTrayAsync}" />
+                
+                <Button Grid.Row="1" Grid.Column="1" Grid.RowSpan="2" Content="About" Margin="0 0 30 0"
+                        Command="{Binding OpenAboutMeAsync}"/>
+            </Grid>
         </StackPanel>
     </Grid>
 </UserControl>

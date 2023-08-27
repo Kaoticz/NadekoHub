@@ -7,12 +7,12 @@ using System.Text.RegularExpressions;
 namespace NadekoUpdater.Services;
 
 /// <summary>
-/// Service that checks, downloads, installs, and updates a NadekoBot instance
+/// Service that checks, downloads, installs, and updates a NadekoBot instance.
 /// </summary>
 /// <remarks>Source: https://gitlab.com/Kwoth/nadekobot/-/releases/permalink/latest</remarks>
 public sealed partial class NadekoResolver : IBotResolver
 {
-    private static readonly HashSet<uint> _updateIdOngoing = new();
+    private static readonly HashSet<Guid> _updateIdOngoing = new();
     private static readonly string _tempDirectory = Path.GetTempPath();
     private static readonly Regex _unzipedDirRegex = GenerateUnzipedDirRegex();
     private readonly IHttpClientFactory _httpClientFactory;
@@ -25,23 +25,23 @@ public sealed partial class NadekoResolver : IBotResolver
     public string FileName { get; } = (OperatingSystem.IsWindows()) ? "NadekoBot.exe" : "NadekoBot";
 
     /// <inheritdoc/>
-    public uint Position { get; }
+    public Guid Id { get; }
 
     /// <inheritdoc/>
     public string BotName { get; }
 
     /// <summary>
-    /// Creates a service that checks, downloads, installs, and updates a NadekoBot instance
+    /// Creates a service that checks, downloads, installs, and updates a NadekoBot instance.
     /// </summary>
     /// <param name="httpClientFactory">The HTTP client factory.</param>
     /// <param name="appConfigManager">The application's settings.</param>
-    /// <param name="position">The position of the bot instance on the lateral bar.</param>
-    public NadekoResolver(IHttpClientFactory httpClientFactory, AppConfigManager appConfigManager, uint position)
+    /// <param name="botId">The Id of the bot.</param>
+    public NadekoResolver(IHttpClientFactory httpClientFactory, AppConfigManager appConfigManager, Guid botId)
     {
         _httpClientFactory = httpClientFactory;
         _appConfigManager = appConfigManager;
-        Position = position;
-        BotName = _appConfigManager.AppConfig.BotEntries[Position].Name;
+        Id = botId;
+        BotName = _appConfigManager.AppConfig.BotEntries[Id].Name;
     }
 
     /// <inheritdoc/>
@@ -60,7 +60,7 @@ public sealed partial class NadekoResolver : IBotResolver
     /// <inheritdoc/>
     public async ValueTask<string?> CreateBackupAsync()
     {
-        var botInstance = _appConfigManager.AppConfig.BotEntries[Position];
+        var botInstance = _appConfigManager.AppConfig.BotEntries[Id];
 
         if (!Directory.Exists(botInstance.InstanceDirectoryUri))
             return null;
@@ -82,7 +82,7 @@ public sealed partial class NadekoResolver : IBotResolver
     /// <inheritdoc/>
     public async ValueTask<string?> GetCurrentVersionAsync(CancellationToken cToken = default)
     {
-        var botEntry = _appConfigManager.AppConfig.BotEntries[Position];
+        var botEntry = _appConfigManager.AppConfig.BotEntries[Id];
 
         if (!string.IsNullOrWhiteSpace(botEntry.Version))
             return botEntry.Version;
@@ -97,7 +97,7 @@ public sealed partial class NadekoResolver : IBotResolver
 
         var currentVersion = $"{version.Major}.{version.Minor}.{version.Build}";
 
-        await _appConfigManager.UpdateConfigAsync(x => x.BotEntries[Position] = x.BotEntries[Position] with { Version = currentVersion }, cToken);
+        await _appConfigManager.UpdateBotEntryAsync(Id, x => x with { Version = currentVersion }, cToken);
 
         return currentVersion;
     }
@@ -118,10 +118,10 @@ public sealed partial class NadekoResolver : IBotResolver
     /// <inheritdoc/>
     public async ValueTask<(string? OldVersion, string? NewVersion)> InstallOrUpdateAsync(string installationUri, CancellationToken cToken = default)
     {
-        if (_updateIdOngoing.Contains(Position))
+        if (_updateIdOngoing.Contains(Id))
             return (null, null);
 
-        _updateIdOngoing.Add(Position);
+        _updateIdOngoing.Add(Id);
 
         var currentVersion = await GetCurrentVersionAsync(cToken);
         var latestVersion = await GetLatestVersionAsync(cToken);
@@ -129,7 +129,7 @@ public sealed partial class NadekoResolver : IBotResolver
         // Update
         if (latestVersion == currentVersion)
         {
-            _updateIdOngoing.Remove(Position);
+            _updateIdOngoing.Remove(Id);
             return (currentVersion, null);
         }
         
@@ -182,7 +182,7 @@ public sealed partial class NadekoResolver : IBotResolver
             }
 
             // Update settings
-            await _appConfigManager.UpdateConfigAsync(x => x.BotEntries[Position] = x.BotEntries[Position] with { Version = latestVersion }, cToken);
+            await _appConfigManager.UpdateBotEntryAsync(Id, x => x with { Version = latestVersion }, cToken);
 
             // Create creds.yml
             var credsUri = Path.Combine(installationUri, "creds.yml");
@@ -194,7 +194,7 @@ public sealed partial class NadekoResolver : IBotResolver
         }
         finally
         {
-            _updateIdOngoing.Remove(Position);
+            _updateIdOngoing.Remove(Id);
 
             // Cleanup
             Utilities.TryDeleteFile(zipTempLocation);

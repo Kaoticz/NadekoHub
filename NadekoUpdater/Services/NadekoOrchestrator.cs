@@ -11,7 +11,7 @@ namespace NadekoUpdater.Services;
 /// </summary>
 public sealed class NadekoOrchestrator : IBotOrchestrator
 {
-    private readonly Dictionary<uint, Process> _runningBots = new();
+    private readonly Dictionary<Guid, Process> _runningBots = new();
     private readonly ReadOnlyAppConfig _appConfig;
     private readonly string _fileName = (OperatingSystem.IsWindows()) ? "NadekoBot.exe" : "NadekoBot";
 
@@ -33,15 +33,15 @@ public sealed class NadekoOrchestrator : IBotOrchestrator
 
 
     /// <inheritdoc/>
-    public bool IsBotRunning(uint botPosition)
-        => _runningBots.ContainsKey(botPosition);
+    public bool IsBotRunning(Guid botId)
+        => _runningBots.ContainsKey(botId);
 
 
     /// <inheritdoc/>
-    public bool Start(uint botPosition)
+    public bool Start(Guid botId)
     {
-        if (_runningBots.ContainsKey(botPosition)
-            || !_appConfig.BotEntries.TryGetValue(botPosition, out var botEntry)
+        if (_runningBots.ContainsKey(botId)
+            || !_appConfig.BotEntries.TryGetValue(botId, out var botEntry)
             || !File.Exists(Path.Combine(botEntry.InstanceDirectoryUri, _fileName)))
             return false;
 
@@ -65,13 +65,13 @@ public sealed class NadekoOrchestrator : IBotOrchestrator
         botProcess.BeginOutputReadLine();
         botProcess.BeginErrorReadLine();
 
-        return _runningBots.TryAdd(botPosition, botProcess);
+        return _runningBots.TryAdd(botId, botProcess);
     }
 
     /// <inheritdoc/>
-    public bool Stop(uint botPosition)
+    public bool Stop(Guid botId)
     {
-        if (!_runningBots.TryGetValue(botPosition, out var botProcess))
+        if (!_runningBots.TryGetValue(botId, out var botProcess))
             return false;
 
         botProcess.Kill(true);
@@ -97,10 +97,10 @@ public sealed class NadekoOrchestrator : IBotOrchestrator
     /// <exception cref="InvalidOperationException">Occurs when <paramref name="sender"/> is not of type <see cref="Process"/>.</exception>
     private void OnExit(object? sender, EventArgs eventArgs)
     {
-        var (position, process) = _runningBots.First(x => x.Value.Equals(sender));
-        OnBotExit?.Invoke(this, new(position, process.ExitCode));
+        var (id, process) = _runningBots.First(x => x.Value.Equals(sender));
+        OnBotExit?.Invoke(this, new(id, process.ExitCode));
 
-        _runningBots.Remove(position);
+        _runningBots.Remove(id);
         process.CancelOutputRead();
         process.CancelErrorRead();
         process.Dispose();
@@ -116,8 +116,8 @@ public sealed class NadekoOrchestrator : IBotOrchestrator
         if (string.IsNullOrWhiteSpace(eventArgs.Data))
             return;
 
-        var (position, _) = _runningBots.First(x => x.Value.Equals(sender));
-        var newEventArgs = new ProcessStdWriteEventArgs(position, eventArgs.Data);
+        var (id, _) = _runningBots.First(x => x.Value.Equals(sender));
+        var newEventArgs = new ProcessStdWriteEventArgs(id, eventArgs.Data);
 
         OnStdout?.Invoke(this, newEventArgs);
     }
@@ -132,8 +132,8 @@ public sealed class NadekoOrchestrator : IBotOrchestrator
         if (string.IsNullOrWhiteSpace(eventArgs.Data))
             return;
 
-        var (position, _) = _runningBots.First(x => x.Value.Equals(sender));
-        var newEventArgs = new ProcessStdWriteEventArgs(position, eventArgs.Data);
+        var (id, _) = _runningBots.First(x => x.Value.Equals(sender));
+        var newEventArgs = new ProcessStdWriteEventArgs(id, eventArgs.Data);
 
         OnStderr?.Invoke(this, newEventArgs);
     }

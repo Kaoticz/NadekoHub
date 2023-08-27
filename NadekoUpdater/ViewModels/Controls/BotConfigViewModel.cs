@@ -22,7 +22,6 @@ public class BotConfigViewModel : ViewModelBase<BotConfigView>, IDisposable
 {
     private string _botName = string.Empty;
     private string _directoryHint = string.Empty;
-    private string _logContent = string.Empty;
     private bool _isBotRunning;
     private bool _isIdle;
     private bool _areButtonsUnlocked;
@@ -43,9 +42,9 @@ public class BotConfigViewModel : ViewModelBase<BotConfigView>, IDisposable
     public IBotResolver Resolver { get; }
 
     /// <summary>
-    /// The position of this bot instance in the lateral bot list.
+    /// The Id of the bot associated with this view-model.
     /// </summary>
-    public uint Position { get; }
+    public Guid Id { get; }
 
     /// <summary>
     /// The bar that defines where the bot instance should be saved to.
@@ -148,18 +147,18 @@ public class BotConfigViewModel : ViewModelBase<BotConfigView>, IDisposable
         _botOrchestrator.OnBotExit += LogBotExit;
         _botOrchestrator.OnBotExit += ReenableButtonsOnBotExit;
 
-        var botEntry = _appConfigManager.AppConfig.BotEntries[botResolver.Position];
+        var botEntry = _appConfigManager.AppConfig.BotEntries[botResolver.Id];
 
-        _logWriter.TryRead(botResolver.Position, out var logContent);
+        _logWriter.TryRead(botResolver.Id, out var logContent);
         FakeConsole.Content = logContent ?? string.Empty;
         FakeConsole.Watermark = "Waiting for the bot to start...";
         Resolver = botResolver;
         BotDirectoryUriBar.CurrentUri = botEntry.InstanceDirectoryUri;
         _botAvatar = Utilities.LoadLocalImage(botEntry.AvatarUri);
         BotName = botResolver.BotName;
-        Position = botResolver.Position;
+        Id = botResolver.Id;
         UpdateBar.DependencyName = "Checking...";
-        IsBotRunning = botOrchestrator.IsBotRunning(botResolver.Position);
+        IsBotRunning = botOrchestrator.IsBotRunning(botResolver.Id);
 
         if (IsBotRunning)
             EnableButtons(true, false);
@@ -177,7 +176,7 @@ public class BotConfigViewModel : ViewModelBase<BotConfigView>, IDisposable
         var wereButtonsUnlocked = AreButtonsUnlocked;
         EnableButtons(true, false);
 
-        var botEntry = _appConfigManager.AppConfig.BotEntries[Resolver.Position];
+        var botEntry = _appConfigManager.AppConfig.BotEntries[Resolver.Id];
         var oldName = botEntry.Name;
         var oldUri = botEntry.InstanceDirectoryUri;
         var hasNewUri = !BotDirectoryUriBar.CurrentUri.Equals(oldUri, StringComparison.OrdinalIgnoreCase);
@@ -194,7 +193,7 @@ public class BotConfigViewModel : ViewModelBase<BotConfigView>, IDisposable
             // Update the application settings.
             if (hasNewUri || !BotName.Equals(oldName, StringComparison.OrdinalIgnoreCase))
             {
-                await _appConfigManager.UpdateConfigAsync(x => x.BotEntries[Position] = x.BotEntries[Position] with
+                await _appConfigManager.UpdateBotEntryAsync(Id, x => x with
                 {
                     Name = BotName,
                     InstanceDirectoryUri = BotDirectoryUriBar.CurrentUri
@@ -220,7 +219,7 @@ public class BotConfigViewModel : ViewModelBase<BotConfigView>, IDisposable
     {
         try
         {
-            var fileUri = Directory.EnumerateFiles(_appConfigManager.AppConfig.BotEntries[Resolver.Position].InstanceDirectoryUri, fileName, SearchOption.AllDirectories)
+            var fileUri = Directory.EnumerateFiles(_appConfigManager.AppConfig.BotEntries[Resolver.Id].InstanceDirectoryUri, fileName, SearchOption.AllDirectories)
                 .First(x => x.Contains(fileName, StringComparison.Ordinal));
 
             _ = Process.Start(new ProcessStartInfo()
@@ -245,9 +244,8 @@ public class BotConfigViewModel : ViewModelBase<BotConfigView>, IDisposable
         if (imageFileStorage.Count is 0)
             return;
 
-        var botEntry = _appConfigManager.AppConfig.BotEntries[Resolver.Position];
         var imageUri = Path.Combine(imageFileStorage[0].Path.AbsolutePath.Split('/'));
-        await _appConfigManager.UpdateConfigAsync(x => x.BotEntries[Resolver.Position] = botEntry with { AvatarUri = imageUri });
+        await _appConfigManager.UpdateBotEntryAsync(Resolver.Id, x => x with { AvatarUri = imageUri });
 
         BotAvatar.Dispose();
         BotAvatar = Utilities.LoadLocalImage(imageUri);
@@ -291,19 +289,12 @@ public class BotConfigViewModel : ViewModelBase<BotConfigView>, IDisposable
 
         EnableButtons(true, false);
 
-        // Delete the bot instance
-        _botOrchestrator.Stop(Resolver.Position);
-        var botUri = _appConfigManager.AppConfig.BotEntries[Position].InstanceDirectoryUri;
-
-        if (Directory.Exists(botUri))
-            Directory.Delete(botUri, true);
-
-        // Update settings
-        await _appConfigManager.DeleteBotEntryAsync(Position);
+        // Stop the bot instance
+        _botOrchestrator.Stop(Resolver.Id);
 
         // Cleanup
         FakeConsole.Content = string.Empty;
-        await _logWriter.FlushAsync(Resolver.Position, true);
+        await _logWriter.FlushAsync(Resolver.Id, true);
 
         UpdateBar.Click -= InstallOrUpdateAsync;
         _botOrchestrator.OnStdout -= WriteLog;
@@ -322,7 +313,7 @@ public class BotConfigViewModel : ViewModelBase<BotConfigView>, IDisposable
     /// <param name="eventArgs">The event arguments.</param>
     public async Task InstallOrUpdateAsync(DependencyButtonViewModel dependencyButton, EventArgs eventArgs)
     {
-        if (_botOrchestrator.IsBotRunning(Resolver.Position))
+        if (_botOrchestrator.IsBotRunning(Resolver.Id))
         {
             await _mainWindow.ShowDialogWindowAsync("Please, stop the bot before updating it.", DialogType.Warning, Icon.Warning);
             return;
@@ -335,7 +326,7 @@ public class BotConfigViewModel : ViewModelBase<BotConfigView>, IDisposable
 
         try
         {
-            var dialogWindowTask = await Resolver.InstallOrUpdateAsync(_appConfigManager.AppConfig.BotEntries[Resolver.Position].InstanceDirectoryUri) switch
+            var dialogWindowTask = await Resolver.InstallOrUpdateAsync(_appConfigManager.AppConfig.BotEntries[Resolver.Id].InstanceDirectoryUri) switch
             {
                 (string oldVer, null) => _mainWindow.ShowDialogWindowAsync($"{Resolver.DependencyName} is already up-to-date (v{oldVer})."),
                 (null, string newVer) => _mainWindow.ShowDialogWindowAsync($"{Resolver.DependencyName} v{newVer} was successfully installed.", iconType: Icon.Success),
@@ -360,7 +351,7 @@ public class BotConfigViewModel : ViewModelBase<BotConfigView>, IDisposable
     /// </summary>
     public void StartBot()
     {
-        IsBotRunning = _botOrchestrator.Start(Position);
+        IsBotRunning = _botOrchestrator.Start(Id);
 
         if (IsBotRunning)
             EnableButtons(true, false);
@@ -370,7 +361,7 @@ public class BotConfigViewModel : ViewModelBase<BotConfigView>, IDisposable
     /// Stops the bot instance associated with this view-model.
     /// </summary>
     public void StopBot()
-        => _botOrchestrator.Stop(Position);
+        => _botOrchestrator.Stop(Id);
 
     /// <summary>
     /// Loads the bot update bar.
@@ -410,10 +401,10 @@ public class BotConfigViewModel : ViewModelBase<BotConfigView>, IDisposable
     /// <param name="eventArgs">The event arguments.</param>
     private void WriteLog(IBotOrchestrator botOrchestrator, ProcessStdWriteEventArgs eventArgs)
     {
-        if (eventArgs.Position != Resolver.Position)
+        if (eventArgs.Id != Resolver.Id)
             return;
 
-        _logWriter.TryAdd(eventArgs.Position, eventArgs.Output);
+        _logWriter.TryAdd(eventArgs.Id, eventArgs.Output);
 
         FakeConsole.Content = (FakeConsole.Content.Length > 100_000)
             ? FakeConsole.Content[FakeConsole.Content.IndexOf(Environment.NewLine, 60_000)..] + eventArgs.Output + Environment.NewLine
@@ -427,12 +418,12 @@ public class BotConfigViewModel : ViewModelBase<BotConfigView>, IDisposable
     /// <param name="eventArgs">The event arguments.</param>
     private void LogBotExit(IBotOrchestrator botOrchestrator, BotExitEventArgs eventArgs)
     {
-        if (eventArgs.Position != Resolver.Position)
+        if (eventArgs.Id != Resolver.Id)
             return;
 
         var message = Environment.NewLine + Resolver.BotName + " stopped." + Environment.NewLine;
 
-        _logWriter.TryAdd(Resolver.Position, message);
+        _logWriter.TryAdd(Resolver.Id, message);
         FakeConsole.Content += message;
     }
 
@@ -443,7 +434,7 @@ public class BotConfigViewModel : ViewModelBase<BotConfigView>, IDisposable
     /// <param name="eventArgs">The event arguments.</param>
     private void ReenableButtonsOnBotExit(IBotOrchestrator botOrchestrator, BotExitEventArgs eventArgs)
     {
-        if (eventArgs.Position != Resolver.Position)
+        if (eventArgs.Id != Resolver.Id)
             return;
 
         IsBotRunning = false;

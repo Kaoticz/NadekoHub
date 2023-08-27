@@ -49,19 +49,19 @@ public class LateralBarViewModel : ViewModelBase<LateralBarView>
     {
         var botEntry = await _botEntryManager.CreateBotEntryAsync();
 
-        BotButtonList.Add(new() { Content = botEntry.Position });
+        BotButtonList.Add(new() { Content = botEntry.BotInfo.Position });
         this.RaisePropertyChanged(nameof(BotButtonList));
     }
 
     /// <summary>
     /// Removes a bot button from the lateral bar.
     /// </summary>
-    /// <param name="position">The position of the button to be removed.</param>
-    public async ValueTask RemoveBotButtonAsync(uint position)
+    /// <param name="botId">The Id of the bot.</param>
+    public async ValueTask RemoveBotButtonAsync(Guid botId)
     {
-        await _botEntryManager.DeleteBotEntryAsync(position);
+        var botEntry = await _botEntryManager.DeleteBotEntryAsync(botId);
         
-        var toRemove = BotButtonList.First(x => x.Content?.Equals(position) is true);
+        var toRemove = BotButtonList.First(x => x.Content?.Equals(botEntry?.BotInfo.Position) is true);
         BotButtonList.Remove(toRemove);
 
         this.RaisePropertyChanged(nameof(BotButtonList));
@@ -71,13 +71,13 @@ public class LateralBarViewModel : ViewModelBase<LateralBarView>
     /// Loads the bot buttons to the lateral bar.
     /// </summary>
     /// <param name="botEntires">The bot entries.</param>
-    private void ReloadBotButtons(IReadOnlyDictionary<uint, BotInstanceInfo> botEntires)
+    private void ReloadBotButtons(IReadOnlyDictionary<Guid, BotInstanceInfo> botEntires)
     {
         BotButtonList.Clear();
 
-        var botPositions = botEntires
-            .OrderBy(x => x.Key)
-            .Select(x => x.Key);
+        var botPositions = botEntires.Values
+            .Select(x => x.Position)
+            .Order();
 
         foreach (var botPosition in botPositions)
             BotButtonList.Add(new() { Content = botPosition });

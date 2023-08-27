@@ -6,9 +6,9 @@ namespace NadekoUpdater.Models.EventArguments;
 public sealed class ProcessStdWriteEventArgs : EventArgs
 {
     /// <summary>
-    /// The position of the bot in the lateral bar.
+    /// The Id of the bot.
     /// </summary>
-    public uint Position { get; }
+    public Guid Id { get; }
 
     /// <summary>
     /// The value that was just written to std.
@@ -18,11 +18,11 @@ public sealed class ProcessStdWriteEventArgs : EventArgs
     /// <summary>
     /// Creates the event arguments when a bot process writes to stdout or stderr.
     /// </summary>
-    /// <param name="position">The position of the bot in the lateral bar.</param>
+    /// <param name="botId">The Id of the bot.</param>
     /// <param name="output">The value that was just written to std.</param>
-    public ProcessStdWriteEventArgs(uint position, string output)
+    public ProcessStdWriteEventArgs(Guid botId, string output)
     {
-        Position = position;
+        Id = botId;
         Output = output;
     }
 }

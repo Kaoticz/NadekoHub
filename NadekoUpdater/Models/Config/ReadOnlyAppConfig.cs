@@ -40,7 +40,7 @@ public sealed class ReadOnlyAppConfig
     /// <summary>
     /// A collection of metadata about the bot instances.
     /// </summary>
-    public IReadOnlyDictionary<uint, BotInstanceInfo> BotEntries
+    public IReadOnlyDictionary<Guid, BotInstanceInfo> BotEntries
         => _appConfig.BotEntries;
 
     /// <summary>

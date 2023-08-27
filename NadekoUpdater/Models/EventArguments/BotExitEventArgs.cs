@@ -6,9 +6,9 @@ namespace NadekoUpdater.Models.EventArguments;
 public sealed class BotExitEventArgs : EventArgs
 {
     /// <summary>
-    /// The position of the bot in the lateral bar.
+    /// The bot's Id.
     /// </summary>
-    public uint Position { get; }
+    public Guid Id { get; }
 
     /// <summary>
     /// The exit code.
@@ -18,11 +18,11 @@ public sealed class BotExitEventArgs : EventArgs
     /// <summary>
     /// Creates the event arguments when a bot process exits.
     /// </summary>
-    /// <param name="position">The position of the bot in the lateral bar.</param>
+    /// <param name="botId">The bot's Id.</param>
     /// <param name="exitCode">The exit code.</param>
-    public BotExitEventArgs(uint position, int exitCode)
+    public BotExitEventArgs(Guid botId, int exitCode)
     {
-        Position = position;
+        Id = botId;
         ExitCode = exitCode;
     }
 }

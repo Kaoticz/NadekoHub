@@ -36,5 +36,5 @@ public sealed class AppConfig
     /// <summary>
     /// A collection of metadata about the bot instances.
     /// </summary>
-    public ConcurrentDictionary<uint, BotInstanceInfo> BotEntries { get; init; } = new();
+    public ConcurrentDictionary<Guid, BotInstanceInfo> BotEntries { get; init; } = new();
 }

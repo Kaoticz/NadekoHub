@@ -24,26 +24,25 @@ public interface IBotOrchestrator
     event EventHandler<IBotOrchestrator, ProcessStdWriteEventArgs>? OnStdout;
 
     /// <summary>
-    /// Determines whether the bot with the specified
-    /// position in the lateral bar is currently running.
+    /// Determines whether the bot with the specified <paramref name="botId"/>.
     /// </summary>
-    /// <param name="botPosition">The bot's position in the lateral bar.</param>
+    /// <param name="botId">The bot's Id.</param>
     /// <returns><see langword="true"/> if the bot is running, <see langword="false"/> otherwise.</returns>
-    bool IsBotRunning(uint botPosition);
+    bool IsBotRunning(Guid botId);
 
     /// <summary>
-    /// Starts the bot with the specified position.
+    /// Starts the bot with the specified <paramref name="botId"/>.
     /// </summary>
-    /// <param name="botPosition">The bot's position in the lateral bar.</param>
+    /// <param name="botId">The bot's Id.</param>
     /// <returns><see langword="true"/> if the bot successfully started, <see langword="false"/> otherwise.</returns>
-    bool Start(uint botPosition);
+    bool Start(Guid botId);
 
     /// <summary>
-    /// Stops the bot with the specified position.
+    /// Stops the bot with the specified <paramref name="botId"/>.
     /// </summary>
-    /// <param name="botPosition">The bot's position in the lateral bar.</param>
+    /// <param name="botId">The bot's Id.</param>
     /// <returns><see langword="true"/> if the bot successfully stopped, <see langword="false"/> otherwise.</returns>
-    bool Stop(uint botPosition);
+    bool Stop(Guid botId);
 
     /// <summary>
     /// Stops all bot instances.

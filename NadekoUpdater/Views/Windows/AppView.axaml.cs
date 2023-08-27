@@ -57,14 +57,14 @@ public partial class AppView : ReactiveWindow<AppViewModel>
         lateralBarView.HomeButton.Click += (_, _) => viewModel.ContentViewModel = GetViewModel<HomeViewModel>(scopeFactory);
         lateralBarView.BotButtonClick += (button, _) =>
         {
-            var botConfigViewModel = GetBotConfigViewModel(button, scopeFactory);
+            var botConfigViewModel = GetBotConfigViewModel(button, appConfig, scopeFactory);
             viewModel.ContentViewModel = botConfigViewModel;
 
             // If the bot instance is deleted, load the Home view.
             botConfigViewModel.BotDeleted += async (_, _) =>
             {
                 viewModel.ContentViewModel = GetViewModel<HomeViewModel>(scopeFactory);
-                await viewModel.LateralBarInstance.RemoveBotButtonAsync(botConfigViewModel.Position);
+                await viewModel.LateralBarInstance.RemoveBotButtonAsync(botConfigViewModel.Id);
             };
         };
 
@@ -122,15 +122,17 @@ public partial class AppView : ReactiveWindow<AppViewModel>
     /// its properties with user data.
     /// </summary>
     /// <param name="button">The button that was pressed in the bot list.</param>
+    /// <param name="appConfig">The application settings.</param>
     /// <param name="scopeFactory">The IoC scope factory.</param>
     /// <returns>The view-model associated with the pressed <paramref name="button"/>.</returns>
     /// <exception cref="InvalidCastException">Occurs when <paramref name="button"/> has a <see cref="ContentControl.Content"/> that is not an <see langword="uint"/>.</exception>
     /// <exception cref="InvalidOperationException">Occurs when <paramref name="button"/> has an invalid <see cref="ContentControl.Content"/>.</exception>
-    private static BotConfigViewModel GetBotConfigViewModel(Button button, IServiceScopeFactory scopeFactory)
+    private static BotConfigViewModel GetBotConfigViewModel(Button button, ReadOnlyAppConfig appConfig, IServiceScopeFactory scopeFactory)
     {
         using var scope = scopeFactory.CreateScope();
         var position = (uint)(button.Content ?? throw new InvalidOperationException("Bot button has no id/position."));
-        var botResolver = scope.ServiceProvider.GetParameterizedService<NadekoResolver>(position);
+        var (botId, _) = appConfig.BotEntries.First(x => x.Value.Position == position);
+        var botResolver = scope.ServiceProvider.GetParameterizedService<NadekoResolver>(botId);
 
         return scope.ServiceProvider.GetParameterizedService<BotConfigViewModel>(botResolver);
     }

@@ -30,7 +30,7 @@
                     </Panel>
                 </Border>
                 <TextBlock Grid.Row="0" Grid.Column="1" Text="Bot Name" VerticalAlignment="Center" />
-                <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding BotName}" />
+                <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding BotName}" VerticalContentAlignment="Center" />
                 <TextBlock Grid.Row="2" Grid.Column="1" FontSize="11" TextWrapping="WrapWithOverflow" VerticalAlignment="Center"
                          Text="Changing bot name or avatar here has no effect on your bot. This is purely for organization purposes in the updater." />
             </Grid>

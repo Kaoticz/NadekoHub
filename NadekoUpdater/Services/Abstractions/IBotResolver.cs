@@ -11,9 +11,9 @@ public interface IBotResolver : IDependencyResolver
     string BotName { get; }
 
     /// <summary>
-    /// The position of the bot instance on the lateral bar.
+    /// The Id of the bot.
     /// </summary>
-    uint Position { get; }
+    Guid Id { get; }
 
     /// <summary>
     /// Creates a backup of the bot instance associated with this resolver.

@@ -12,7 +12,7 @@ namespace NadekoUpdater.Services;
 /// </summary>
 public sealed class LogWriter : ILogWriter
 {
-    private readonly Dictionary<uint, StringBuilder> _botLogs = new();
+    private readonly Dictionary<Guid, StringBuilder> _botLogs = new();
     private readonly ReadOnlyAppConfig _appConfig;
 
     /// <inheritdoc/>
@@ -33,20 +33,20 @@ public sealed class LogWriter : ILogWriter
     }
 
     /// <inheritdoc/>
-    public async Task<bool> FlushAsync(uint botPosition, bool removeFromMemory = false, CancellationToken cToken = default)
+    public async Task<bool> FlushAsync(Guid botId, bool removeFromMemory = false, CancellationToken cToken = default)
     {
-        if (!_botLogs.TryGetValue(botPosition, out var logStringBuilder))
+        if (!_botLogs.TryGetValue(botId, out var logStringBuilder))
             return false;
 
         if (removeFromMemory)
-            _botLogs.Remove(botPosition);
+            _botLogs.Remove(botId);
 
         if (logStringBuilder.Length is 0)
             return false;
 
         Directory.CreateDirectory(_appConfig.LogsDirectoryUri);
         var logByteSize = (logStringBuilder.Length * 2) + 1;
-        var botEntry = _appConfig.BotEntries[botPosition];
+        var botEntry = _appConfig.BotEntries[botId];
         var now = DateTimeOffset.Now;
         var date = new DateOnly(now.Year, now.Month, now.Day).ToShortDateString().Replace('/', '-');
         var fileUri = Path.Combine(_appConfig.LogsDirectoryUri, $"{botEntry.Name}_{date}-{now.ToUnixTimeSeconds()}.txt");
@@ -61,29 +61,29 @@ public sealed class LogWriter : ILogWriter
     }
 
     /// <inheritdoc/>
-    public bool TryAdd(uint botPosition, string message)
+    public bool TryAdd(Guid botId, string message)
     {
         if (string.IsNullOrWhiteSpace(message) || _appConfig.LogMaxSizeMb <= 0.0)
             return false;
 
-        if (!_botLogs.TryGetValue(botPosition, out var logStringBuilder))
+        if (!_botLogs.TryGetValue(botId, out var logStringBuilder))
         {
             logStringBuilder = new();
-            _botLogs.TryAdd(botPosition, logStringBuilder);
+            _botLogs.TryAdd(botId, logStringBuilder);
         }
 
         logStringBuilder.AppendLine(message);
 
         if ((logStringBuilder.Length > _appConfig.LogMaxSizeMb * 1_000_000))
-            _ = FlushAsync(botPosition);
+            _ = FlushAsync(botId);
 
         return true;
     }
 
     /// <inheritdoc/>
-    public bool TryRead(uint botPosition, [MaybeNullWhen(false)] out string log)
+    public bool TryRead(Guid botId, [MaybeNullWhen(false)] out string log)
     {
-        if (_botLogs.TryGetValue(botPosition, out var logStringBuilder))
+        if (_botLogs.TryGetValue(botId, out var logStringBuilder))
         {
             log = logStringBuilder.ToString();
             return true;

@@ -20,7 +20,7 @@ public class ConfigViewModel : ViewModelBase<ConfigView>
         : Environment.NewLine + "To make the dependencies accessible to your bot instances without this updater, consider installing " +
         $"them through your package manager or adding the directory \"{AppStatics.AppDepsUri}\" to your PATH environment variable.";
 
-    private readonly AppConfigManager _appConfigManager;
+    private readonly IAppConfigManager _appConfigManager;
     private readonly AppView _mainWindow;
     private double _maxLogSize;
 
@@ -69,7 +69,7 @@ public class ConfigViewModel : ViewModelBase<ConfigView>
     /// <param name="logsUriBar">The bar that defines where the logs of the bot instances should be stored.</param>
     /// <param name="ffmpegResolver">The service that manages ffmpeg on the system.</param>
     /// <param name="ytdlpResolver">The service that manages yt-dlp on the system.</param>
-    public ConfigViewModel(AppConfigManager appConfigManager, AppView mainWindow, UriInputBarViewModel botsUriBar, UriInputBarViewModel backupsUriBar,
+    public ConfigViewModel(IAppConfigManager appConfigManager, AppView mainWindow, UriInputBarViewModel botsUriBar, UriInputBarViewModel backupsUriBar,
         UriInputBarViewModel logsUriBar, IFfmpegResolver ffmpegResolver, IYtdlpResolver ytdlpResolver)
     {
         _appConfigManager = appConfigManager;

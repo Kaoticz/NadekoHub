@@ -16,7 +16,7 @@ public sealed partial class NadekoResolver : IBotResolver
     private static readonly string _tempDirectory = Path.GetTempPath();
     private static readonly Regex _unzipedDirRegex = GenerateUnzipedDirRegex();
     private readonly IHttpClientFactory _httpClientFactory;
-    private readonly AppConfigManager _appConfigManager;
+    private readonly IAppConfigManager _appConfigManager;
 
     /// <inheritdoc/>
     public string DependencyName { get; } = "NadekoBot";
@@ -36,7 +36,7 @@ public sealed partial class NadekoResolver : IBotResolver
     /// <param name="httpClientFactory">The HTTP client factory.</param>
     /// <param name="appConfigManager">The application's settings.</param>
     /// <param name="botId">The Id of the bot.</param>
-    public NadekoResolver(IHttpClientFactory httpClientFactory, AppConfigManager appConfigManager, Guid botId)
+    public NadekoResolver(IHttpClientFactory httpClientFactory, IAppConfigManager appConfigManager, Guid botId)
     {
         _httpClientFactory = httpClientFactory;
         _appConfigManager = appConfigManager;

@@ -26,7 +26,7 @@ public class BotConfigViewModel : ViewModelBase<BotConfigView>, IDisposable
     private bool _isIdle;
     private bool _areButtonsUnlocked;
     private SKBitmap _botAvatar;
-    private readonly AppConfigManager _appConfigManager;
+    private readonly IAppConfigManager _appConfigManager;
     private readonly AppView _mainWindow;
     private readonly IBotOrchestrator _botOrchestrator;
     private readonly ILogWriter _logWriter;
@@ -130,7 +130,7 @@ public class BotConfigViewModel : ViewModelBase<BotConfigView>, IDisposable
     /// <param name="botResolver">The bot resolver to be used.</param>
     /// <param name="botOrchestrator">The bot orchestrator.</param>
     /// <param name="logWriter">The service responsible for creating log files.</param>
-    public BotConfigViewModel(AppConfigManager appConfigManager, AppView mainWindow, UriInputBarViewModel botDirectoryUriBar, DependencyButtonViewModel updateBotBar,
+    public BotConfigViewModel(IAppConfigManager appConfigManager, AppView mainWindow, UriInputBarViewModel botDirectoryUriBar, DependencyButtonViewModel updateBotBar,
         FakeConsoleViewModel fakeConsole, IBotResolver botResolver, IBotOrchestrator botOrchestrator, ILogWriter logWriter)
     {
         _appConfigManager = appConfigManager;

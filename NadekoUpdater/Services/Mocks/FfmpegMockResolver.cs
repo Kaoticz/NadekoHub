@@ -1,11 +1,11 @@
 using NadekoUpdater.Services.Abstractions;
 
-namespace NadekoUpdater.Services;
+namespace NadekoUpdater.Services.Mocks;
 
 /// <summary>
 /// Service that pretends to check, download, install, and update ffmpeg.
 /// </summary>
-public sealed class FfmpegMockResolver : FfmpegResolver
+internal sealed class FfmpegMockResolver : FfmpegResolver
 {
     private const string _currentVersion = "6.0";
 

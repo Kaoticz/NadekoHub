@@ -1,7 +1,9 @@
+using Avalonia.Controls;
 using Microsoft.Extensions.DependencyInjection;
 using NadekoUpdater.Models.Config;
 using NadekoUpdater.Services;
 using NadekoUpdater.Services.Abstractions;
+using NadekoUpdater.Services.Mocks;
 using NadekoUpdater.Views.Windows;
 using ReactiveUI;
 using System.Reflection;
@@ -47,6 +49,13 @@ public static class IServiceCollectionExt
     /// <returns>This service collection with the services added.</returns>
     public static IServiceCollection RegisterServices(this IServiceCollection serviceCollection)
     {
+        // Design-time
+        if (Design.IsDesignMode)
+        {
+            serviceCollection.AddTransient<MockNadekoResolver>();
+            serviceCollection.AddTransient<MockAppConfigManager>();
+        }
+
         // Internal
         serviceCollection.AddMemoryCache();
         serviceCollection.AddSingleton<ILogWriter, LogWriter>();
@@ -59,7 +68,7 @@ public static class IServiceCollectionExt
             .ConfigureHttpMessageHandlerBuilder(builder => builder.PrimaryHandler = _httpHandler);
 
         // App settings
-        serviceCollection.AddSingleton<AppConfigManager>();
+        serviceCollection.AddSingleton<IAppConfigManager, AppConfigManager>();
         serviceCollection.AddSingleton<ReadOnlyAppConfig>();
         serviceCollection.AddSingleton(_ =>
             (File.Exists(AppStatics.AppConfigUri))

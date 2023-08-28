@@ -12,7 +12,7 @@
         <dd:DesignDependencyButtonViewModel/>
     </Design.DataContext>
 
-    <Grid RowDefinitions="*" ColumnDefinitions="*,Auto" ShowGridLines="True">
+    <Grid RowDefinitions="*" ColumnDefinitions="*,Auto" ShowGridLines="False">
         <TextBlock Grid.Column="0" Text="{Binding DependencyName}" HorizontalAlignment="Left" VerticalAlignment="Center" />
         <Button Grid.Column="1" Content="{Binding Status}" Command="{Binding RaiseClick}" IsEnabled="{Binding IsEnabled}" HorizontalAlignment="Center" VerticalAlignment="Center" />
     </Grid>

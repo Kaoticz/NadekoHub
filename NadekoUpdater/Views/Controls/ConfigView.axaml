@@ -16,7 +16,7 @@
         <dd:DesignConfigViewModel/>
     </Design.DataContext>
 
-    <Grid RowDefinitions="80,*" ColumnDefinitions="*" ShowGridLines="True">
+    <Grid RowDefinitions="80,*" ColumnDefinitions="*" ShowGridLines="False">
         <!--Settings Title-->
         <TextBlock Grid.Row="0" Text="Settings" FontSize="28" HorizontalAlignment="Left" VerticalAlignment="Center"/>
 
@@ -42,7 +42,7 @@
             <!--Application Settings-->
             <!--I tried referencing the control directly, but it doesn't work for some reason-->
             <!--So I had to 'rewrite' the control in here-->
-            <Grid RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto" ColumnDefinitions="*,Auto,Auto" ShowGridLines="True">
+            <Grid RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto" ColumnDefinitions="*,Auto,Auto" ShowGridLines="False">
                 <TextBlock Grid.Row="0" Text="Bot Directory:" ToolTip.Tip="Defines the directory the updater is going to install the bot instances."/>
                 <TextBox Grid.Row="1" Grid.Column="0" Margin="0 0 2 0" Text="{Binding BotsUriBar.CurrentUri}" Watermark="Enter a directory" />
                 <Button Grid.Row="1" Grid.Column="1" Margin="2 0 2 0" Content="Browse"
@@ -64,7 +64,7 @@
                         Command="{Binding LogsUriBar.OpenFolder}" CommandParameter="{Binding LogsUriBar.CurrentUri}" />
             </Grid>
 
-            <Grid RowDefinitions="Auto,Auto,Auto" ColumnDefinitions="*,Auto" ShowGridLines="True">
+            <Grid RowDefinitions="Auto,Auto,Auto" ColumnDefinitions="*,Auto" ShowGridLines="False">
                 <TextBlock Grid.Row="0" Grid.Column="0" Margin="0 8 0 0" Text="Maximum log file size (in MB):" ToolTip.Tip="Defines the maximum size a log file is allowed to have. Set to 0 to disable logging." />
                 <ButtonSpinner Grid.Row="1" Grid.Column="0" Content="{Binding MaxLogSize}" Spin="ButtonSpun" ButtonSpinnerLocation="Right" HorizontalAlignment="Left" />
 

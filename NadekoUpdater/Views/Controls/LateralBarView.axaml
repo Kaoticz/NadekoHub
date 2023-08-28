@@ -14,16 +14,16 @@
         <dd:DesignLateralBarViewModel />
     </Design.DataContext>
 
-    <Grid RowDefinitions="Auto,*,Auto" ColumnDefinitions="*" ShowGridLines="True">
+    <Grid RowDefinitions="Auto,*,Auto" ColumnDefinitions="*" ShowGridLines="False">
         <StackPanel Grid.Row="0">
             <!--Home button-->
-            <Button Name="HomeButton" Content="Home Button" HorizontalAlignment="Center" VerticalAlignment="Top"/>
+            <Button Name="HomeButton" Content="Home" HorizontalAlignment="Center" VerticalAlignment="Top"/>
         
             <!--Visual separator-->
             <Separator HorizontalAlignment="Stretch" VerticalAlignment="Center" />
         
             <!--Button that adds new bot buttons-->
-            <Button Content="Add Bot Button" Command="{Binding AddBotButtonAsync}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+            <Button Content="Add" Command="{Binding AddBotButtonAsync}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
         </StackPanel>
 
         <!--Scroll bar with bot buttons-->

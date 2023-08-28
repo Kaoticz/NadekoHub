@@ -23,7 +23,7 @@
     </Design.DataContext>
 
     <!--Add vertical and horizontal scrolling bars when the window is too small-->
-        <Grid RowDefinitions="*" ColumnDefinitions="65,*" ShowGridLines="True">
+        <Grid RowDefinitions="*" ColumnDefinitions="65,*" ShowGridLines="False">
             <!--Left Lateral Bar-->
             <ContentControl Grid.Row="0" Grid.Column="0" Grid.RowSpan="5" Content="{Binding LateralBarInstance}" />
 

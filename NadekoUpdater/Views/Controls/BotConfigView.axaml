@@ -16,12 +16,12 @@
         <dd:DesignBotConfigViewModel/>
     </Design.DataContext>
 
-    <Grid RowDefinitions="80,Auto,*" ColumnDefinitions="*" ShowGridLines="True">
+    <Grid RowDefinitions="80,Auto,*" ColumnDefinitions="*" ShowGridLines="False">
         <!--Bot Settings Title-->
         <TextBlock Grid.Row="0" Text="{Binding BotName}" FontSize="28" HorizontalAlignment="Left" VerticalAlignment="Center"/>
 
         <StackPanel Grid.Row="1">
-            <Grid RowDefinitions="Auto,Auto,Auto" ColumnDefinitions="130,*" ShowGridLines="True">
+            <Grid RowDefinitions="Auto,Auto,Auto" ColumnDefinitions="130,*" ShowGridLines="False">
                 <Border Grid.Row="0" Grid.Column="0" Grid.RowSpan="3" ClipToBounds="True" CornerRadius="70" Margin="10">
                     <Panel>
                         <siv:SKImageView Source="{Binding BotAvatar}" Stretch="UniformToFill" />

@@ -45,7 +45,7 @@ internal static class Utilities
     }
 
     /// <summary>
-    /// Safely casts an object to a <typeparamref name="T"/>.
+    /// Safely casts an <see cref="object"/> to a <typeparamref name="T"/>.
     /// </summary>
     /// <typeparam name="T">The type to cast to.</typeparam>
     /// <param name="obj">The object to be cast.</param>

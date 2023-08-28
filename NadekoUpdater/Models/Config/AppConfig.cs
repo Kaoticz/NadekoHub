@@ -1,3 +1,4 @@
+using Avalonia;
 using System.Collections.Concurrent;
 
 namespace NadekoUpdater.Models.Config;
@@ -32,6 +33,11 @@ public sealed class AppConfig
     /// Determines the maximum size a log file can have, in Mb.
     /// </summary>
     public double LogMaxSizeMb { get; set; } = 0.5;
+
+    /// <summary>
+    /// Determines the size the application window should be set on startup.
+    /// </summary>
+    public WindowSize WindowSize { get; set; } = new(double.Parse(WindowConstants.DefaultWindowWidth), double.Parse(WindowConstants.DefaultWindowHeight));
 
     /// <summary>
     /// A collection of metadata about the bot instances.

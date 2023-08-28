@@ -13,8 +13,6 @@
         Icon="/Assets/nadekoupdatericon.ico"
         WindowStartupLocation="CenterScreen"
         Title="{x:Static const:WindowConstants.WindowTitle}"
-        Width="{x:Static const:WindowConstants.DefaultWindowWidth}"
-        Height="{x:Static const:WindowConstants.DefaultWindowHeight}"
         MinWidth="{x:Static const:WindowConstants.MinWindowWidth}"
         MinHeight="{x:Static const:WindowConstants.MinWindowHeight}">
 

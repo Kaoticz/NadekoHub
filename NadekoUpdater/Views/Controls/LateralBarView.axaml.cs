@@ -81,11 +81,11 @@ public partial class LateralBarView : ReactiveUserControl<LateralBarViewModel>
     {
         if (!Utilities.TryCastTo<Panel>(sender, out var panel)
             || !Utilities.TryCastTo<SKImageView>(panel.Children[0], out var botAvatar)
-            || !Utilities.TryCastTo<Button>(panel.Children[1], out var button))
+            || !Utilities.TryCastTo<Button>(panel.Children[1], out var button)
+            || !Utilities.TryCastTo<Guid>(button.Content, out var botId))
             throw new InvalidOperationException($"Visual tree has an unexpected structure.");
 
         // Set the avatar
-        var botId = (Guid)(button.Content ?? throw new InvalidOperationException("Button did not contain a valid bot Id."));
         botAvatar.Source = Utilities.LoadLocalImage(_appConfig.BotEntries[botId].AvatarUri);
 
         // Tunnel press and release events directly to the handling methods.

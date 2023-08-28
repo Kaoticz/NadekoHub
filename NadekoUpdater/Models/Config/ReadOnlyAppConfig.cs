@@ -1,3 +1,5 @@
+using Avalonia;
+
 namespace NadekoUpdater.Models.Config;
 
 /// <summary>
@@ -36,6 +38,12 @@ public sealed class ReadOnlyAppConfig
     /// </summary>
     public double LogMaxSizeMb
         => _appConfig.LogMaxSizeMb;
+
+    /// <summary>
+    /// Determines the size the application window should be set on startup.
+    /// </summary>
+    public WindowSize WindowSize
+        => _appConfig.WindowSize;
 
     /// <summary>
     /// A collection of metadata about the bot instances.

@@ -72,7 +72,7 @@ public class UriInputBarViewModel : ViewModelBase<UriInputBar>
     public async Task SelectFolderAsync()
     {
         var selectedUri = (await _storageProvider.OpenFolderPickerAsync(_folderPickerOptions))
-            .Select(x => x.Path.AbsolutePath)
+            .Select(x => x.Path.LocalPath)
             .FirstOrDefault();
 
         CurrentUri = Path.GetFullPath(selectedUri ?? CurrentUri);

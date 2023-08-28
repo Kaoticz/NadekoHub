@@ -256,7 +256,8 @@ public class BotConfigViewModel : ViewModelBase<BotConfigView>, IDisposable
             return;
 
         // Save the Uri to the image file
-        var imageUri = Path.Combine(imageFileStorage[0].Path.AbsolutePath.Split('/'));
+        var imageUri = imageFileStorage[0].Path.LocalPath;
+
         await _appConfigManager.UpdateBotEntryAsync(Resolver.Id, x => x with { AvatarUri = imageUri });
 
         // Set the new avatar

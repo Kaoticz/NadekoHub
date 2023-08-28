@@ -1,6 +1,5 @@
 using Avalonia.Controls;
 using NadekoUpdater.Models;
-using NadekoUpdater.Services;
 using NadekoUpdater.Services.Abstractions;
 using NadekoUpdater.ViewModels.Abstractions;
 using NadekoUpdater.Views.Controls;
@@ -34,7 +33,7 @@ public class LateralBarViewModel : ViewModelBase<LateralBarView>
         {
             // Use WhenActivated to execute logic
             // when the view model gets activated.
-            this.ReloadBotButtons(botEntryManager.AppConfig.BotEntries);
+            ReloadBotButtons(botEntryManager.AppConfig.BotEntries);
 
             // Or use WhenActivated to execute logic
             // when the view model gets deactivated.
@@ -50,7 +49,7 @@ public class LateralBarViewModel : ViewModelBase<LateralBarView>
     {
         var botEntry = await _botEntryManager.CreateBotEntryAsync();
 
-        BotButtonList.Add(new() { Content = botEntry.BotInfo.Position });
+        BotButtonList.Add(new() { Content = botEntry.Id });
         this.RaisePropertyChanged(nameof(BotButtonList));
     }
 
@@ -62,7 +61,7 @@ public class LateralBarViewModel : ViewModelBase<LateralBarView>
     {
         var botEntry = await _botEntryManager.DeleteBotEntryAsync(botId);
         
-        var toRemove = BotButtonList.First(x => x.Content?.Equals(botEntry?.BotInfo.Position) is true);
+        var toRemove = BotButtonList.First(x => x.Content?.Equals(botEntry?.Id) is true);
         BotButtonList.Remove(toRemove);
 
         this.RaisePropertyChanged(nameof(BotButtonList));
@@ -76,12 +75,12 @@ public class LateralBarViewModel : ViewModelBase<LateralBarView>
     {
         BotButtonList.Clear();
 
-        var botPositions = botEntires.Values
-            .Select(x => x.Position)
-            .Order();
+        var botIds = botEntires
+            .OrderBy(x => x.Value.Position)
+            .Select(x => x.Key);
 
-        foreach (var botPosition in botPositions)
-            BotButtonList.Add(new() { Content = botPosition });
+        foreach (var botId in botIds)
+            BotButtonList.Add(new() { Content = botId });
 
         this.RaisePropertyChanged(nameof(BotButtonList));
     }

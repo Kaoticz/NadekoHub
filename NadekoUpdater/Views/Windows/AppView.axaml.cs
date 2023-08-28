@@ -60,6 +60,9 @@ public partial class AppView : ReactiveWindow<AppViewModel>
             var botConfigViewModel = GetBotConfigViewModel(button, appConfig, scopeFactory);
             viewModel.ContentViewModel = botConfigViewModel;
 
+            // Update the avatar on the lateral bar.
+            botConfigViewModel.AvatarChanged += (_, eventArgs) => lateralBarView.UpdateBotButtonAvatarAsync(eventArgs);
+
             // If the bot instance is deleted, load the Home view.
             botConfigViewModel.BotDeleted += async (_, _) =>
             {
@@ -130,8 +133,7 @@ public partial class AppView : ReactiveWindow<AppViewModel>
     private static BotConfigViewModel GetBotConfigViewModel(Button button, ReadOnlyAppConfig appConfig, IServiceScopeFactory scopeFactory)
     {
         using var scope = scopeFactory.CreateScope();
-        var position = (uint)(button.Content ?? throw new InvalidOperationException("Bot button has no id/position."));
-        var (botId, _) = appConfig.BotEntries.First(x => x.Value.Position == position);
+        var botId = (Guid)(button.Content ?? throw new InvalidOperationException("Bot button has no valid Id."));
         var botResolver = scope.ServiceProvider.GetParameterizedService<NadekoResolver>(botId);
 
         return scope.ServiceProvider.GetParameterizedService<BotConfigViewModel>(botResolver);

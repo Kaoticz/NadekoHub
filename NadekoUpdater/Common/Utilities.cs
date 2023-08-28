@@ -2,6 +2,7 @@ using Avalonia.Platform;
 using SkiaSharp;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 
 namespace NadekoUpdater.Common;
 
@@ -41,6 +42,26 @@ internal static class Utilities
         return (File.Exists(uri))
             ? SKBitmap.Decode(uri)
             : LoadEmbededImage(uri);
+    }
+
+    /// <summary>
+    /// Safely casts an object to a <typeparamref name="T"/>.
+    /// </summary>
+    /// <typeparam name="T">The type to cast to.</typeparam>
+    /// <param name="obj">The object to be cast.</param>
+    /// <param name="castObject">The cast object, or <see langword="null"/> is casting failed.</param>
+    /// <returns><see langword="true"/> if the object was successfully cast, <see langword="false"/> otherwise.</returns>
+    /// <exception cref="InvalidCastException">Occurs when <paramref name="obj"/> is not of type <typeparamref name="T"/>.</exception>
+    public static bool TryCastTo<T>(object? obj, [MaybeNullWhen(false)] out T castObject)
+    {
+        if (obj is null)
+        {
+            castObject = default;
+            return false;
+        }
+
+        castObject = (T)obj;
+        return true;
     }
 
     /// <summary>

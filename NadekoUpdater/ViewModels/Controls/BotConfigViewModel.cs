@@ -4,7 +4,6 @@ using MsBox.Avalonia;
 using MsBox.Avalonia.Enums;
 using NadekoUpdater.Enums;
 using NadekoUpdater.Models.EventArguments;
-using NadekoUpdater.Services;
 using NadekoUpdater.Services.Abstractions;
 using NadekoUpdater.ViewModels.Abstractions;
 using NadekoUpdater.Views.Controls;
@@ -12,6 +11,7 @@ using NadekoUpdater.Views.Windows;
 using ReactiveUI;
 using SkiaSharp;
 using System.Diagnostics;
+using System.Reactive.Disposables;
 
 namespace NadekoUpdater.ViewModels.Controls;
 
@@ -32,9 +32,14 @@ public class BotConfigViewModel : ViewModelBase<BotConfigView>, IDisposable
     private readonly ILogWriter _logWriter;
 
     /// <summary>
-    /// Triggered when the user deletes the bot instance associated with this view-model.
+    /// Raised when the user deletes the bot instance associated with this view-model.
     /// </summary>
     public event AsyncEventHandler<BotConfigViewModel, EventArgs>? BotDeleted;
+
+    /// <summary>
+    /// Raised when the user sets a new avatar for the bot instance associated with this view-model.
+    /// </summary>
+    public event AsyncEventHandler<BotConfigViewModel, AvatarChangedEventArgs>? AvatarChanged;
 
     /// <summary>
     /// The bot resolver to be used.
@@ -166,6 +171,9 @@ public class BotConfigViewModel : ViewModelBase<BotConfigView>, IDisposable
             EnableButtons(!Directory.Exists(botEntry.InstanceDirectoryUri), true);
 
         _ = LoadUpdateBarAsync(botResolver, updateBotBar);
+
+        // Dispose when the view is deactivated
+        this.WhenActivated(disposables => Disposable.Create(() => Dispose()).DisposeWith(disposables));
     }
  
     /// <summary>
@@ -222,11 +230,14 @@ public class BotConfigViewModel : ViewModelBase<BotConfigView>, IDisposable
             var fileUri = Directory.EnumerateFiles(_appConfigManager.AppConfig.BotEntries[Resolver.Id].InstanceDirectoryUri, fileName, SearchOption.AllDirectories)
                 .First(x => x.Contains(fileName, StringComparison.Ordinal));
 
-            _ = Process.Start(new ProcessStartInfo()
+            var process = Process.Start(new ProcessStartInfo()
             {
                 FileName = fileUri,
                 UseShellExecute = true,
             }) ?? throw new InvalidOperationException($"Failed opening {fileName}. There is no program association for files of type '{fileName[(fileName.LastIndexOf('.') + 1)..]}'.");
+
+            process.EnableRaisingEvents = true;
+            process.Exited += (sender, _) => (sender as Process)?.Dispose();
         }
         catch (Exception ex)
         {
@@ -244,11 +255,16 @@ public class BotConfigViewModel : ViewModelBase<BotConfigView>, IDisposable
         if (imageFileStorage.Count is 0)
             return;
 
+        // Save the Uri to the image file
         var imageUri = Path.Combine(imageFileStorage[0].Path.AbsolutePath.Split('/'));
         await _appConfigManager.UpdateBotEntryAsync(Resolver.Id, x => x with { AvatarUri = imageUri });
 
+        // Set the new avatar
         BotAvatar.Dispose();
         BotAvatar = Utilities.LoadLocalImage(imageUri);
+
+        // Invoke event
+        AvatarChanged?.Invoke(this, new(Id, BotAvatar, imageUri));
     }
 
     /// <summary>

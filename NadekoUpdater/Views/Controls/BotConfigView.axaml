@@ -20,7 +20,7 @@
         <!--Bot Settings Title-->
         <TextBlock Grid.Row="0" Text="{Binding BotName}" FontSize="28" HorizontalAlignment="Left" VerticalAlignment="Center"/>
 
-        <StackPanel Grid.Row="1">
+        <StackPanel Grid.Row="1" Spacing="5">
             <Grid RowDefinitions="Auto,Auto,Auto" ColumnDefinitions="130,*" ShowGridLines="False">
                 <Border Grid.Row="0" Grid.Column="0" Grid.RowSpan="3" ClipToBounds="True" CornerRadius="70" Margin="10">
                     <Panel>
@@ -44,7 +44,7 @@
             <TextBlock Text="{Binding DirectoryHint}" FontSize="11" TextWrapping="WrapWithOverflow" />
 
             <!--Top Bot Control Buttons-->
-            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Spacing="2">
                 <Button Content="Move/Rename" Command="{Binding MoveOrRenameAsync}" IsEnabled="{Binding IsIdle}" />
                 <Button Content="Credentials" Command="{Binding OpenFileAsync}" CommandParameter="creds.yml" IsEnabled="{Binding AreButtonsUnlocked}" />
                 <Button Content="Bot Settings" Command="{Binding OpenFileAsync}" CommandParameter="bot.yml" IsEnabled="{Binding AreButtonsUnlocked}" />
@@ -53,7 +53,7 @@
             </StackPanel>
             
             <!--Bottom Bot Control Buttons-->
-            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Spacing="2">
                 <Button Content="Start" Command="{Binding StartBot}" IsEnabled="{Binding !IsBotRunning}" />
                 <Button Content="Stop" Command="{Binding StopBot}" IsEnabled="{Binding IsBotRunning}" />
             </StackPanel>

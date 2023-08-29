@@ -1,0 +1,65 @@
+<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <Design.PreviewWith>
+        <Border Padding="20">
+            <StackPanel Spacing="5">
+                <StackPanel Orientation="Horizontal">
+                    <Button Content="Button" />
+                    <Button Content="Button" IsEnabled="False" />
+                </StackPanel>
+                <StackPanel Orientation="Horizontal">
+                    <Button Classes="transparent" Content="Transp.Button" />
+                    <Button Classes="transparent" Content="Transp.Button" IsEnabled="False" />
+                </StackPanel>
+                <Border Classes="circular">
+                    <Button Grid.Column="0" Content="+" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" />
+                </Border>
+                <TextBlock Text="Text Block" />
+                <TextBox Classes="console" Watermark="Fake Console" />
+                <TextBox Watermark="Regular Text Box" />
+            </StackPanel>
+        </Border>
+    </Design.PreviewWith>
+
+    <!--All Buttons-->
+    <Style Selector="Button">
+        <Setter Property="Padding" Value="15 7 15 7" />
+    </Style>
+
+    <!--Transparent Buttons-->
+    <Style Selector="Button.transparent">
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="Foreground" Value="{DynamicResource ButtonForeground}" />
+        <Setter Property="FontWeight" Value="Bold" />
+
+        <!--Transparent Button Disabled-->
+        <Style Selector="^:disabled /template/ ContentPresenter#PART_ContentPresenter">
+            <Setter Property="Background" Value="Transparent" />
+        </Style>
+    </Style>
+
+    <!--Circular Border-->
+    <Style Selector="Border.circular">
+        <Setter Property="ClipToBounds" Value="True" />
+        <Setter Property="CornerRadius" Value="100" />
+    </Style>
+    
+    <!--Fake Console-->
+    <Style Selector="TextBox.console">
+        <Setter Property="Background" Value="Black" />
+        <Setter Property="Foreground" Value="LightGray" />
+        <Setter Property="IsReadOnly" Value="True" />
+        <Setter Property="TextWrapping" Value="Wrap" />
+        <Setter Property="AcceptsReturn" Value="True" />
+        <Setter Property="AcceptsTab" Value="True" />
+        <Setter Property="BorderThickness" Value="0" />
+
+        <Style Selector="^ /template/ Border#PART_BorderElement">
+            <Setter Property="Background" Value="Black" />
+        </Style>
+
+        <Style Selector="^ /template/ TextBlock#PART_Watermark">
+            <Setter Property="Foreground" Value="LightGray" />
+        </Style>
+    </Style>
+</Styles>

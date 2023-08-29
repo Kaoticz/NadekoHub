@@ -14,24 +14,24 @@
         <dd:DesignHomeViewModel/>
     </Design.DataContext>
 
-    <Grid RowDefinitions="*,40,*,*,30" ColumnDefinitions="*,*,*,*,*" ShowGridLines="False">
+    <Grid RowDefinitions="Auto,Auto,*,*,Auto" ColumnDefinitions="*,*,*,*,*" ShowGridLines="False">
         <!--Top Banner-->
-        <Border Grid.Row="0" Grid.Column="0" ClipToBounds="True" CornerRadius="70" Margin="10">
+        <Border Classes="circular" Grid.Row="0" Grid.Column="0" UseLayoutRounding="True" Margin="10">
             <Image Stretch="UniformToFill" Source="{x:Static const:AppConstants.BotAvatarPlaceholderUri}" />
         </Border>
         <TextBlock Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="3" Text="Welcome to NadekoBot v4" FontSize="28"
                    FontStyle="Oblique" TextWrapping="WrapWithOverflow" HorizontalAlignment="Center" VerticalAlignment="Center"/>
 
         <!--Center Buttons-->
-        <Button Grid.Row="1" Grid.Column="0" Content="Commands" HorizontalAlignment="Center" VerticalAlignment="Center"
+        <Button Classes="transparent" Grid.Row="1" Grid.Column="0" Content="Commands" HorizontalContentAlignment="Center" HorizontalAlignment="Stretch" VerticalAlignment="Center"
                 Command="{Binding OpenUrl}" CommandParameter="https://nadeko.bot/commands"/>
-        <Button Grid.Row="1" Grid.Column="1" Content="Suggest" HorizontalAlignment="Center" VerticalAlignment="Center"
+        <Button Classes="transparent" Grid.Row="1" Grid.Column="1" Content="Suggest" HorizontalContentAlignment="Center" HorizontalAlignment="Stretch" VerticalAlignment="Center"
                 Command="{Binding OpenUrl}" CommandParameter="https://suggest.nadeko.bot/"/>
-        <Button Grid.Row="1" Grid.Column="2" Content="Docs" HorizontalAlignment="Center" VerticalAlignment="Center"
+        <Button Classes="transparent" Grid.Row="1" Grid.Column="2" Content="Docs" HorizontalContentAlignment="Center" HorizontalAlignment="Stretch" VerticalAlignment="Center"
                 Command="{Binding OpenUrl}" CommandParameter="https://nadekobot.readthedocs.io/en/v4/"/>
-        <Button Grid.Row="1" Grid.Column="3" Content="Support" HorizontalAlignment="Center" VerticalAlignment="Center"
+        <Button Classes="transparent" Grid.Row="1" Grid.Column="3" Content="Support" HorizontalContentAlignment="Center" HorizontalAlignment="Stretch" VerticalAlignment="Center"
                 Command="{Binding OpenUrl}" CommandParameter="https://invite.nadeko.bot/"/>
-        <Button Grid.Row="1" Grid.Column="4" Content="Embeds" HorizontalAlignment="Center" VerticalAlignment="Center"
+        <Button Classes="transparent" Grid.Row="1" Grid.Column="4" Content="Embeds" HorizontalContentAlignment="Center" HorizontalAlignment="Stretch" VerticalAlignment="Center"
                 Command="{Binding OpenUrl}" CommandParameter="https://eb.nadeko.bot/"/>
 
         <!--Center Instructions-->

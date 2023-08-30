@@ -1,4 +1,4 @@
-using Avalonia;
+using NadekoUpdater.Enums;
 using System.Collections.Concurrent;
 
 namespace NadekoUpdater.Models.Config;
@@ -23,6 +23,11 @@ public sealed class AppConfig
     /// The absolute path to the directory where the bot logs are stored.
     /// </summary>
     public string LogsDirectoryUri { get; set; } = AppStatics.AppDefaultLogDirectoryUri;
+
+    /// <summary>
+    /// The theme to be used.
+    /// </summary>
+    public ThemeType Theme { get; set; } = ThemeType.Dark;
 
     /// <summary>
     /// Determines whether the application should be minimized to the system tray when closed.

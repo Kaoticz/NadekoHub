@@ -1,4 +1,4 @@
-using Avalonia;
+using NadekoUpdater.Enums;
 
 namespace NadekoUpdater.Models.Config;
 
@@ -26,6 +26,12 @@ public sealed class ReadOnlyAppConfig
     /// </summary>
     public string LogsDirectoryUri
         => _appConfig.LogsDirectoryUri;
+
+    /// <summary>
+    /// The theme to be used.
+    /// </summary>
+    public ThemeType Theme
+        => _appConfig.Theme;
 
     /// <summary>
     /// Determines whether the application should be minimized to the system tray when closed.

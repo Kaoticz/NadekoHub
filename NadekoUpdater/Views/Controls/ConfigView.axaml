@@ -27,7 +27,7 @@
         <StackPanel Grid.Row="1" Margin="5 0 0 0" Spacing="2">
             <!--Dependencies Text-->
             <TextBlock Text="Dependencies" FontSize="22" />
-            <TextBlock Text="Make sure the dependencies below are installed if you want to use NadekoBot to play music." />
+            <TextBlock Text="Make sure the dependencies below are installed if you want to use NadekoBot to play music." TextWrapping="Wrap" />
             
             <!--Dependency Buttons-->
             <ItemsRepeater ItemsSource="{Binding DependencyButtons}">
@@ -68,14 +68,26 @@
                         Command="{Binding LogsUriBar.OpenFolder}" CommandParameter="{Binding LogsUriBar.CurrentUri}" />
             </Grid>
 
-            <Grid RowDefinitions="Auto,Auto,Auto" ColumnDefinitions="*,Auto" ShowGridLines="False">
+            <Grid RowDefinitions="Auto,Auto,Auto" ColumnDefinitions="*,Auto,Auto" ShowGridLines="False">
+                <!--Log Maximum Size Button Spinner-->
                 <TextBlock Grid.Row="0" Grid.Column="0" Margin="0 8 0 0" Text="Maximum log file size (in MB):" ToolTip.Tip="Defines the maximum size a log file is allowed to have. Set to 0 to disable logging." />
                 <ButtonSpinner Grid.Row="1" Grid.Column="0" Content="{Binding MaxLogSize}" Spin="ButtonSpun" ButtonSpinnerLocation="Right" HorizontalAlignment="Left" />
 
+                <!--Minimize to Tray CheckBox-->
                 <CheckBox Grid.Row="2" Grid.Column="0" Content="Minimize to system tray." ToolTip.Tip="Defines whether the updater should be minimized to the system tray rather than closed."
                           IsChecked="{Binding MinimizeToTray}" Command="{Binding ToggleMinimizeToTrayAsync}" />
                 
-                <Button Grid.Row="1" Grid.Column="1" Grid.RowSpan="2" Content="About" Margin="0 0 30 0"
+                <!--Theme Selector-->
+                <TextBlock Grid.Row="1" Grid.Column="1" Text="Theme " VerticalAlignment="Center" />
+                <ComboBox Name="ThemeBox" Grid.Row="1" Grid.Column="2" SelectedIndex="{Binding SelectedThemeIndex}">
+                    <!--The order of these items corresponds to the enum type "ThemeType"-->
+                    <ComboBoxItem Content="Auto" />
+                    <ComboBoxItem Content="Light" />
+                    <ComboBoxItem Content="Dark" />
+                </ComboBox>
+                
+                <!--About Button-->
+                <Button Grid.Row="2" Grid.Column="2" Content="About" Margin="0 5 30 0"
                         Command="{Binding OpenAboutMeAsync}"/>
             </Grid>
         </StackPanel>

@@ -1,7 +1,13 @@
+using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Markup.Xaml.Styling;
 using Avalonia.ReactiveUI;
+using Avalonia.Styling;
+using Avalonia.Themes.Fluent;
 using Microsoft.Extensions.DependencyInjection;
+using NadekoUpdater.Common;
 using NadekoUpdater.DesignData.Common;
+using NadekoUpdater.Enums;
 using NadekoUpdater.Models.Config;
 using NadekoUpdater.Services;
 using NadekoUpdater.Services.Abstractions;
@@ -81,12 +87,13 @@ public partial class AppView : ReactiveWindow<AppViewModel>
     protected override void OnResized(WindowResizedEventArgs eventArgs)
     {
         if (base.IsLoaded && _saveWindowSizeTask.IsCompleted)
-            _saveWindowSizeTask = SaveCurrentWindowSizeAsync(TimeSpan.FromSeconds(1));
+            _saveWindowSizeTask = SaveCurrentWindowSizeAsync(TimeSpan.FromSeconds(1));       
 
         base.OnResized(eventArgs);
     }
 
     /// <inheritdoc/>
+    /// <exception cref="UnreachableException">Occurs when <see cref="ThemeType"/> has an unimplemented value.</exception>
     protected override void OnOpened(EventArgs eventArgs)
     {
         // Ensure that bots on Unix system have access to the dependencies.
@@ -96,6 +103,15 @@ public partial class AppView : ReactiveWindow<AppViewModel>
         // Set the window size from the last session
         base.Height = _appConfigManager.AppConfig.WindowSize.Height;
         base.Width = _appConfigManager.AppConfig.WindowSize.Width;
+
+        // Set the user prefered theme
+        base.RequestedThemeVariant = _appConfigManager.AppConfig.Theme switch
+        {
+            ThemeType.Auto => ThemeVariant.Default,
+            ThemeType.Light => ThemeVariant.Light,
+            ThemeType.Dark => ThemeVariant.Dark,
+            _ => throw new UnreachableException($"No implementation for theme of type {_appConfigManager.AppConfig.Theme} was provided."),
+        };
 
         base.OnOpened(eventArgs);
     }
@@ -114,13 +130,13 @@ public partial class AppView : ReactiveWindow<AppViewModel>
     }
 
     /// <inheritdoc/>
-    protected override async void OnClosed(EventArgs e)
+    protected override async void OnClosed(EventArgs eventArgs)
     {
         // When the updater is closed, kill all bots and write their logs.
         _botOrchestrator.StopAll();
         await _logWriter.FlushAllAsync(true);
 
-        base.OnClosed(e);
+        base.OnClosed(eventArgs);
     }
 
     /// <summary>

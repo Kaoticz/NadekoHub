@@ -19,7 +19,7 @@
             <SolidColorBrush x:Key='HeavyBackground'>#FFFAFD</SolidColorBrush>
         </ResourceDictionary>
         <ResourceDictionary x:Key='Dark'>
-            <SolidColorBrush x:Key='LightBackground'>#2c2c2c</SolidColorBrush>
+            <SolidColorBrush x:Key='LightBackground'>#252525</SolidColorBrush>
             <SolidColorBrush x:Key='MediumBackground'>#202020</SolidColorBrush>
             <SolidColorBrush x:Key='HeavyBackground'>#181818</SolidColorBrush>
         </ResourceDictionary>

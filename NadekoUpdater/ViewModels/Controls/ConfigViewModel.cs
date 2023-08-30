@@ -6,6 +6,9 @@ using NadekoUpdater.Views.Windows;
 using NadekoUpdater.Services.Abstractions;
 using ReactiveUI;
 using Avalonia.Controls;
+using Avalonia.Styling;
+using System.Diagnostics;
+using Avalonia;
 
 namespace NadekoUpdater.ViewModels.Controls;
 
@@ -22,6 +25,7 @@ public class ConfigViewModel : ViewModelBase<ConfigView>
     private readonly IAppConfigManager _appConfigManager;
     private readonly AppView _mainWindow;
     private double _maxLogSize;
+    private int _selectedThemeIndex;
 
     /// <summary>
     /// Defines the maximum size a log file can have, in MB.
@@ -30,6 +34,19 @@ public class ConfigViewModel : ViewModelBase<ConfigView>
     {
         get => _maxLogSize;
         private set => this.RaiseAndSetIfChanged(ref _maxLogSize, value);
+    }
+
+    /// <summary>
+    /// Defines the index of the theme currently selected.
+    /// </summary>
+    public int SelectedThemeIndex
+    {
+        get => _selectedThemeIndex;
+        set
+        {
+            this.RaiseAndSetIfChanged(ref _selectedThemeIndex, value);
+            _ = ChangeThemeAsync((ThemeType)value);
+        }
     }
 
     /// <summary>
@@ -73,7 +90,8 @@ public class ConfigViewModel : ViewModelBase<ConfigView>
     {
         _appConfigManager = appConfigManager;
         _mainWindow = mainWindow;
-        MaxLogSize = _appConfigManager.AppConfig.LogMaxSizeMb;
+        _maxLogSize = _appConfigManager.AppConfig.LogMaxSizeMb;
+        _selectedThemeIndex = (int)_appConfigManager.AppConfig.Theme;
 
         BotsUriBar = botsUriBar;
         BotsUriBar.CurrentUri = appConfigManager.AppConfig.BotsDirectoryUri;
@@ -123,6 +141,31 @@ public class ConfigViewModel : ViewModelBase<ConfigView>
             : Math.Round(Math.Max(0.0, MaxLogSize - 0.1), 2);
 
         await _appConfigManager.UpdateConfigAsync(x => x.LogMaxSizeMb = MaxLogSize);
+    }
+
+    /// <summary>
+    /// Changes the current theme to the specified theme.
+    /// </summary>
+    /// <param name="selectedTheme">The theme to be applied.</param>
+    /// <exception cref="UnreachableException">Occurs when <see cref="ThemeType"/> has an unimplemented value.</exception>
+    private async Task ChangeThemeAsync(ThemeType selectedTheme)
+    {
+        try
+        {
+            _mainWindow.RequestedThemeVariant = selectedTheme switch
+            {
+                ThemeType.Auto => ThemeVariant.Default,
+                ThemeType.Light => ThemeVariant.Light,
+                ThemeType.Dark => ThemeVariant.Dark,
+                _ => throw new UnreachableException($"No implementation for theme of type {selectedTheme} was provided."),
+            };
+
+            await _appConfigManager.UpdateConfigAsync(x => x.Theme = selectedTheme);
+        }
+        catch (Exception ex)
+        {
+            await _mainWindow.ShowDialogWindowAsync("An error occurred when setting a theme:\n" + ex.Message, DialogType.Error, Icon.Error);
+        }
     }
 
     /// <summary>

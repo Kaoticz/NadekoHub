@@ -19,21 +19,21 @@ public class LateralBarViewModel : ViewModelBase<LateralBarView>
     /// </summary>
     public ObservableCollection<Button> BotButtonList { get; } = new();
 
-    private readonly IAppConfigManager _botEntryManager;
+    private readonly IAppConfigManager _appConfigManager;
 
     /// <summary>
     /// Creates the view-model for the <see cref="LateralBarView"/>.
     /// </summary>
-    /// <param name="botEntryManager">The application's settings manager.</param>
-    public LateralBarViewModel(IAppConfigManager botEntryManager)
+    /// <param name="appConfigManager">The application's settings manager.</param>
+    public LateralBarViewModel(IAppConfigManager appConfigManager)
     {
-        _botEntryManager = botEntryManager;
+        _appConfigManager = appConfigManager;
 
         this.WhenActivated(disposables =>
         {
             // Use WhenActivated to execute logic
             // when the view model gets activated.
-            ReloadBotButtons(botEntryManager.AppConfig.BotEntries);
+            ReloadBotButtons(appConfigManager.AppConfig.BotEntries);
 
             // Or use WhenActivated to execute logic
             // when the view model gets deactivated.
@@ -47,7 +47,7 @@ public class LateralBarViewModel : ViewModelBase<LateralBarView>
     /// </summary>
     public async ValueTask AddBotButtonAsync()
     {
-        var botEntry = await _botEntryManager.CreateBotEntryAsync();
+        var botEntry = await _appConfigManager.CreateBotEntryAsync();
 
         BotButtonList.Add(new() { Content = botEntry.Id });
         this.RaisePropertyChanged(nameof(BotButtonList));
@@ -59,7 +59,7 @@ public class LateralBarViewModel : ViewModelBase<LateralBarView>
     /// <param name="botId">The Id of the bot.</param>
     public async ValueTask RemoveBotButtonAsync(Guid botId)
     {
-        var botEntry = await _botEntryManager.DeleteBotEntryAsync(botId);
+        var botEntry = await _appConfigManager.DeleteBotEntryAsync(botId);
         
         var toRemove = BotButtonList.First(x => x.Content?.Equals(botEntry?.Id) is true);
         BotButtonList.Remove(toRemove);

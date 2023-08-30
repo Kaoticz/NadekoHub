@@ -23,7 +23,7 @@ public static class WindowConstants
     /// <summary>
     /// Defines the minimum height of the window.
     /// </summary>
-    public const string MinWindowHeight = "460";
+    public const string MinWindowHeight = "500";
 
     /// <summary>
     /// Defines the default window title.

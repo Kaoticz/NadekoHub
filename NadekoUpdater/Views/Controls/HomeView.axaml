@@ -15,6 +15,12 @@
     </Design.DataContext>
 
     <Grid RowDefinitions="Auto,Auto,*,*,Auto" ColumnDefinitions="*,*,*,*,*" ShowGridLines="False">
+        <!--Background Colors-->
+        <Rectangle Grid.Row="0" Grid.Column="0" Grid.RowSpan="2" Grid.ColumnSpan="5"
+                   Fill="{DynamicResource MediumBackground}" />
+        <Rectangle Grid.Row="2" Grid.Column="0" Grid.RowSpan="3" Grid.ColumnSpan="5"
+                   Fill="{DynamicResource HeavyBackground}" />
+        
         <!--Top Banner-->
         <Border Classes="circular" Grid.Row="0" Grid.Column="0" UseLayoutRounding="True" Margin="10">
             <Image Stretch="UniformToFill" Source="{x:Static const:AppConstants.BotAvatarPlaceholderUri}" />

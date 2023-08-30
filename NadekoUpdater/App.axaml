@@ -9,8 +9,10 @@
         <local:ViewLocator/>
     </Application.DataTemplates>
 
+    <!--Styles-->
+    <!--Think of them like CSS classes-->
     <Application.Styles>
-        <StyleInclude Source="/Styles/NadekoStyles.axaml"/>
+        <StyleInclude Source="/Styles/NadekoStyles.axaml" />
         <!--Generated Here: https://theme.xaml.live/-->
         <FluentTheme>
           <FluentTheme.Palettes>
@@ -19,6 +21,16 @@
           </FluentTheme.Palettes>
         </FluentTheme>
     </Application.Styles>
+    
+    <!--Resources-->
+    <!--Think of them like global variables-->
+    <Application.Resources>
+        <ResourceDictionary>
+          <ResourceDictionary.MergedDictionaries>
+            <ResourceInclude Source="/Resources/Colors.axaml" />  
+          </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Application.Resources>
 
     <TrayIcon.Icons>
       <TrayIcons>

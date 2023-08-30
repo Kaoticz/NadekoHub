@@ -26,6 +26,6 @@
             <ContentControl Grid.Row="0" Grid.Column="0" Grid.RowSpan="5" Content="{Binding LateralBarInstance}" />
 
             <!--View-->
-            <ContentControl Grid.Row="0" Grid.Column="1" Content="{Binding ContentViewModel}" Padding="5 0 5 0" />
+            <ContentControl Grid.Row="0" Grid.Column="1" Content="{Binding ContentViewModel}" />
         </Grid>
 </Window>

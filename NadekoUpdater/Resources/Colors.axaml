@@ -1,0 +1,27 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <!--Preview-->
+    <Design.PreviewWith>
+        <Border Padding="20">
+            <StackPanel Spacing="5">
+                <TextBlock Text="LightBackground" Background="{DynamicResource LightBackground}" Padding="10" />
+                <TextBlock Text="MediumBackground" Background="{DynamicResource MediumBackground}" Padding="10" />
+                <TextBlock Text="HeavyBackground" Background="{DynamicResource HeavyBackground}" Padding="10" />
+            </StackPanel>
+        </Border>
+    </Design.PreviewWith>
+
+    <ResourceDictionary.ThemeDictionaries>
+        <ResourceDictionary x:Key='Light'>
+            <SolidColorBrush x:Key='LightBackground'>#FAF5F8</SolidColorBrush>
+            <SolidColorBrush x:Key='MediumBackground'>#FCFAFC</SolidColorBrush>
+            <SolidColorBrush x:Key='HeavyBackground'>#FFFAFD</SolidColorBrush>
+        </ResourceDictionary>
+        <ResourceDictionary x:Key='Dark'>
+            <SolidColorBrush x:Key='LightBackground'>#2c2c2c</SolidColorBrush>
+            <SolidColorBrush x:Key='MediumBackground'>#202020</SolidColorBrush>
+            <SolidColorBrush x:Key='HeavyBackground'>#181818</SolidColorBrush>
+        </ResourceDictionary>
+    </ResourceDictionary.ThemeDictionaries>
+</ResourceDictionary>

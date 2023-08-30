@@ -14,7 +14,7 @@
         <dd:DesignLateralBarViewModel />
     </Design.DataContext>
 
-    <Grid RowDefinitions="Auto,*,Auto" ColumnDefinitions="*" ShowGridLines="False">
+    <Grid RowDefinitions="Auto,*,Auto" ColumnDefinitions="*" Background="{DynamicResource LightBackground}" ShowGridLines="False">
         <StackPanel Grid.Row="0">
             <!--Home button-->
             <Button Name="HomeButton" Content="Home" HorizontalAlignment="Center" VerticalAlignment="Top"/>

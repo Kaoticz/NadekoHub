@@ -29,6 +29,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Watch Remove="Resources\Colors.axaml" />
     <Watch Remove="Styles\NadekoStyles.axaml" />
     <Watch Remove="Views\Controls\BotConfigView.axaml" />
     <Watch Remove="Views\Controls\FakeConsole.axaml" />

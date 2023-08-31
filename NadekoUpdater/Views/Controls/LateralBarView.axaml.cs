@@ -10,8 +10,11 @@ using NadekoUpdater.Models.Config;
 using NadekoUpdater.Models.EventArguments;
 using NadekoUpdater.Services.Mocks;
 using NadekoUpdater.ViewModels.Controls;
+using ReactiveUI;
 using SkiaImageView;
 using SkiaSharp;
+using System.Collections.Specialized;
+using System.Diagnostics;
 
 namespace NadekoUpdater.Views.Controls;
 
@@ -76,9 +79,10 @@ public partial class LateralBarView : ReactiveUserControl<LateralBarViewModel>
     /// <param name="sender">The <see cref="Panel"/> that contains the bot buttons and avatars.</param>
     /// <param name="eventArgs">The event arguments.</param>
     /// <remarks>This is executed each time one of the buttons is rendered.</remarks>
-    /// <exception cref="InvalidOperationException"></exception>
+    /// <exception cref="InvalidOperationException">Occurs when the visual tree has an unexpected structure.</exception>
     private void OnBarLoad(object? sender, VisualTreeAttachmentEventArgs eventArgs)
     {
+        // TODO: fix the weird image bug
         if (!Utilities.TryCastTo<Panel>(sender, out var panel)
             || !Utilities.TryCastTo<SKImageView>(panel.Children[0], out var botAvatar)
             || !Utilities.TryCastTo<Button>(panel.Children[1], out var button)
@@ -86,6 +90,7 @@ public partial class LateralBarView : ReactiveUserControl<LateralBarViewModel>
             throw new InvalidOperationException($"Visual tree has an unexpected structure.");
 
         // Set the avatar
+        (botAvatar.Source as IDisposable)?.Dispose();
         botAvatar.Source = Utilities.LoadLocalImage(_appConfig.BotEntries[botId].AvatarUri);
 
         // Tunnel press and release events directly to the handling methods.

@@ -12,11 +12,16 @@ namespace NadekoUpdater.ViewModels.Windows;
 public class AppViewModel : ViewModelBase<AppView>
 {
     private ViewModelBase _contentViewModel;
+    private LateralBarViewModel _lateralBarInstance;
 
     /// <summary>
     /// View-model instance of a <see cref="LateralBarView"/>.
     /// </summary>
-    public LateralBarViewModel LateralBarInstance { get; }
+    public LateralBarViewModel LateralBarInstance
+    {
+        get => _lateralBarInstance;
+        set => this.RaiseAndSetIfChanged(ref _lateralBarInstance, value);
+    }
 
     /// <summary>
     /// View-model instance of the view to be displayed.
@@ -34,7 +39,7 @@ public class AppViewModel : ViewModelBase<AppView>
     /// <param name="homeViewModel">The first view-model to be displayed when the application is started.</param>
     public AppViewModel(LateralBarViewModel lateralBarInstance, HomeViewModel homeViewModel)
     {
-        LateralBarInstance = lateralBarInstance;
+        _lateralBarInstance = lateralBarInstance;
         _contentViewModel = homeViewModel;
     }
 }

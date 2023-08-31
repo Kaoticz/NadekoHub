@@ -17,11 +17,13 @@
             <SolidColorBrush x:Key='LightBackground'>#FAF5F8</SolidColorBrush>
             <SolidColorBrush x:Key='MediumBackground'>#FCFAFC</SolidColorBrush>
             <SolidColorBrush x:Key='HeavyBackground'>#FFFAFD</SolidColorBrush>
+            <SolidColorBrush x:Key='BotSelectionColor'>#681E58</SolidColorBrush>
         </ResourceDictionary>
         <ResourceDictionary x:Key='Dark'>
             <SolidColorBrush x:Key='LightBackground'>#252525</SolidColorBrush>
             <SolidColorBrush x:Key='MediumBackground'>#202020</SolidColorBrush>
             <SolidColorBrush x:Key='HeavyBackground'>#181818</SolidColorBrush>
+            <SolidColorBrush x:Key='BotSelectionColor'>#992C83</SolidColorBrush>
         </ResourceDictionary>
     </ResourceDictionary.ThemeDictionaries>
 </ResourceDictionary>

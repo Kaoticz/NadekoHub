@@ -6,7 +6,7 @@
              xmlns:vm="using:NadekoUpdater.ViewModels.Controls"
              xmlns:dd="using:NadekoUpdater.DesignData.Controls"
              xmlns:const="using:NadekoUpdater.Common"
-             mc:Ignorable="d" d:DesignWidth="65" d:DesignHeight="450"
+             mc:Ignorable="d" d:DesignWidth="70" d:DesignHeight="450"
              x:Class="NadekoUpdater.Views.Controls.LateralBarView"
              x:DataType="vm:LateralBarViewModel">
 
@@ -31,7 +31,7 @@
             <ItemsRepeater Name="ButtonList" ItemsSource="{Binding BotButtonList}">
                 <ItemsRepeater.ItemTemplate>
                     <DataTemplate>
-                        <Border ClipToBounds="True" CornerRadius="70" Margin="0,5,0,0">
+                        <Border BorderBrush="{DynamicResource LightBackground}" ClipToBounds="True" BorderThickness="3" CornerRadius="4" Margin="5,5,5,0">
                             <Panel AttachedToVisualTree="OnBarLoad" PointerEntered="BotButtonHover" PointerExited="BotButtonUnhover">
                                 <siv:SKImageView Stretch="UniformToFill" />
                                 <Button Click="LoadBotViewModel" Content="{Binding Content}" Opacity="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />

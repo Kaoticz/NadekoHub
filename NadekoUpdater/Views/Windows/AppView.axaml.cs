@@ -1,9 +1,12 @@
 using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Markup.Xaml.MarkupExtensions;
 using Avalonia.Markup.Xaml.Styling;
+using Avalonia.Media.Immutable;
 using Avalonia.ReactiveUI;
 using Avalonia.Styling;
 using Avalonia.Themes.Fluent;
+using DynamicData;
 using Microsoft.Extensions.DependencyInjection;
 using NadekoUpdater.Common;
 using NadekoUpdater.DesignData.Common;
@@ -57,6 +60,10 @@ public partial class AppView : ReactiveWindow<AppViewModel>
     public AppView(IServiceScopeFactory scopeFactory, IBotOrchestrator botOrchestrator, ILogWriter logWriter,
         IAppConfigManager appConfigManager, AppViewModel viewModel, LateralBarView lateralBarView)
     {
+        // Shorthand for fetching the bot button from the lateral bar structure
+        static Button GetBarButton(Control border)
+            => (((border as Border)?.Child as Panel)?.Children[1] as Button) ?? throw new InvalidOperationException("Unexpected layout.");
+
         _appConfigManager = appConfigManager;
         _botOrchestrator = botOrchestrator;
         _logWriter = logWriter;
@@ -65,6 +72,11 @@ public partial class AppView : ReactiveWindow<AppViewModel>
         lateralBarView.HomeButton.Click += (_, _) => viewModel.ContentViewModel = GetViewModel<HomeViewModel>(scopeFactory);
         lateralBarView.BotButtonClick += (button, _) =>
         {
+            // If the user clicked on the bot instance that is already active, exit.
+            if (base.ViewModel?.ContentViewModel is BotConfigViewModel currentViewModel && currentViewModel.Id.Equals(button.Content))
+                return;
+
+            // Switch to the bot config view-model
             var botConfigViewModel = GetBotConfigViewModel(button, scopeFactory);
             viewModel.ContentViewModel = botConfigViewModel;
 
@@ -72,10 +84,16 @@ public partial class AppView : ReactiveWindow<AppViewModel>
             botConfigViewModel.AvatarChanged += (_, eventArgs) => lateralBarView.UpdateBotButtonAvatarAsync(eventArgs);
 
             // If the bot instance is deleted, load the Home view.
-            botConfigViewModel.BotDeleted += async (_, _) =>
+            botConfigViewModel.BotDeleted += async (bcvm, _) =>
             {
                 viewModel.ContentViewModel = GetViewModel<HomeViewModel>(scopeFactory);
                 await viewModel.LateralBarInstance.RemoveBotButtonAsync(botConfigViewModel.Id);
+
+                // Fix weird bug that redraws bot buttons with the wrong avatars.
+                // A random border with null button content just pops up randomly in ButtonList.Children.
+                // This probably happens because the view references a Border with a bunch of stuff, whereas the view-model only
+                // references a Button, but I can't be bothered to do this the right way. 
+                lateralBarView.ButtonList.Children.RemoveAll(lateralBarView.ButtonList.Children.Where(x => GetBarButton(x).Content is null));
             };
         };
 

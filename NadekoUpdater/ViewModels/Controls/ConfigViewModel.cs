@@ -117,8 +117,8 @@ public class ConfigViewModel : ViewModelBase<ConfigView>
     /// <summary>
     /// Shows the "About Me" window as a dialog window.
     /// </summary>
-    public async ValueTask OpenAboutMeAsync()
-        => await new AboutMeView().ShowDialog(_mainWindow); // This looks weird, but AboutMeView is rendered useless once this method exits.
+    public async ValueTask OpenAboutMeAsync()   // This looks weird, but AboutMeView is rendered useless once this method exits.
+        => await new AboutMeView() { RequestedThemeVariant = _mainWindow.ActualThemeVariant }.ShowDialog(_mainWindow);
 
     /// <summary>
     /// Saves the minimize preference to the configuration file.

@@ -16,17 +16,18 @@
 
     <Grid RowDefinitions="Auto,Auto,*,*,Auto" ColumnDefinitions="*,*,*,*,*" ShowGridLines="False">
         <!--Background Colors-->
-        <Rectangle Grid.Row="0" Grid.Column="0" Grid.RowSpan="2" Grid.ColumnSpan="5"
-                   Fill="{DynamicResource MediumBackground}" />
-        <Rectangle Grid.Row="2" Grid.Column="0" Grid.RowSpan="3" Grid.ColumnSpan="5"
-                   Fill="{DynamicResource HeavyBackground}" />
+        <Rectangle Grid.Row="0" Grid.Column="0" Grid.RowSpan="2" Grid.ColumnSpan="5" Fill="{DynamicResource MediumBackground}" />
+        <Rectangle Grid.Row="2" Grid.Column="0" Grid.RowSpan="3" Grid.ColumnSpan="5" Fill="{DynamicResource HeavyBackground}" />
+        <Rectangle Grid.Row="5" Grid.Column="0" Fill="#008DDA" />
+        <Rectangle Grid.Row="5" Grid.Column="1" Fill="#F86752" />
+        <Rectangle Grid.Row="5" Grid.Column="2" Grid.ColumnSpan="3" Fill="#B90060" />
         
         <!--Top Banner-->
-        <Border Classes="circular" Grid.Row="0" Grid.Column="0" UseLayoutRounding="True" Margin="10">
+        <Border Classes="circular" Grid.Row="0" Grid.Column="0" Margin="10">
             <Image Stretch="UniformToFill" Source="{x:Static const:AppConstants.BotAvatarPlaceholderUri}" />
         </Border>
         <TextBlock Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="3" Text="Welcome to NadekoBot v4" FontSize="28"
-                   FontStyle="Oblique" TextWrapping="WrapWithOverflow" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                FontStyle="Oblique" TextWrapping="WrapWithOverflow" HorizontalAlignment="Center" VerticalAlignment="Center"/>
 
         <!--Center Buttons-->
         <Button Classes="transparent" Grid.Row="1" Grid.Column="0" Content="Commands" HorizontalContentAlignment="Center" HorizontalAlignment="Stretch" VerticalAlignment="Center"
@@ -42,16 +43,22 @@
 
         <!--Center Instructions-->
         <TextBlock Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="5" Text="Pick a bot on the left to get started."
-                   FontSize="22" FontStyle="Oblique" TextWrapping="WrapWithOverflow" HorizontalAlignment="Center" VerticalAlignment="Bottom"/>
+                FontSize="22" FontStyle="Oblique" TextWrapping="WrapWithOverflow" HorizontalAlignment="Center" VerticalAlignment="Bottom"/>
         <TextBlock Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="5" Text="Don't see any bot? Click on the plus button to add a new one."
-                   TextWrapping="WrapWithOverflow" HorizontalAlignment="Center" VerticalAlignment="Top"/>
+                TextWrapping="WrapWithOverflow" HorizontalAlignment="Center" VerticalAlignment="Top"/>
 
         <!--Bottom Buttons-->
-        <Button Grid.Row="5" Grid.Column="0" Content="Tip me on Paypal" HorizontalAlignment="Center" VerticalAlignment="Center"
-                 Command="{Binding OpenUrl}" CommandParameter="https://paypal.me/kwoth"/>
-        <Button Grid.Row="5" Grid.Column="1" Content="Support on Patreon" HorizontalAlignment="Center" VerticalAlignment="Center"
-                 Command="{Binding OpenUrl}" CommandParameter="https://patreon.com/nadekobot"/>
-        <TextBlock Grid.Row="5" Grid.Column="2" Grid.ColumnSpan="3" Text="Thank You ♡" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+        <Button Classes="transparent" Grid.Row="5" Grid.Column="0" Content="Tip me on Paypal" Foreground="White" HorizontalAlignment="Stretch"
+                Command="{Binding OpenUrl}" CommandParameter="https://paypal.me/kwoth"/>
+        <Image Grid.Row="5" Grid.Column="0" MaxHeight="30" IsHitTestVisible="False" HorizontalAlignment="Right"
+                Source="avares://NadekoUpdater/Assets/paypal.png" />
+        
+        <Button Classes="transparent" Grid.Row="5" Grid.Column="1" Content="Support on Patreon" Foreground="White" HorizontalAlignment="Stretch"
+                Command="{Binding OpenUrl}" CommandParameter="https://patreon.com/nadekobot"/>
+        <Image Grid.Row="5" Grid.Column="1" MaxHeight="30" IsHitTestVisible="False" HorizontalAlignment="Right"
+                Source="avares://NadekoUpdater/Assets/patreon.png" />
+        <TextBlock Grid.Row="5" Grid.Column="2" Grid.ColumnSpan="3" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center"
+                Text="Thank You ♡"/>
 
     </Grid>
 </UserControl>

@@ -17,13 +17,17 @@
     <Grid RowDefinitions="Auto,*,Auto" ColumnDefinitions="*" Background="{DynamicResource LightBackground}" ShowGridLines="False">
         <StackPanel Grid.Row="0">
             <!--Home button-->
-            <Button Name="HomeButton" Content="Home" HorizontalAlignment="Center" VerticalAlignment="Top"/>
+            <Button Classes="transparent" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"
+                     Name="HomeButton" Content="🏠" FontSize="18"/>
         
             <!--Visual separator-->
             <Separator HorizontalAlignment="Stretch" VerticalAlignment="Center" />
         
             <!--Button that adds new bot buttons-->
-            <Button Content="Add" Command="{Binding AddBotButtonAsync}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+            <Border Classes="circular" HorizontalAlignment="Center" VerticalAlignment="Center">
+                <Button Classes="accent" Command="{Binding AddBotButtonAsync}" Content="+"
+                        PointerEntered="BotButtonHover" PointerExited="BotButtonUnhover"/>
+            </Border>
         </StackPanel>
 
         <!--Scroll bar with bot buttons-->

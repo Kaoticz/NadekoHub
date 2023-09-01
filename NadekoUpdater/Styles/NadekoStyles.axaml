@@ -14,7 +14,7 @@
                     <Button Classes="transparent" Content="Transp.Button" IsEnabled="False" />
                 </StackPanel>
                 <Border Classes="circular">
-                    <Button Grid.Column="0" Content="+" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" />
+                    <Button Classes="accent" Content="+" />
                 </Border>
                 <TextBlock Text="Text Block" />
                 <TextBox Classes="console" Watermark="Fake Console" />
@@ -40,10 +40,36 @@
         </Style>
     </Style>
 
+    <!--Add Bot Button-->
+    <Style Selector="Button.accent">
+        <Setter Property="FontSize" Value="18" />
+        <Setter Property="FontWeight" Value="Bold" />
+        <Setter Property="Padding" Value="20 15 20 15" />
+        <Setter Property="HorizontalContentAlignment" Value="Center" />
+        <Setter Property="Background" Value="{DynamicResource AccentButtonBackground}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource AccentButtonBorderBrush}" />
+        <Setter Property="Foreground" Value="{DynamicResource AccentButtonForeground}" />
+
+        <!--Add Bot Button Mouse Over-->
+        <Style Selector="^:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+            <Setter Property="Background" Value="{DynamicResource AccentButtonBackgroundPointerOver}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource AccentButtonBorderBrushPointerOver}" />
+            <Setter Property="Foreground" Value="{DynamicResource AccentButtonForegroundPointerOver}" />
+        </Style>
+
+        <!--Add Bot Button Pressed-->
+        <Style Selector="^:pressed  /template/ ContentPresenter#PART_ContentPresenter">
+            <Setter Property="Background" Value="{DynamicResource AccentButtonBackgroundPressed}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource AccentButtonBorderBrushPressed}" />
+            <Setter Property="Foreground" Value="{DynamicResource AccentButtonForegroundPressed}" />
+        </Style>
+    </Style>
+
     <!--Circular Border-->
     <Style Selector="Border.circular">
         <Setter Property="ClipToBounds" Value="True" />
         <Setter Property="CornerRadius" Value="100" />
+        <Setter Property="HorizontalAlignment" Value="Center" />
     </Style>
     
     <!--Fake Console-->

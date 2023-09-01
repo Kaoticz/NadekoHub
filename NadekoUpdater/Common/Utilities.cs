@@ -51,7 +51,6 @@ internal static class Utilities
     /// <param name="obj">The object to be cast.</param>
     /// <param name="castObject">The cast object, or <see langword="null"/> is casting failed.</param>
     /// <returns><see langword="true"/> if the object was successfully cast, <see langword="false"/> otherwise.</returns>
-    /// <exception cref="InvalidCastException">Occurs when <paramref name="obj"/> is not of type <typeparamref name="T"/>.</exception>
     public static bool TryCastTo<T>(object? obj, [MaybeNullWhen(false)] out T castObject)
     {
         if (obj is null)
@@ -60,8 +59,16 @@ internal static class Utilities
             return false;
         }
 
-        castObject = (T)obj;
-        return true;
+        try
+        {
+            castObject = (T)obj;
+            return true;
+        }
+        catch
+        {
+            castObject = default;
+            return false;
+        }
     }
 
     /// <summary>

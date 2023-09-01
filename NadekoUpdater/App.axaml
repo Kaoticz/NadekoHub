@@ -9,6 +9,17 @@
         <local:ViewLocator/>
     </Application.DataTemplates>
 
+    <!--Resources-->
+    <!--Think of them like global variables-->
+    <Application.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceInclude Source="/Resources/Fonts.axaml" />
+                <ResourceInclude Source="/Resources/Colors.axaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Application.Resources>
+
     <!--Styles-->
     <!--Think of them like CSS classes-->
     <Application.Styles>
@@ -21,16 +32,6 @@
           </FluentTheme.Palettes>
         </FluentTheme>
     </Application.Styles>
-    
-    <!--Resources-->
-    <!--Think of them like global variables-->
-    <Application.Resources>
-        <ResourceDictionary>
-          <ResourceDictionary.MergedDictionaries>
-            <ResourceInclude Source="/Resources/Colors.axaml" />  
-          </ResourceDictionary.MergedDictionaries>
-        </ResourceDictionary>
-    </Application.Resources>
 
     <TrayIcon.Icons>
       <TrayIcons>

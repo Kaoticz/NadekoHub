@@ -53,22 +53,14 @@ internal static class Utilities
     /// <returns><see langword="true"/> if the object was successfully cast, <see langword="false"/> otherwise.</returns>
     public static bool TryCastTo<T>(object? obj, [MaybeNullWhen(false)] out T castObject)
     {
-        if (obj is null)
+        if (obj is T result)
         {
-            castObject = default;
-            return false;
-        }
-
-        try
-        {
-            castObject = (T)obj;
+            castObject = result;
             return true;
         }
-        catch
-        {
-            castObject = default;
-            return false;
-        }
+
+        castObject = default;
+        return false;
     }
 
     /// <summary>

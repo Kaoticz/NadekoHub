@@ -18,20 +18,35 @@
                 </Border>
                 <TextBlock Text="Text Block" />
                 <TextBox Classes="console" Watermark="Fake Console" />
-                <TextBox Watermark="Regular Text Box" />
+                <TextBox Watermark="Regular Text Box" Text="Sample Text" />
             </StackPanel>
         </Border>
     </Design.PreviewWith>
 
+    <!--All Text Blocks-->
+    <Style Selector="TextBlock">
+        <Setter Property="FontFamily" Value="{StaticResource NotoSansFont}" />
+        <Setter Property="FontSize" Value="15" />
+    </Style>
+
+    <!--All Text Boxes-->
+    <Style Selector="TextBox">
+        <Setter Property="FontFamily" Value="{StaticResource NotoSansFont}" />
+        <Setter Property="FontSize" Value="15" />
+    </Style>
+
     <!--All Buttons-->
     <Style Selector="Button">
         <Setter Property="Padding" Value="15 7 15 7" />
+        <Setter Property="FontFamily" Value="{StaticResource NotoSansFont}" />
+        <Setter Property="FontSize" Value="15" />
     </Style>
 
     <!--Transparent Buttons-->
     <Style Selector="Button.transparent">
         <Setter Property="Background" Value="Transparent" />
         <Setter Property="Foreground" Value="{DynamicResource ButtonForeground}" />
+        <Setter Property="FontFamily" Value="{StaticResource NotoSansBoldFont}" />
         <Setter Property="FontWeight" Value="Bold" />
 
         <!--Transparent Button Disabled-->
@@ -42,10 +57,11 @@
 
     <!--Add Bot Button-->
     <Style Selector="Button.accent">
-        <Setter Property="FontSize" Value="18" />
+        <Setter Property="FontSize" Value="30" />
         <Setter Property="FontWeight" Value="Bold" />
-        <Setter Property="Padding" Value="20 15 20 15" />
+        <Setter Property="Padding" Value="15 5 16 9" />
         <Setter Property="HorizontalContentAlignment" Value="Center" />
+        <Setter Property="FontFamily" Value="{StaticResource NotoSansBoldFont}" />
         <Setter Property="Background" Value="{DynamicResource AccentButtonBackground}" />
         <Setter Property="BorderBrush" Value="{DynamicResource AccentButtonBorderBrush}" />
         <Setter Property="Foreground" Value="{DynamicResource AccentButtonForeground}" />

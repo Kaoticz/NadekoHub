@@ -3,6 +3,7 @@ using NadekoUpdater.DesignData.Common;
 using NadekoUpdater.Services.Abstractions;
 using NadekoUpdater.Services.Mocks;
 using NadekoUpdater.ViewModels.Controls;
+using NadekoUpdater.ViewModels.Windows;
 using NadekoUpdater.Views.Windows;
 
 namespace NadekoUpdater.DesignData.Controls;
@@ -21,6 +22,7 @@ public sealed class DesignConfigViewModel : ConfigViewModel
             DesignStatics.Services.GetRequiredService<UriInputBarViewModel>(),
             DesignStatics.Services.GetRequiredService<UriInputBarViewModel>(),
             DesignStatics.Services.GetRequiredService<UriInputBarViewModel>(),
+            DesignStatics.Services.GetRequiredService<AboutMeViewModel>(),
             DesignStatics.Services.GetRequiredService<IFfmpegResolver>(),
             DesignStatics.Services.GetRequiredService<IYtdlpResolver>()
         )

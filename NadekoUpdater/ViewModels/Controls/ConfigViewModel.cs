@@ -4,6 +4,7 @@ using MsBox.Avalonia.Enums;
 using NadekoUpdater.Enums;
 using NadekoUpdater.Services.Abstractions;
 using NadekoUpdater.ViewModels.Abstractions;
+using NadekoUpdater.ViewModels.Windows;
 using NadekoUpdater.Views.Controls;
 using NadekoUpdater.Views.Windows;
 using ReactiveUI;
@@ -22,6 +23,7 @@ public class ConfigViewModel : ViewModelBase<ConfigView>
         $"them through your package manager or adding the directory \"{AppStatics.AppDepsUri}\" to your PATH environment variable.";
 
     private readonly IAppConfigManager _appConfigManager;
+    private readonly AboutMeViewModel _aboutMeViewModel;
     private readonly AppView _mainWindow;
     private double _maxLogSize;
     private int _selectedThemeIndex;
@@ -85,12 +87,13 @@ public class ConfigViewModel : ViewModelBase<ConfigView>
     /// <param name="ffmpegResolver">The service that manages ffmpeg on the system.</param>
     /// <param name="ytdlpResolver">The service that manages yt-dlp on the system.</param>
     public ConfigViewModel(IAppConfigManager appConfigManager, AppView mainWindow, UriInputBarViewModel botsUriBar, UriInputBarViewModel backupsUriBar,
-        UriInputBarViewModel logsUriBar, IFfmpegResolver ffmpegResolver, IYtdlpResolver ytdlpResolver)
+        UriInputBarViewModel logsUriBar, AboutMeViewModel aboutMeViewModel, IFfmpegResolver ffmpegResolver, IYtdlpResolver ytdlpResolver)
     {
         _appConfigManager = appConfigManager;
         _mainWindow = mainWindow;
         _maxLogSize = _appConfigManager.AppConfig.LogMaxSizeMb;
         _selectedThemeIndex = (int)_appConfigManager.AppConfig.Theme;
+        _aboutMeViewModel = aboutMeViewModel;
 
         BotsUriBar = botsUriBar;
         BotsUriBar.CurrentUri = appConfigManager.AppConfig.BotsDirectoryUri;
@@ -117,8 +120,17 @@ public class ConfigViewModel : ViewModelBase<ConfigView>
     /// <summary>
     /// Shows the "About Me" window as a dialog window.
     /// </summary>
-    public async ValueTask OpenAboutMeAsync()   // This looks weird, but AboutMeView is rendered useless once this method exits.
-        => await new AboutMeView() { RequestedThemeVariant = _mainWindow.ActualThemeVariant }.ShowDialog(_mainWindow);
+    public async ValueTask OpenAboutMeAsync()
+    {
+        // This looks weird, but AboutMeView is rendered useless once it is closed by ShowDialog.
+        var aboutMeView = new AboutMeView()
+        {
+            RequestedThemeVariant = _mainWindow.ActualThemeVariant,
+            ViewModel = _aboutMeViewModel
+        };
+
+        await aboutMeView.ShowDialog(_mainWindow);
+    }
 
     /// <summary>
     /// Saves the minimize preference to the configuration file.

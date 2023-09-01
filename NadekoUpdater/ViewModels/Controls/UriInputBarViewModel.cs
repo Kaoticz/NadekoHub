@@ -66,6 +66,13 @@ public class UriInputBarViewModel : ViewModelBase<UriInputBar>
         => Process.Start(new ProcessStartInfo(directoryUri) { UseShellExecute = true });
 
     /// <summary>
+    /// Checks if the current Uri is valid and updates <see cref="IsValidUri"/> appropriately.
+    /// </summary>
+    /// <returns><see langword="true"/> if the directory is valid, <see langword="false"/> otherwise.</returns>
+    public bool RecheckCurrentUri()
+        => IsValidUri = IsValidDirectory(CurrentUri);
+
+    /// <summary>
     /// Opens a directory picker and sets <see cref="CurrentUri"/> to the selected directory.
     /// </summary>
     public async Task SelectFolderAsync()

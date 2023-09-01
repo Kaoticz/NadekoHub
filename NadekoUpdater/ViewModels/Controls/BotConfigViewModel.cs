@@ -353,6 +353,7 @@ public class BotConfigViewModel : ViewModelBase<BotConfigView>, IDisposable
             await dialogWindowTask;
             _ = LoadUpdateBarAsync(Resolver, UpdateBar);
 
+            BotDirectoryUriBar.RecheckCurrentUri();
             EnableButtons(false, true);
         }
         catch (Exception ex)

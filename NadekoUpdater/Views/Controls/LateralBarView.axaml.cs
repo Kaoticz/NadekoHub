@@ -5,18 +5,14 @@ using Avalonia.Interactivity;
 using Avalonia.Media;
 using Avalonia.Media.Immutable;
 using Avalonia.ReactiveUI;
-using Kotz.Events;
 using Microsoft.Extensions.DependencyInjection;
 using NadekoUpdater.DesignData.Common;
 using NadekoUpdater.Models.Config;
 using NadekoUpdater.Models.EventArguments;
 using NadekoUpdater.Services.Mocks;
 using NadekoUpdater.ViewModels.Controls;
-using ReactiveUI;
 using SkiaImageView;
 using SkiaSharp;
-using System.Collections.Specialized;
-using System.Diagnostics;
 
 namespace NadekoUpdater.Views.Controls;
 

@@ -33,7 +33,7 @@ public abstract class FfmpegResolver : IFfmpegResolver
 
         // If ffmpeg or ffprobe are absent, a reinstall needs to be performed.
         if (currentVer is null || !await Utilities.ProgramExistsAsync("ffprobe", cToken))
-            return null;       
+            return null;
 
         var latestVer = await GetLatestVersionAsync(cToken);
 

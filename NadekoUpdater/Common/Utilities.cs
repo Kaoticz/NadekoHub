@@ -186,5 +186,5 @@ internal static class Utilities
         Environment.SetEnvironmentVariable("PATH", newPathEnvValue, EnvironmentVariableTarget.Process);
 
         return true;
-    }    
+    }
 }

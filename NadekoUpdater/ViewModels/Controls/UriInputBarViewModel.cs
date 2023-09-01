@@ -1,10 +1,9 @@
+using Avalonia.Platform.Storage;
+using NadekoUpdater.Models.EventArguments;
 using NadekoUpdater.ViewModels.Abstractions;
 using NadekoUpdater.Views.Controls;
-using System.Diagnostics;
-using Avalonia.Platform.Storage;
 using ReactiveUI;
-using Kotz.Events;
-using NadekoUpdater.Models.EventArguments;
+using System.Diagnostics;
 
 namespace NadekoUpdater.ViewModels.Controls;
 

@@ -60,7 +60,7 @@ public class LateralBarViewModel : ViewModelBase<LateralBarView>
     public async ValueTask RemoveBotButtonAsync(Guid botId)
     {
         var botEntry = await _appConfigManager.DeleteBotEntryAsync(botId);
-        
+
         var toRemove = BotButtonList.First(x => x.Content?.Equals(botEntry?.Id) is true);
         BotButtonList.Remove(toRemove);
 

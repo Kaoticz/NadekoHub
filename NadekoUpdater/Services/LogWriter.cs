@@ -1,4 +1,3 @@
-using Kotz.Events;
 using NadekoUpdater.Models.Config;
 using NadekoUpdater.Models.EventArguments;
 using NadekoUpdater.Services.Abstractions;

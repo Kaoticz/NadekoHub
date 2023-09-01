@@ -1,17 +1,9 @@
-using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Markup.Xaml.MarkupExtensions;
-using Avalonia.Markup.Xaml.Styling;
-using Avalonia.Media.Immutable;
 using Avalonia.ReactiveUI;
 using Avalonia.Styling;
-using Avalonia.Themes.Fluent;
-using DynamicData;
 using Microsoft.Extensions.DependencyInjection;
-using NadekoUpdater.Common;
 using NadekoUpdater.DesignData.Common;
 using NadekoUpdater.Enums;
-using NadekoUpdater.Models.Config;
 using NadekoUpdater.Services;
 using NadekoUpdater.Services.Abstractions;
 using NadekoUpdater.ViewModels.Abstractions;
@@ -120,7 +112,7 @@ public partial class AppView : ReactiveWindow<AppViewModel>
     protected override void OnResized(WindowResizedEventArgs eventArgs)
     {
         if (base.IsLoaded && _saveWindowSizeTask.IsCompleted)
-            _saveWindowSizeTask = SaveCurrentWindowSizeAsync(TimeSpan.FromSeconds(1));       
+            _saveWindowSizeTask = SaveCurrentWindowSizeAsync(TimeSpan.FromSeconds(1));
 
         base.OnResized(eventArgs);
     }

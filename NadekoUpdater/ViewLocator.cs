@@ -3,7 +3,6 @@ using Avalonia.Controls;
 using Avalonia.Controls.Templates;
 using Avalonia.Media;
 using NadekoUpdater.ViewModels.Abstractions;
-using System;
 
 namespace NadekoUpdater;
 

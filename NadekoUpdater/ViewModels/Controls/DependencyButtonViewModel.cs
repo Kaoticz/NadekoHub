@@ -1,4 +1,3 @@
-using Kotz.Events;
 using NadekoUpdater.Enums;
 using NadekoUpdater.ViewModels.Abstractions;
 using NadekoUpdater.Views.Controls;

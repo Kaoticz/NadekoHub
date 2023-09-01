@@ -23,7 +23,7 @@ public static partial class AppStatics
     /// Defines the default location where the bot instances are stored.
     /// </summary>
     public static string AppDefaultBotDirectoryUri { get; } = Path.Combine(AppDefaultConfigDirectoryUri, "Bots");
-    
+
     /// <summary>
     /// Defines the default location where the backups of bot instances are stored.
     /// </summary>

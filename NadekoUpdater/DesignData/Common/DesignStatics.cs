@@ -1,6 +1,5 @@
 using Avalonia;
 using Avalonia.Controls;
-using System;
 
 namespace NadekoUpdater.DesignData.Common;
 

@@ -1,4 +1,3 @@
-using Kotz.Events;
 using NadekoUpdater.Models.EventArguments;
 using System.Diagnostics.CodeAnalysis;
 

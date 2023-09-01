@@ -1,5 +1,4 @@
 using Avalonia.Controls;
-using Kotz.Events;
 using MsBox.Avalonia;
 using MsBox.Avalonia.Enums;
 using NadekoUpdater.Enums;
@@ -175,7 +174,7 @@ public class BotConfigViewModel : ViewModelBase<BotConfigView>, IDisposable
         // Dispose when the view is deactivated
         this.WhenActivated(disposables => Disposable.Create(() => Dispose()).DisposeWith(disposables));
     }
- 
+
     /// <summary>
     /// Moves or renames the bot instance associated with this view-model.
     /// </summary>
@@ -457,7 +456,7 @@ public class BotConfigViewModel : ViewModelBase<BotConfigView>, IDisposable
         IsBotRunning = false;
         EnableButtons(false, true);
     }
-    
+
     /// <inheritdoc/>
     public void Dispose()
     {

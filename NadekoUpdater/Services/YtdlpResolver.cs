@@ -94,7 +94,7 @@ public sealed class YtdlpResolver : IYtdlpResolver
     {
         if (_isUpdating)
             return (null, null);
-        
+
         _isUpdating = true;
         var currentVersion = await GetCurrentVersionAsync(cToken);
         var newVersion = await GetLatestVersionAsync(cToken);

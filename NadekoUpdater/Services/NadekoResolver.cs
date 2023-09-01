@@ -132,7 +132,7 @@ public sealed partial class NadekoResolver : IBotResolver
             _updateIdOngoing.Remove(Id);
             return (currentVersion, null);
         }
-        
+
         var backupFileUri = await CreateBackupAsync();
 
         if (currentVersion is not null)

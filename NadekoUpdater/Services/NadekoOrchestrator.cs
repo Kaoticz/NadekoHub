@@ -1,4 +1,3 @@
-using Kotz.Events;
 using NadekoUpdater.Models.Config;
 using NadekoUpdater.Models.EventArguments;
 using NadekoUpdater.Services.Abstractions;
@@ -22,7 +21,7 @@ public sealed class NadekoOrchestrator : IBotOrchestrator
     public event EventHandler<IBotOrchestrator, ProcessStdWriteEventArgs>? OnStderr;
 
     /// <inheritdoc/>    
-    public event EventHandler<IBotOrchestrator, ProcessStdWriteEventArgs>? OnStdout;   
+    public event EventHandler<IBotOrchestrator, ProcessStdWriteEventArgs>? OnStdout;
 
     /// <summary>
     /// Creates an object that coordinates multiple running processes of NadekoBot.

@@ -25,7 +25,7 @@ public sealed class FfmpegWindowsResolver : FfmpegResolver
     /// <param name="httpClientFactory">The HTTP client factory.</param>
     public FfmpegWindowsResolver(IHttpClientFactory httpClientFactory)
         => _httpClientFactory = httpClientFactory;
-    
+
     /// <inheritdoc/>
     public override ValueTask<bool?> CanUpdateAsync(CancellationToken cToken = default)
     {
@@ -92,7 +92,7 @@ public sealed class FfmpegWindowsResolver : FfmpegResolver
         {
             // Extract the zip file.
             ZipFile.ExtractToDirectory(zipFilePath, _tempDirectory);
-        
+
             // Move ffmpeg to the dependencies directory.
             File.Move(Path.Combine(zipExtractDir, "bin", FileName), Path.Combine(dependenciesUri, FileName), true);
             File.Move(Path.Combine(zipExtractDir, "bin", "ffprobe.exe"), Path.Combine(dependenciesUri, "ffprobe.exe"), true);

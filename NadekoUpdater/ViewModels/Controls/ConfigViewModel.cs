@@ -1,14 +1,13 @@
+using Avalonia.Controls;
+using Avalonia.Styling;
 using MsBox.Avalonia.Enums;
 using NadekoUpdater.Enums;
+using NadekoUpdater.Services.Abstractions;
 using NadekoUpdater.ViewModels.Abstractions;
 using NadekoUpdater.Views.Controls;
 using NadekoUpdater.Views.Windows;
-using NadekoUpdater.Services.Abstractions;
 using ReactiveUI;
-using Avalonia.Controls;
-using Avalonia.Styling;
 using System.Diagnostics;
-using Avalonia;
 
 namespace NadekoUpdater.ViewModels.Controls;
 
@@ -176,7 +175,7 @@ public class ConfigViewModel : ViewModelBase<ConfigView>
     private async Task InitializeDependencyButtonAsync(DependencyButtonViewModel dependencyButton, IDependencyResolver dependencyResolver)
     {
         dependencyButton.Click += async (buttonViewModel, _) => await HandleDependencyAsync(buttonViewModel, dependencyResolver);
-        
+
         var canUpdate = await dependencyResolver.CanUpdateAsync();
         dependencyButton.Status = (canUpdate is null)
             ? DependencyStatus.Install

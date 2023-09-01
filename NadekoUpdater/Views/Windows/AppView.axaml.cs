@@ -21,9 +21,11 @@ namespace NadekoUpdater.Views.Windows;
 public partial class AppView : ReactiveWindow<AppViewModel>
 {
     private Task _saveWindowSizeTask = Task.CompletedTask;
+    private readonly IServiceScopeFactory _scopeFactory;
     private readonly IAppConfigManager _appConfigManager;
     private readonly IBotOrchestrator _botOrchestrator;
     private readonly ILogWriter _logWriter;
+    private readonly LateralBarView _lateralBarView;
 
     /// <summary>
     /// Designer's constructor. Use the parameterized constructor instead.
@@ -52,59 +54,39 @@ public partial class AppView : ReactiveWindow<AppViewModel>
     public AppView(IServiceScopeFactory scopeFactory, IBotOrchestrator botOrchestrator, ILogWriter logWriter,
         IAppConfigManager appConfigManager, AppViewModel viewModel, LateralBarView lateralBarView)
     {
-        // Shorthand for fetching the bot button from the lateral bar structure
-        static Button GetBarButton(Control border)
-            => (((border as Border)?.Child as Panel)?.Children[1] as Button) ?? throw new InvalidOperationException("Unexpected layout.");
-
+        _scopeFactory = scopeFactory;
         _appConfigManager = appConfigManager;
         _botOrchestrator = botOrchestrator;
         _logWriter = logWriter;
+        _lateralBarView = lateralBarView;
 
-        lateralBarView.ConfigButton.Click += (_, _) =>
+        _lateralBarView.ConfigButton.Click += (_, _) =>
         {
-            lateralBarView.ResetBotButtonBorders();
-            viewModel.ContentViewModel = GetViewModel<ConfigViewModel>(scopeFactory);
+            _lateralBarView.ResetBotButtonBorders();
+            viewModel.ContentViewModel = GetViewModel<ConfigViewModel>();
         };
 
-        lateralBarView.HomeButton.Click += (_, _) =>
+        _lateralBarView.HomeButton.Click += (_, _) =>
         {
-            lateralBarView.ResetBotButtonBorders();
-            viewModel.ContentViewModel = GetViewModel<HomeViewModel>(scopeFactory);
+            _lateralBarView.ResetBotButtonBorders();
+            viewModel.ContentViewModel = GetViewModel<HomeViewModel>();
         };
 
-        lateralBarView.BotButtonClick += (button, _) =>
+        _lateralBarView.BotButtonClick += (button, _) =>
         {
-            // If the user clicked on the bot instance that is already active, exit.
-            if (base.ViewModel?.ContentViewModel is BotConfigViewModel currentViewModel && currentViewModel.Id.Equals(button.Content))
+            var botConfigViewModel = SwitchBotConfigViewModel(button, _lateralBarView);
+
+            if (botConfigViewModel is null)
                 return;
 
-            // Switch to the bot config view-model
-            var botConfigViewModel = GetBotConfigViewModel(button, scopeFactory);
-            viewModel.ContentViewModel = botConfigViewModel;
-
-            // Update the selector on the lateral bar
-            lateralBarView.ResetBotButtonBorders();
-            lateralBarView.ApplyBotButtonBorder(button);
-
             // Update the avatar on the lateral bar.
-            botConfigViewModel.AvatarChanged += (_, eventArgs) => lateralBarView.UpdateBotButtonAvatarAsync(eventArgs);
+            botConfigViewModel.AvatarChanged += (_, eventArgs) => _lateralBarView.UpdateBotButtonAvatarAsync(eventArgs);
 
             // If the bot instance is deleted, load the Home view.
-            botConfigViewModel.BotDeleted += async (bcvm, _) =>
-            {
-                lateralBarView.ResetBotButtonBorders();
-                viewModel.ContentViewModel = GetViewModel<HomeViewModel>(scopeFactory);
-                await viewModel.LateralBarInstance.RemoveBotButtonAsync(botConfigViewModel.Id);
-
-                // Fix weird bug that redraws bot buttons with the wrong avatars.
-                // A random border with null button content just pops up randomly in ButtonList.Children.
-                // This probably happens because the view references a Border with a bunch of stuff, whereas the view-model only
-                // references a Button, but I can't be bothered to do this the right way. 
-                lateralBarView.ButtonList.Children.RemoveAll(lateralBarView.ButtonList.Children.Where(x => GetBarButton(x).Content is null));
-            };
+            botConfigViewModel.BotDeleted += (bcvm, _) => RemoveBotAsync(bcvm.Id, _lateralBarView);
         };
 
-        this.WhenActivated(_ => base.ViewModel = viewModel);    // Sets the view-model to the one in the IoC container.
+        this.WhenActivated(_ => base.ViewModel = viewModel);    // Sets the view-model to one from the IoC container.
         InitializeComponent();
     }
 
@@ -176,15 +158,69 @@ public partial class AppView : ReactiveWindow<AppViewModel>
     }
 
     /// <summary>
-    /// Gets a <typeparamref name="T"/> from the <paramref name="scopeFactory"/>.
+    /// Gets a <typeparamref name="T"/> from the <see cref="_scopeFactory"/>.
     /// </summary>
     /// <typeparam name="T">The type of view-model to be returned.</typeparam>
-    /// <param name="scopeFactory">The IoC scope factory.</param>
     /// <returns>A <typeparamref name="T"/>.</returns>
-    private static T GetViewModel<T>(IServiceScopeFactory scopeFactory) where T : ViewModelBase
+    private T GetViewModel<T>() where T : ViewModelBase
     {
-        using var scope = scopeFactory.CreateScope();
+        using var scope = _scopeFactory.CreateScope();
         return scope.ServiceProvider.GetRequiredService<T>();
+    }
+
+    /// <summary>
+    /// Removes the bot with the specified Id from the settings file and the lateral bar.
+    /// </summary>
+    /// <param name="botId">The Id of the bot to be removed.</param>
+    /// <param name="lateralBarView">The view of the lateral bar.</param>
+    /// <exception cref="InvalidOperationException">Occurs when the lateral bar has an unexpected structure layout.</exception>
+    private async Task RemoveBotAsync(Guid botId, LateralBarView lateralBarView)
+    {
+        // Shorthand for fetching the bot button from the lateral bar structure
+        static Button GetBarButton(Control border)
+            => (((border as Border)?.Child as Panel)?.Children[1] as Button) ?? throw new InvalidOperationException("Unexpected layout.");
+
+        base.ViewModel ??= GetViewModel<AppViewModel>();
+
+        lateralBarView.ResetBotButtonBorders();
+        base.ViewModel.ContentViewModel = GetViewModel<HomeViewModel>();
+
+        if (lateralBarView.ViewModel is not null)
+            await lateralBarView.ViewModel.RemoveBotButtonAsync(botId);
+
+        // Fix weird bug that redraws bot buttons with the wrong avatars.
+        // A random border with null button content just pops up randomly in ButtonList.Children.
+        // This probably happens because the view references a Border with a bunch of stuff, whereas the view-model only
+        // references a Button, but I can't be bothered to do this the right way. 
+        lateralBarView.ButtonList.Children.RemoveAll(lateralBarView.ButtonList.Children.Where(x => GetBarButton(x).Content is null));
+    }
+
+    /// <summary>
+    /// Switches to the view-model associated with the specified <paramref name="button"/> and updates
+    /// the selection border on the lateral bar.
+    /// </summary>
+    /// <param name="button">The bot button that was pressed.</param>
+    /// <param name="lateralBarView">The view of the lateral bar.</param>
+    /// <returns>
+    /// The view-model associated with <paramref name="button"/>,
+    /// <see langword="null"/> if the current and requested view-models are the same.
+    /// </returns>
+    private BotConfigViewModel? SwitchBotConfigViewModel(Button button, LateralBarView lateralBarView)
+    {
+        // If the user clicked on the bot instance that is already active, do not switch.
+        if (base.ViewModel?.ContentViewModel is BotConfigViewModel currentViewModel && currentViewModel.Id.Equals(button.Content))
+            return default;
+
+        // Switch to the bot config view-model
+        var botConfigViewModel = GetBotConfigViewModel(button, _scopeFactory);
+        this.ViewModel ??= GetViewModel<AppViewModel>();
+        this.ViewModel.ContentViewModel = botConfigViewModel;
+
+        // Update the selector on the lateral bar
+        lateralBarView.ResetBotButtonBorders();
+        lateralBarView.ApplyBotButtonBorder(button);
+
+        return botConfigViewModel;
     }
 
     /// <summary>
@@ -194,7 +230,7 @@ public partial class AppView : ReactiveWindow<AppViewModel>
     /// <param name="button">The button that was pressed in the bot list.</param>
     /// <param name="scopeFactory">The IoC scope factory.</param>
     /// <returns>The view-model associated with the pressed <paramref name="button"/>.</returns>
-    /// <exception cref="InvalidCastException">Occurs when <paramref name="button"/> has a <see cref="ContentControl.Content"/> that is not an <see langword="uint"/>.</exception>
+    /// <exception cref="InvalidCastException">Occurs when <paramref name="button"/> has a <see cref="ContentControl.Content"/> that is not a <see cref="Guid"/>.</exception>
     /// <exception cref="InvalidOperationException">Occurs when <paramref name="button"/> has an invalid <see cref="ContentControl.Content"/>.</exception>
     private static BotConfigViewModel GetBotConfigViewModel(Button button, IServiceScopeFactory scopeFactory)
     {

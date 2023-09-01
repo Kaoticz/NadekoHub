@@ -27,7 +27,7 @@ public sealed class AppConfig
     /// <summary>
     /// The theme to be used.
     /// </summary>
-    public ThemeType Theme { get; set; } = ThemeType.Dark;
+    public ThemeType Theme { get; set; } = ThemeType.Auto;
 
     /// <summary>
     /// Determines whether the application should be minimized to the system tray when closed.

@@ -31,8 +31,8 @@
             <ItemsRepeater Name="ButtonList" ItemsSource="{Binding BotButtonList}">
                 <ItemsRepeater.ItemTemplate>
                     <DataTemplate>
-                        <Border BorderBrush="{DynamicResource LightBackground}" ClipToBounds="True" BorderThickness="3" CornerRadius="4" Margin="5,5,5,0">
-                            <Panel AttachedToVisualTree="OnBarLoad" PointerEntered="BotButtonHover" PointerExited="BotButtonUnhover">
+                        <Border BorderBrush="Transparent" ClipToBounds="True" BorderThickness="3" CornerRadius="4" Margin="5,5,5,0">
+                            <Panel AttachedToVisualTree="OnBotButtonLoad" PointerEntered="BotButtonHover" PointerExited="BotButtonUnhover">
                                 <siv:SKImageView Stretch="UniformToFill" />
                                 <Button Click="LoadBotViewModel" Content="{Binding Content}" Opacity="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
                             </Panel>

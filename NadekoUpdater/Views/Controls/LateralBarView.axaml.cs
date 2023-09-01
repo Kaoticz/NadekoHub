@@ -2,6 +2,8 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Interactivity;
+using Avalonia.Media;
+using Avalonia.Media.Immutable;
 using Avalonia.ReactiveUI;
 using Kotz.Events;
 using Microsoft.Extensions.DependencyInjection;
@@ -25,6 +27,7 @@ public partial class LateralBarView : ReactiveUserControl<LateralBarViewModel>
 {
     private static readonly Cursor _pointingHandCursor = new(StandardCursorType.Hand);
     private static readonly Cursor _arrow = new(StandardCursorType.Arrow);
+    private static readonly SolidColorBrush _transparentColor = new(Colors.Transparent);
     private readonly ReadOnlyAppConfig _appConfig;
 
     /// <summary>
@@ -66,6 +69,31 @@ public partial class LateralBarView : ReactiveUserControl<LateralBarViewModel>
     }
 
     /// <summary>
+    /// Applies the selection outline to the specified bot button.
+    /// </summary>
+    /// <param name="button">The bot button.</param>
+    /// <exception cref="InvalidOperationException">Occurs when the visual tree has an unexpected structure.</exception>
+    public void ApplyBotButtonBorder(Button button)
+    {
+        if (!Utilities.TryCastTo<Border>(button.Parent?.Parent, out var border))
+            throw new InvalidOperationException("Visual tree has an unexpected structure.");
+
+        if (!Utilities.TryCastTo<ImmutableSolidColorBrush>(this.FindResource(base.ActualThemeVariant, "BotSelectionColor"), out var resourceColor))
+            return;
+
+        border.BorderBrush = resourceColor;
+    }
+
+    /// <summary>
+    /// Applies a transparent outline to all bot buttons.
+    /// </summary>
+    public void ResetBotButtonBorders()
+    {
+        foreach (var border in ButtonList.Children.Cast<Border>())
+            border.BorderBrush = _transparentColor;
+    }
+
+    /// <summary>
     /// Routes a button click from the view to <see cref="BotButtonClick"/>.
     /// </summary>
     /// <param name="sender">The bot button that was clicked.</param>
@@ -80,14 +108,13 @@ public partial class LateralBarView : ReactiveUserControl<LateralBarViewModel>
     /// <param name="eventArgs">The event arguments.</param>
     /// <remarks>This is executed each time one of the buttons is rendered.</remarks>
     /// <exception cref="InvalidOperationException">Occurs when the visual tree has an unexpected structure.</exception>
-    private void OnBarLoad(object? sender, VisualTreeAttachmentEventArgs eventArgs)
+    private void OnBotButtonLoad(object? sender, VisualTreeAttachmentEventArgs eventArgs)
     {
-        // TODO: fix the weird image bug
         if (!Utilities.TryCastTo<Panel>(sender, out var panel)
             || !Utilities.TryCastTo<SKImageView>(panel.Children[0], out var botAvatar)
             || !Utilities.TryCastTo<Button>(panel.Children[1], out var button)
             || !Utilities.TryCastTo<Guid>(button.Content, out var botId))
-            throw new InvalidOperationException($"Visual tree has an unexpected structure.");
+            throw new InvalidOperationException("Visual tree has an unexpected structure.");
 
         // Set the avatar
         (botAvatar.Source as IDisposable)?.Dispose();

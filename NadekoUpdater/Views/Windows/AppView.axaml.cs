@@ -68,8 +68,18 @@ public partial class AppView : ReactiveWindow<AppViewModel>
         _botOrchestrator = botOrchestrator;
         _logWriter = logWriter;
 
-        lateralBarView.ConfigButton.Click += (_, _) => viewModel.ContentViewModel = GetViewModel<ConfigViewModel>(scopeFactory);
-        lateralBarView.HomeButton.Click += (_, _) => viewModel.ContentViewModel = GetViewModel<HomeViewModel>(scopeFactory);
+        lateralBarView.ConfigButton.Click += (_, _) =>
+        {
+            lateralBarView.ResetBotButtonBorders();
+            viewModel.ContentViewModel = GetViewModel<ConfigViewModel>(scopeFactory);
+        };
+
+        lateralBarView.HomeButton.Click += (_, _) =>
+        {
+            lateralBarView.ResetBotButtonBorders();
+            viewModel.ContentViewModel = GetViewModel<HomeViewModel>(scopeFactory);
+        };
+
         lateralBarView.BotButtonClick += (button, _) =>
         {
             // If the user clicked on the bot instance that is already active, exit.
@@ -80,12 +90,17 @@ public partial class AppView : ReactiveWindow<AppViewModel>
             var botConfigViewModel = GetBotConfigViewModel(button, scopeFactory);
             viewModel.ContentViewModel = botConfigViewModel;
 
+            // Update the selector on the lateral bar
+            lateralBarView.ResetBotButtonBorders();
+            lateralBarView.ApplyBotButtonBorder(button);
+
             // Update the avatar on the lateral bar.
             botConfigViewModel.AvatarChanged += (_, eventArgs) => lateralBarView.UpdateBotButtonAvatarAsync(eventArgs);
 
             // If the bot instance is deleted, load the Home view.
             botConfigViewModel.BotDeleted += async (bcvm, _) =>
             {
+                lateralBarView.ResetBotButtonBorders();
                 viewModel.ContentViewModel = GetViewModel<HomeViewModel>(scopeFactory);
                 await viewModel.LateralBarInstance.RemoveBotButtonAsync(botConfigViewModel.Id);
 

@@ -11,6 +11,9 @@
         <dd:DesignFakeConsoleViewModel/>
     </Design.DataContext>
 
-    <TextBox Classes="console" Text="{Binding Content}" Watermark="{Binding Watermark}" CaretIndex="{Binding Content.Length}" />
+    <TextBox Classes="console"
+             Text="{Binding Content}"
+             Watermark="{Binding Watermark}"
+             CaretIndex="{Binding Content.Length}" />
 
 </UserControl>

@@ -6,11 +6,11 @@
         xmlns:const="using:NadekoUpdater.Common"
         xmlns:dd="using:NadekoUpdater.DesignData.Windows"
         mc:Ignorable="d" d:DesignWidth="400" d:DesignHeight="285"
-        Width="400" Height="285"
+        Width="400" Height="300"
         x:Class="NadekoUpdater.Views.Windows.AboutMeView"
         x:DataType="vm:AboutMeViewModel"
         Title="About NadekoUpdater"
-        Icon="/Assets/nadekoupdatericon.ico"
+        Icon="{DynamicResource NadekoUpdaterIcon}"
         WindowStartupLocation="CenterOwner"
         CanResize="False">
     <Design.DataContext>

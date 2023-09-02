@@ -10,7 +10,7 @@
         d:DesignHeight="{x:Static const:WindowConstants.MinWindowHeight}"
         x:Class="NadekoUpdater.Views.Windows.AppView"
         x:DataType="vm:AppViewModel"
-        Icon="/Assets/nadekoupdatericon.ico"
+        Icon="{DynamicResource NadekoUpdaterIcon}"
         WindowStartupLocation="CenterScreen"
         Title="{x:Static const:WindowConstants.WindowTitle}"
         MinWidth="{x:Static const:WindowConstants.MinWindowWidth}"

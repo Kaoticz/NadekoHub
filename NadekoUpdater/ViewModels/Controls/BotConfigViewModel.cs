@@ -288,7 +288,7 @@ public class BotConfigViewModel : ViewModelBase<BotConfigView>, IDisposable
     /// </summary>
     public async ValueTask DeleteBotAsync()
     {
-        var buttonPressed = await MessageBoxManager.GetMessageBoxStandard(new()
+        var buttonPressed = await _mainWindow.ShowDialogWindowAsync(new()
         {
             ButtonDefinitions = ButtonEnum.OkCancel,
             ContentTitle = "Are you sure?",
@@ -296,9 +296,9 @@ public class BotConfigViewModel : ViewModelBase<BotConfigView>, IDisposable
             MaxWidth = int.Parse(WindowConstants.DefaultWindowWidth) / 2.0,
             SizeToContent = SizeToContent.WidthAndHeight,
             ShowInCenter = true,
-            WindowIcon = AppStatics.DialogWindowIcon,
+            WindowIcon = _mainWindow.GetResource<WindowIcon>(AppResources.NadekoUpdaterIcon),
             WindowStartupLocation = WindowStartupLocation.CenterOwner
-        }).ShowWindowDialogAsync(_mainWindow);
+        });
 
         if (buttonPressed is not ButtonResult.Ok)
             return;

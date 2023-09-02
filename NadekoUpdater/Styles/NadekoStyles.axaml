@@ -87,6 +87,12 @@
         <Setter Property="CornerRadius" Value="100" />
         <Setter Property="HorizontalAlignment" Value="Center" />
     </Style>
+
+    <!--Icons-->
+    <Style Selector="Image.icon">
+        <Setter Property="MaxWidth" Value="28" />
+        <Setter Property="MaxHeight" Value="28" />
+    </Style>
     
     <!--Fake Console-->
     <Style Selector="TextBox.console">

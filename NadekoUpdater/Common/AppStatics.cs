@@ -45,11 +45,6 @@ public static partial class AppStatics
     public static string AppDepsUri { get; } = Path.Combine(AppDefaultConfigDirectoryUri, "Dependencies");
 
     /// <summary>
-    /// Represents the window icon to be used on dialog windows.
-    /// </summary>
-    public static WindowIcon DialogWindowIcon { get; } = new(AssetLoader.Open(new Uri(AppConstants.ApplicationWindowIcon)));
-
-    /// <summary>
     /// Represents the image formats supported by the views of this application.
     /// </summary>
     public static FilePickerOpenOptions ImageFilePickerOptions { get; } = new()

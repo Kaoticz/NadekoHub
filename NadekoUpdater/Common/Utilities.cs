@@ -27,7 +27,7 @@ internal static class Utilities
     public static SKBitmap LoadEmbededImage(string? uri = default)
     {
         return (string.IsNullOrWhiteSpace(uri) || !uri.StartsWith("avares://"))
-            ? SKBitmap.Decode(AssetLoader.Open(new Uri(AppConstants.BotAvatarPlaceholderUri)))
+            ? SKBitmap.Decode(AssetLoader.Open(new Uri(AppConstants.BotAvatarUri)))
             : SKBitmap.Decode(AssetLoader.Open(new Uri(uri)));
     }
 

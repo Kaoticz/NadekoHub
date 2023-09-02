@@ -24,7 +24,7 @@
         
         <!--Top Banner-->
         <Border Classes="circular" Grid.Row="0" Grid.Column="0" Margin="10">
-            <Image Stretch="UniformToFill" Source="{x:Static const:AppConstants.BotAvatarPlaceholderUri}" />
+            <Image Stretch="UniformToFill" Source="{DynamicResource NadekoAvatar}" />
         </Border>
         <TextBlock Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="3" Text="Welcome to NadekoBot v4" FontSize="30"
                 FontWeight="Bold" TextWrapping="WrapWithOverflow" HorizontalAlignment="Center" VerticalAlignment="Center"/>
@@ -51,14 +51,13 @@
         <Button Classes="transparent" Grid.Row="5" Grid.Column="0" Content="Tip me on Paypal" FontSize="12" Foreground="White" HorizontalAlignment="Stretch"
                 Command="{Binding OpenUrl}" CommandParameter="https://paypal.me/kwoth"/>
         <Image Grid.Row="5" Grid.Column="0" MaxHeight="30" IsHitTestVisible="False" HorizontalAlignment="Right"
-                Source="avares://NadekoUpdater/Assets/paypal.png" />
+                Source="{DynamicResource PaypalIcon}" />
         
         <Button Classes="transparent" Grid.Row="5" Grid.Column="1" Content="Support on Patreon" FontSize="12" Foreground="White" HorizontalAlignment="Stretch"
                 Command="{Binding OpenUrl}" CommandParameter="https://patreon.com/nadekobot"/>
         <Image Grid.Row="5" Grid.Column="1" MaxHeight="30" IsHitTestVisible="False" HorizontalAlignment="Right"
-                Source="avares://NadekoUpdater/Assets/patreon.png" />
+                Source="{DynamicResource PatreonIcon}" />
         <TextBlock Grid.Row="5" Grid.Column="2" Grid.ColumnSpan="3" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center"
                 Text="Thank You ♡"/>
-
     </Grid>
 </UserControl>

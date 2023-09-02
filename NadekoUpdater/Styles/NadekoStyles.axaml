@@ -27,6 +27,7 @@
     <Style Selector="TextBlock">
         <Setter Property="FontFamily" Value="{StaticResource NotoSansFont}" />
         <Setter Property="FontSize" Value="15" />
+        <Setter Property="TextWrapping" Value="Wrap" />
     </Style>
 
     <!--All Text Boxes-->
@@ -40,6 +41,8 @@
         <Setter Property="Padding" Value="15 7 15 7" />
         <Setter Property="FontFamily" Value="{StaticResource NotoSansFont}" />
         <Setter Property="FontSize" Value="15" />
+        <Setter Property="HorizontalContentAlignment" Value="Center" />
+        <Setter Property="VerticalContentAlignment" Value="Center" />
     </Style>
 
     <!--Transparent Buttons-->
@@ -60,7 +63,6 @@
         <Setter Property="FontSize" Value="30" />
         <Setter Property="FontWeight" Value="Bold" />
         <Setter Property="Padding" Value="15 5 16 9" />
-        <Setter Property="HorizontalContentAlignment" Value="Center" />
         <Setter Property="FontFamily" Value="{StaticResource NotoSansBoldFont}" />
         <Setter Property="Background" Value="{DynamicResource AccentButtonBackground}" />
         <Setter Property="BorderBrush" Value="{DynamicResource AccentButtonBorderBrush}" />
@@ -90,8 +92,8 @@
 
     <!--Icons-->
     <Style Selector="Image.icon">
-        <Setter Property="MaxWidth" Value="28" />
-        <Setter Property="MaxHeight" Value="28" />
+        <Setter Property="Width" Value="23" />
+        <Setter Property="Height" Value="23" />
     </Style>
     
     <!--Fake Console-->

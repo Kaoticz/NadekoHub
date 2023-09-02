@@ -29,17 +29,42 @@
         <TextBlock Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="3" Text="Welcome to NadekoBot v4" FontSize="30"
                 FontWeight="Bold" TextWrapping="WrapWithOverflow" HorizontalAlignment="Center" VerticalAlignment="Center"/>
 
-        <!--Center Buttons-->
-        <Button Classes="transparent" Grid.Row="1" Grid.Column="0" Content="Commands" HorizontalContentAlignment="Center" HorizontalAlignment="Stretch" VerticalAlignment="Center"
-                Command="{Binding OpenUrl}" CommandParameter="https://nadeko.bot/commands"/>
-        <Button Classes="transparent" Grid.Row="1" Grid.Column="1" Content="Suggest" HorizontalContentAlignment="Center" HorizontalAlignment="Stretch" VerticalAlignment="Center"
-                Command="{Binding OpenUrl}" CommandParameter="https://suggest.nadeko.bot/"/>
-        <Button Classes="transparent" Grid.Row="1" Grid.Column="2" Content="Docs" HorizontalContentAlignment="Center" HorizontalAlignment="Stretch" VerticalAlignment="Center"
-                Command="{Binding OpenUrl}" CommandParameter="https://nadekobot.readthedocs.io/en/v4/"/>
-        <Button Classes="transparent" Grid.Row="1" Grid.Column="3" Content="Support" HorizontalContentAlignment="Center" HorizontalAlignment="Stretch" VerticalAlignment="Center"
-                Command="{Binding OpenUrl}" CommandParameter="https://invite.nadeko.bot/"/>
-        <Button Classes="transparent" Grid.Row="1" Grid.Column="4" Content="Embeds" HorizontalContentAlignment="Center" HorizontalAlignment="Stretch" VerticalAlignment="Center"
-                Command="{Binding OpenUrl}" CommandParameter="https://eb.nadeko.bot/"/>
+        <!--Top Buttons-->
+        <Button Classes="transparent" Grid.Row="1" Grid.Column="0" HorizontalAlignment="Stretch" VerticalAlignment="Center"
+                Command="{Binding OpenUrl}" CommandParameter="https://nadeko.bot/commands">
+            <StackPanel Orientation="Horizontal">
+                <Image Classes="icon" Source="{DynamicResource CommandsIcon}" />
+                <TextBlock Text="Commands" />
+            </StackPanel>
+        </Button>
+        <Button Classes="transparent" Grid.Row="1" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Center"
+                Command="{Binding OpenUrl}" CommandParameter="https://suggest.nadeko.bot/">
+            <StackPanel Orientation="Horizontal">
+                <Image Classes="icon" Source="{DynamicResource SuggestionIcon}" />
+                <TextBlock Text="Suggest" />
+            </StackPanel>
+        </Button>
+        <Button Classes="transparent" Grid.Row="1" Grid.Column="2" HorizontalAlignment="Stretch" VerticalAlignment="Center"
+                Command="{Binding OpenUrl}" CommandParameter="https://nadekobot.readthedocs.io/en/v4/">
+            <StackPanel Orientation="Horizontal">
+                <Image Classes="icon" Source="{DynamicResource DocumentationIcon}" />
+                <TextBlock Text="Docs" />
+            </StackPanel>
+        </Button>
+        <Button Classes="transparent" Grid.Row="1" Grid.Column="3" HorizontalAlignment="Stretch" VerticalAlignment="Center"
+                Command="{Binding OpenUrl}" CommandParameter="https://invite.nadeko.bot/">
+            <StackPanel Orientation="Horizontal">
+                <Image Classes="icon" Source="{DynamicResource DiscordIcon}" />
+                <TextBlock Text="Support" />
+            </StackPanel>
+        </Button>
+        <Button Classes="transparent" Grid.Row="1" Grid.Column="4" HorizontalAlignment="Stretch" VerticalAlignment="Center"
+                Command="{Binding OpenUrl}" CommandParameter="https://eb.nadeko.bot/">
+            <StackPanel Orientation="Horizontal">
+                <Image Classes="icon" Source="{DynamicResource EmbedsIcon}" />
+                <TextBlock Text="Embeds" />
+            </StackPanel>
+        </Button>
 
         <!--Center Instructions-->
         <TextBlock Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="5" Text="Pick a bot on the left to get started."
@@ -50,12 +75,12 @@
         <!--Bottom Buttons-->
         <Button Classes="transparent" Grid.Row="5" Grid.Column="0" Content="Tip me on Paypal" FontSize="12" Foreground="White" HorizontalAlignment="Stretch"
                 Command="{Binding OpenUrl}" CommandParameter="https://paypal.me/kwoth"/>
-        <Image Grid.Row="5" Grid.Column="0" MaxHeight="30" IsHitTestVisible="False" HorizontalAlignment="Right"
+        <Image Classes="icon" Grid.Row="5" Grid.Column="0" MaxHeight="30" IsHitTestVisible="False" HorizontalAlignment="Right"
                 Source="{DynamicResource PaypalIcon}" />
         
         <Button Classes="transparent" Grid.Row="5" Grid.Column="1" Content="Support on Patreon" FontSize="12" Foreground="White" HorizontalAlignment="Stretch"
                 Command="{Binding OpenUrl}" CommandParameter="https://patreon.com/nadekobot"/>
-        <Image Grid.Row="5" Grid.Column="1" MaxHeight="30" IsHitTestVisible="False" HorizontalAlignment="Right"
+        <Image Classes="icon" Grid.Row="5" Grid.Column="1" MaxHeight="30" IsHitTestVisible="False" HorizontalAlignment="Right"
                 Source="{DynamicResource PatreonIcon}" />
         <TextBlock Grid.Row="5" Grid.Column="2" Grid.ColumnSpan="3" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center"
                 Text="Thank You ♡"/>

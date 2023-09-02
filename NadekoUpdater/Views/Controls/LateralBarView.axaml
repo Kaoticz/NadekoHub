@@ -17,16 +17,17 @@
     <Grid RowDefinitions="Auto,*,Auto" ColumnDefinitions="*" Background="{DynamicResource LightBackground}" ShowGridLines="False">
         <StackPanel Grid.Row="0">
             <!--Home button-->
-            <Button Classes="transparent" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"
-                     Name="HomeButton" Content="🏠" FontSize="18"/>
+            <Button Classes="transparent" Name="HomeButton" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center">
+                <Image Classes="icon" Source="{DynamicResource HomeIcon}" />
+            </Button>
         
             <!--Visual separator-->
             <Separator HorizontalAlignment="Stretch" VerticalAlignment="Center" />
         
             <!--Button that adds new bot buttons-->
             <Border Classes="circular" HorizontalAlignment="Center" VerticalAlignment="Center">
-                <Button Classes="accent" Command="{Binding AddBotButtonAsync}" Content="+"
-                        PointerEntered="BotButtonHover" PointerExited="BotButtonUnhover"/>
+                <Button Classes="accent" PointerEntered="BotButtonHover" PointerExited="BotButtonUnhover"
+                        Command="{Binding AddBotButtonAsync}" Content="+"/>
             </Border>
         </StackPanel>
 
@@ -47,7 +48,9 @@
         </ScrollViewer>
         
         <!--Configurations button-->
-        <Button Name="ConfigButton" Grid.Row="2" Content="◯" HorizontalContentAlignment="Center" HorizontalAlignment="Stretch" VerticalAlignment="Center"/>
+        <Button Classes="transparent" Name="ConfigButton" Grid.Row="2" HorizontalAlignment="Stretch" VerticalAlignment="Center">
+            <Image Classes="icon" Source="{DynamicResource ConfigIcon}" />
+        </Button>
     </Grid>
 
 </UserControl>

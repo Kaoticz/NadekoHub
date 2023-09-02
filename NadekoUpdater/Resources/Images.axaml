@@ -16,9 +16,10 @@
                     <Image Classes="icon" Source="{DynamicResource DependenciesIcon}" />
                     <Image Classes="icon" Source="{DynamicResource DocumentationIcon}" />
                     <Image Classes="icon" Source="{DynamicResource HomeIcon}" />
-                    <Image Classes="icon" Source="{DynamicResource EmbedsIcon}" />
+                    <Image Classes="icon" Source="{DynamicResource CommandsIcon}" />
                 </StackPanel>
                 <StackPanel Spacing="5" Orientation="Horizontal">
+                    <Image Classes="icon" Source="{DynamicResource EmbedsIcon}" />
                     <Image Classes="icon" Source="{DynamicResource UrlIcon}" />
                     <Image Classes="icon" Source="{DynamicResource SuggestionIcon}" />
                     <Image Classes="icon" Source="{DynamicResource DiscordIcon}" />

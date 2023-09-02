@@ -1,3 +1,4 @@
+using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Styling;
 using MsBox.Avalonia.Enums;
@@ -84,6 +85,7 @@ public class ConfigViewModel : ViewModelBase<ConfigView>
     /// <param name="botsUriBar">The bar that defines where the bot instances should be stored.</param>
     /// <param name="backupsUriBar">The bar that defines where the backups of the bot instances should be stored.</param>
     /// <param name="logsUriBar">The bar that defines where the logs of the bot instances should be stored.</param>
+    /// <param name="aboutMeViewModel">The view-model for the AboutMe window.</param>
     /// <param name="ffmpegResolver">The service that manages ffmpeg on the system.</param>
     /// <param name="ytdlpResolver">The service that manages yt-dlp on the system.</param>
     public ConfigViewModel(IAppConfigManager appConfigManager, AppView mainWindow, UriInputBarViewModel botsUriBar, UriInputBarViewModel backupsUriBar,
@@ -163,6 +165,7 @@ public class ConfigViewModel : ViewModelBase<ConfigView>
     {
         try
         {
+            // Set the window theme
             _mainWindow.RequestedThemeVariant = selectedTheme switch
             {
                 ThemeType.Auto => ThemeVariant.Default,
@@ -170,6 +173,10 @@ public class ConfigViewModel : ViewModelBase<ConfigView>
                 ThemeType.Dark => ThemeVariant.Dark,
                 _ => throw new UnreachableException($"No implementation for theme of type {selectedTheme} was provided."),
             };
+
+            // Set the application's theme too, so the tray icon gets changed.
+            if (Application.Current is not null)
+                Application.Current.RequestedThemeVariant = _mainWindow.ActualThemeVariant;
 
             await _appConfigManager.UpdateConfigAsync(x => x.Theme = selectedTheme);
         }

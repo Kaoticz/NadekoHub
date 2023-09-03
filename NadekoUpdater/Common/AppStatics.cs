@@ -1,7 +1,5 @@
-using Avalonia.Controls;
-using Avalonia.Media.Immutable;
 using Avalonia.Media;
-using Avalonia.Platform;
+using Avalonia.Media.Immutable;
 using Avalonia.Platform.Storage;
 using System.Text.RegularExpressions;
 

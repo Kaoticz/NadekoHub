@@ -1,8 +1,6 @@
 using Avalonia.Controls;
-using Avalonia.Media.Imaging;
 using Avalonia.Styling;
 using MsBox.Avalonia;
-using MsBox.Avalonia.Base;
 using MsBox.Avalonia.Dto;
 using MsBox.Avalonia.Enums;
 

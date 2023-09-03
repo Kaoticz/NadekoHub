@@ -18,59 +18,129 @@
 
     <Grid RowDefinitions="80,Auto,*" ColumnDefinitions="*" ShowGridLines="False">
         <!--Background Colors-->
-        <Rectangle Grid.Row="0" Fill="{DynamicResource HeavyBackground}" />
-        <Rectangle Grid.Row="1" Grid.RowSpan="3" Fill="{DynamicResource MediumBackground}" />
+        <Rectangle Grid.Row="0"
+                   Fill="{DynamicResource HeavyBackground}"/>
+        
+        <Rectangle Grid.Row="1"
+                   Grid.RowSpan="3"
+                   Fill="{DynamicResource MediumBackground}"/>
 
         <!--Bot Settings Title-->
-        <TextBlock Grid.Row="0" Text="{Binding BotName}" FontSize="28" Margin="5 0 5 0" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+        <TextBlock Grid.Row="0"
+                   Margin="5 0 5 0"
+                   FontSize="28"
+                   HorizontalAlignment="Left"
+                   VerticalAlignment="Center"
+                   Text="{Binding BotName}"/>
 
         <StackPanel Grid.Row="1" Margin="5 0 5 0" Spacing="5">
             <Grid RowDefinitions="Auto,Auto,Auto" ColumnDefinitions="130,*" ShowGridLines="False">
-                <Border Grid.Row="0" Grid.Column="0" Grid.RowSpan="3" ClipToBounds="True" CornerRadius="70" Margin="10">
+                <Border Grid.Row="0"
+                        Grid.Column="0"
+                        Grid.RowSpan="3"
+                        Classes="circular"
+                        Margin="10">
                     <Panel>
-                        <siv:SKImageView Source="{Binding BotAvatar}" Stretch="UniformToFill" />
-                        <Button Content="📂" Opacity="0" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" VerticalAlignment="Stretch" HorizontalAlignment="Stretch"
-                                 Command="{Binding SaveAvatarAsync}" PointerEntered="AvatarButtonHover" PointerExited="AvatarButtonUnhover" />
+                        <siv:SKImageView Source="{Binding BotAvatar}"
+                                         Stretch="UniformToFill"/>
+                        
+                        <Button Content="📂"
+                                Opacity="0"
+                                VerticalContentAlignment="Center"
+                                HorizontalContentAlignment="Center"
+                                VerticalAlignment="Stretch"
+                                HorizontalAlignment="Stretch"
+                                PointerEntered="AvatarButtonHover"
+                                PointerExited="AvatarButtonUnhover"
+                                Command="{Binding SaveAvatarAsync}"/>
                     </Panel>
                 </Border>
-                <TextBlock Grid.Row="0" Grid.Column="1" Text="Bot Name" VerticalAlignment="Center" />
-                <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding BotName}" VerticalContentAlignment="Center" />
-                <TextBlock Grid.Row="2" Grid.Column="1" FontSize="11" TextWrapping="WrapWithOverflow" VerticalAlignment="Center"
-                         Text="Changing bot name or avatar here has no effect on your bot. This is purely for organization purposes in the updater." />
+                <TextBlock Grid.Row="0"
+                           Grid.Column="1"
+                           Text="Bot Name"
+                           VerticalAlignment="Center"/>
+                
+                <TextBox Grid.Row="1"
+                         Grid.Column="1"
+                         Text="{Binding BotName}"
+                         VerticalContentAlignment="Center"/>
+                
+                <TextBlock Grid.Row="2"
+                           Grid.Column="1"
+                           FontSize="11"
+                           VerticalAlignment="Center"
+                           Text="Changing bot name or avatar here has no effect on your bot. This is purely for organization purposes in the updater."/>
             </Grid>
 
             <!--Visual separator-->
-            <Separator HorizontalAlignment="Stretch" VerticalAlignment="Center" />
+            <Separator HorizontalAlignment="Stretch"
+                       VerticalAlignment="Center"/>
 
             <!--Bot Directory TextBox-->
-            <TextBlock Text="Installation Path" Margin="5 0 5 0" />
-            <ContentControl Content="{Binding BotDirectoryUriBar}" Margin="5 0 5 0" />
-            <TextBlock Text="{Binding DirectoryHint}" FontSize="11" TextWrapping="WrapWithOverflow" Margin="5 0 5 0" />
+            <TextBlock Text="Installation Path"
+                       Margin="5 0 5 0"/>
+            
+            <ContentControl Margin="5 0 5 0"
+                            Content="{Binding BotDirectoryUriBar}"/>
+            
+            <TextBlock FontSize="11"
+                       Margin="5 0 5 0"
+                       Text="{Binding DirectoryHint}"/>
 
             <!--Top Bot Control Buttons-->
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="5 0 5 0" Spacing="2">
-                <Button Content="Move/Rename" Command="{Binding MoveOrRenameAsync}" IsEnabled="{Binding IsIdle}" />
-                <Button Content="Credentials" Command="{Binding OpenFileAsync}" CommandParameter="creds.yml" IsEnabled="{Binding AreButtonsUnlocked}" />
-                <Button Content="Bot Settings" Command="{Binding OpenFileAsync}" CommandParameter="bot.yml" IsEnabled="{Binding AreButtonsUnlocked}" />
-                <Button Content="Backup" Command="{Binding BackupBotAsync}" IsEnabled="{Binding AreButtonsUnlocked}" />
-                <Button Content="Delete Bot" Command="{Binding DeleteBotAsync}" IsEnabled="{Binding IsIdle}" />
+                <Button Content="Move/Rename"
+                        Command="{Binding MoveOrRenameAsync}"
+                        IsEnabled="{Binding IsIdle}"/>
+                
+                <Button Content="Credentials"
+                        CommandParameter="creds.yml"
+                        Command="{Binding OpenFileAsync}"
+                        IsEnabled="{Binding AreButtonsUnlocked}"/>
+                
+                <Button Content="Bot Settings"
+                        CommandParameter="bot.yml"
+                        Command="{Binding OpenFileAsync}"
+                        IsEnabled="{Binding AreButtonsUnlocked}"/>
+                
+                <Button Content="Backup"
+                        Command="{Binding BackupBotAsync}"
+                        IsEnabled="{Binding AreButtonsUnlocked}"/>
+                
+                <Button Content="Delete Bot"
+                        Command="{Binding DeleteBotAsync}"
+                        IsEnabled="{Binding IsIdle}"/>
             </StackPanel>
             
             <!--Bottom Bot Control Buttons-->
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="5 0 5 0" Spacing="2">
-                <Button Content="▶ Start" Command="{Binding StartBot}" IsEnabled="{Binding !IsBotRunning}" />
-                <Button Content="⏹ Stop" Command="{Binding StopBot}" IsEnabled="{Binding IsBotRunning}" />
+                <Button Content="▶ Start"
+                        Command="{Binding StartBot}"
+                        IsEnabled="{Binding !IsBotRunning}"/>
+                
+                <Button Content="⏹ Stop"
+                        Command="{Binding StopBot}"
+                        IsEnabled="{Binding IsBotRunning}"/>
             </StackPanel>
 
-            <ContentControl Content="{Binding UpdateBar}" Margin="5 0 5 0" />
+            <ContentControl Content="{Binding UpdateBar}"
+                            Margin="5 0 5 0"/>
         </StackPanel>
         
         <!--Fake Console-->
-        <Expander Grid.Row="2" Padding="1" Margin="5 5 5 0" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+        <Expander Grid.Row="2"
+                  Padding="1"
+                  Margin="5 5 5 0"
+                  VerticalAlignment="Stretch"
+                  HorizontalAlignment="Stretch">
             <Expander.Header>
                 <StackPanel Orientation="Horizontal">
-                    <Image Classes="icon" Source="{DynamicResource TerminalIcon}" HorizontalAlignment="Left" />
-                    <TextBlock Text="Logs" Margin="5 0 0 0" />
+                    <Image Classes="icon"
+                           HorizontalAlignment="Left"
+                           Source="{DynamicResource TerminalIcon}"/>
+                    
+                    <TextBlock Text="Logs"
+                               Margin="5 0 0 0"/>
                 </StackPanel>
             </Expander.Header>
             <ContentControl Content="{Binding FakeConsole}" />

@@ -1,8 +1,5 @@
-using Avalonia;
-using Avalonia.Media;
 using Avalonia.Media.Immutable;
 using NadekoUpdater.Enums;
-using NadekoUpdater.Extensions;
 using NadekoUpdater.ViewModels.Abstractions;
 using NadekoUpdater.Views.Controls;
 using NadekoUpdater.Views.Windows;
@@ -54,7 +51,7 @@ public class DependencyButtonViewModel : ViewModelBase<DependencyButton>
         set
         {
             this.RaiseAndSetIfChanged(ref _status, value);
-            BorderColor = UpdateButtonColor(value);
+            BorderColor = GetButtonColor(value);
             IsEnabled = value is not DependencyStatus.Installed
                 and not DependencyStatus.Updating
                 and not DependencyStatus.Checking;
@@ -78,11 +75,15 @@ public class DependencyButtonViewModel : ViewModelBase<DependencyButton>
     {
         _appView = appView;
         _status = DependencyStatus.Checking;
-        _borderColor = UpdateButtonColor(Status);
+        _borderColor = GetButtonColor(Status);
     }
 
+    /// <summary>
+    /// Checks the current status of this button and update its colors appropriately.
+    /// </summary>
+    /// <returns>The color appropriate to the button's current status.</returns>
     public ImmutableSolidColorBrush RecheckButtonColor()
-        => BorderColor = UpdateButtonColor(Status);
+        => BorderColor = GetButtonColor(Status);
 
     /// <summary>
     /// Triggers the <see cref="Click"/> event.
@@ -91,7 +92,13 @@ public class DependencyButtonViewModel : ViewModelBase<DependencyButton>
     protected internal Task RaiseClick()
         => Click?.Invoke(this, EventArgs.Empty) ?? Task.CompletedTask;
 
-    private ImmutableSolidColorBrush UpdateButtonColor(DependencyStatus status)
+    /// <summary>
+    /// Gets the appropriate color according to the specified <paramref name="status"/>.
+    /// </summary>
+    /// <param name="status">The status of the dependency.</param>
+    /// <returns>The color for the status of the dependency.</returns>
+    /// <exception cref="UnreachableException">Occurs when <paramref name="status"/> contains a value that is not implemented.</exception>
+    private ImmutableSolidColorBrush GetButtonColor(DependencyStatus status)
     {
         return status switch
         {

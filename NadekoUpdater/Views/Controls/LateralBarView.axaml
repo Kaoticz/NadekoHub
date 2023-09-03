@@ -17,17 +17,25 @@
     <Grid RowDefinitions="Auto,*,Auto" ColumnDefinitions="*" Background="{DynamicResource LightBackground}" ShowGridLines="False">
         <StackPanel Grid.Row="0">
             <!--Home button-->
-            <Button Classes="transparent" Name="HomeButton" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center">
-                <Image Classes="icon" Source="{DynamicResource HomeIcon}" />
+            <Button Classes="transparent"
+                    Name="HomeButton"
+                    HorizontalAlignment="Stretch"
+                    HorizontalContentAlignment="Center">
+                <Image Classes="icon"
+                       Source="{DynamicResource HomeIcon}"/>
             </Button>
         
             <!--Visual separator-->
-            <Separator HorizontalAlignment="Stretch" VerticalAlignment="Center" />
+            <Separator HorizontalAlignment="Stretch"
+                       VerticalAlignment="Center" />
         
             <!--Button that adds new bot buttons-->
             <Border Classes="circular" HorizontalAlignment="Center" VerticalAlignment="Center">
-                <Button Classes="accent" PointerEntered="BotButtonHover" PointerExited="BotButtonUnhover"
-                        Command="{Binding AddBotButtonAsync}" Content="+"/>
+                <Button Classes="accent"
+                        Content="+"
+                        PointerEntered="BotButtonHover"
+                        PointerExited="BotButtonUnhover"
+                        Command="{Binding AddBotButtonAsync}"/>
             </Border>
         </StackPanel>
 
@@ -36,10 +44,20 @@
             <ItemsRepeater Name="ButtonList" ItemsSource="{Binding BotButtonList}">
                 <ItemsRepeater.ItemTemplate>
                     <DataTemplate>
-                        <Border BorderBrush="Transparent" ClipToBounds="True" BorderThickness="3" CornerRadius="4" Margin="5,5,5,0">
-                            <Panel AttachedToVisualTree="OnBotButtonLoad" PointerEntered="BotButtonHover" PointerExited="BotButtonUnhover">
+                        <Border BorderBrush="Transparent"
+                                ClipToBounds="True"
+                                BorderThickness="3"
+                                CornerRadius="4"
+                                Margin="5,5,5,0">
+                            <Panel AttachedToVisualTree="OnBotButtonLoad"
+                                   PointerEntered="BotButtonHover"
+                                   PointerExited="BotButtonUnhover">
                                 <siv:SKImageView Stretch="UniformToFill" />
-                                <Button Click="LoadBotViewModel" Content="{Binding Content}" Opacity="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
+                                <Button Opacity="0"
+                                        HorizontalAlignment="Stretch"
+                                        VerticalAlignment="Stretch"
+                                        Click="LoadBotViewModel"
+                                        Content="{Binding Content}" />
                             </Panel>
                         </Border>
                     </DataTemplate>
@@ -48,8 +66,13 @@
         </ScrollViewer>
         
         <!--Configurations button-->
-        <Button Classes="transparent" Name="ConfigButton" Grid.Row="2" HorizontalAlignment="Stretch" VerticalAlignment="Center">
-            <Image Classes="icon" Source="{DynamicResource ConfigIcon}" />
+        <Button Grid.Row="2"
+                Classes="transparent"
+                Name="ConfigButton"
+                HorizontalAlignment="Stretch"
+                VerticalAlignment="Center">
+            <Image Classes="icon"
+                   Source="{DynamicResource ConfigIcon}"/>
         </Button>
     </Grid>
 

@@ -29,16 +29,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Watch Remove="Resources\Colors.axaml" />
-    <Watch Remove="Resources\Fonts.axaml" />
-    <Watch Remove="Resources\Images.axaml" />
-    <Watch Remove="Styles\NadekoStyles.axaml" />
-    <Watch Remove="Views\Controls\BotConfigView.axaml" />
-    <Watch Remove="Views\Controls\FakeConsole.axaml" />
-    <Watch Remove="Views\Windows\AboutMeView.axaml" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="Avalonia" Version="11.0.4" />
     <PackageReference Include="Avalonia.Desktop" Version="11.0.4" />
     <PackageReference Include="Avalonia.ReactiveUI" Version="11.0.4" />

@@ -18,21 +18,43 @@
     </Design.DataContext>
 
     <StackPanel Margin="10 20 10 20">
-        <TextBlock TextAlignment="Center" TextWrapping="WrapWithOverflow" Margin="0 0 0 10"
-            Text="NadekoBot is a general purpose open-source Discord bot created by Kwoth. Support the project!" />
+        <TextBlock Text="NadekoBot is a general purpose open-source Discord bot created by Kwoth. Support the project!"
+                   TextAlignment="Center"
+                   Margin="0 0 0 10"/>
 
         <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-            <Button Content="Paypal" Command="{Binding OpenUrl}" CommandParameter="https://www.paypal.com/paypalme/kwoth" />
-            <Button Content="Official Website" Margin="10 0 10 0" Command="{Binding OpenUrl}" CommandParameter="https://nadeko.bot" />
-            <Button Content="Patreon" Command="{Binding OpenUrl}" CommandParameter="https://www.patreon.com/nadekobot" />
+            <Button Content="Paypal"
+                    CommandParameter="https://www.paypal.com/paypalme/kwoth"
+                    Command="{Binding OpenUrl}"/>
+            
+            <Button Content="Official Website"
+                    Margin="10 0 10 0"
+                    CommandParameter="https://nadeko.bot"
+                    Command="{Binding OpenUrl}"/>
+            
+            <Button Content="Patreon"
+                    CommandParameter="https://www.patreon.com/nadekobot"
+                    Command="{Binding OpenUrl}"/>
         </StackPanel>
         
-        <Separator Margin="20" HorizontalAlignment="Stretch" />
+        <Separator Margin="20"
+                   HorizontalAlignment="Stretch" />
 
-        <TextBlock TextWrapping="WrapWithOverflow" Margin="0 0 0 10"
-            Text="This tool was made by Kotz. If it has been useful to you, consider showing your support by buying me a coffee." />
-        <Button Content="Buy me a Ko-fi" HorizontalAlignment="Center" Command="{Binding OpenUrl}" CommandParameter="https://ko-fi.com/kaoticz" />
-        <TextBlock Text="© 2023 NadekoUpdater" FontSize="11" HorizontalAlignment="Center" Margin="0 30 0 0" />
-        <TextBlock Text="License: to-do" FontSize="11" HorizontalAlignment="Center" />
+        <TextBlock Text="This tool was made by Kotz. If it has been useful to you, consider showing your support by buying me a coffee."
+                   Margin="0 0 0 10" />
+        
+        <Button Content="Buy me a Ko-fi"
+                HorizontalAlignment="Center"
+                CommandParameter="https://ko-fi.com/kaoticz"
+                Command="{Binding OpenUrl}"/>
+        
+        <TextBlock Text="© 2023 NadekoUpdater"
+                   FontSize="11"
+                   HorizontalAlignment="Center"
+                   Margin="0 30 0 0"/>
+        
+        <TextBlock Text="License: to-do"
+                   FontSize="11"
+                   HorizontalAlignment="Center"/>
     </StackPanel>
 </Window>

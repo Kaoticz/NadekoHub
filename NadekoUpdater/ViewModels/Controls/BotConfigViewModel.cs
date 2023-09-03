@@ -1,5 +1,4 @@
 using Avalonia.Controls;
-using MsBox.Avalonia;
 using MsBox.Avalonia.Enums;
 using NadekoUpdater.Enums;
 using NadekoUpdater.Models.EventArguments;

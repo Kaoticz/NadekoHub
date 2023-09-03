@@ -1,6 +1,7 @@
 using Avalonia.Controls;
 using Avalonia.Media;
 using Avalonia.Media.Imaging;
+using Avalonia.Media.Immutable;
 
 namespace NadekoUpdater.Common;
 
@@ -91,27 +92,37 @@ public static class AppResources
     #region Color Brushes
 
     /// <summary>
-    /// Resource type: <see cref="SolidColorBrush"/>
+    /// Resource type: <see cref="ImmutableSolidColorBrush"/>
     /// </summary>
     public const string LightBackground = "LightBackground";
 
 
     /// <summary>
-    /// Resource type: <see cref="SolidColorBrush"/>
+    /// Resource type: <see cref="ImmutableSolidColorBrush"/>
     /// </summary>
     public const string MediumBackground = "MediumBackground";
 
 
     /// <summary>
-    /// Resource type: <see cref="SolidColorBrush"/>
+    /// Resource type: <see cref="ImmutableSolidColorBrush"/>
     /// </summary>
     public const string HeavyBackground = "HeavyBackground";
 
 
     /// <summary>
-    /// Resource type: <see cref="SolidColorBrush"/>
+    /// Resource type: <see cref="ImmutableSolidColorBrush"/>
     /// </summary>
     public const string BotSelectionColor = "BotSelectionColor";
-    
+
+    /// <summary>
+    /// Resource type: <see cref="ImmutableSolidColorBrush"/>
+    /// </summary>
+    public const string DependencyInstall = "DependencyInstall";
+
+    /// <summary>
+    /// Resource type: <see cref="ImmutableSolidColorBrush"/>
+    /// </summary>
+    public const string DependencyUpdate = "DependencyUpdate";
+
     #endregion
 }

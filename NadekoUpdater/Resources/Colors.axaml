@@ -12,6 +12,10 @@
         </Border>
     </Design.PreviewWith>
 
+
+    <SolidColorBrush x:Key='DependencyInstall'>#24A148</SolidColorBrush>
+    <SolidColorBrush x:Key='DependencyUpdate'>#D6D600</SolidColorBrush>
+
     <ResourceDictionary.ThemeDictionaries>
         <ResourceDictionary x:Key='Light'>
             <SolidColorBrush x:Key='LightBackground'>#FAF5F8</SolidColorBrush>

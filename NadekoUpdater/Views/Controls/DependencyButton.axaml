@@ -12,8 +12,27 @@
         <dd:DesignDependencyButtonViewModel/>
     </Design.DataContext>
 
-    <Grid RowDefinitions="*" ColumnDefinitions="*,Auto" ShowGridLines="False">
-        <TextBlock Grid.Column="0" Text="{Binding DependencyName}" HorizontalAlignment="Left" VerticalAlignment="Center" />
-        <Button Grid.Column="1" Content="{Binding Status}" Command="{Binding RaiseClick}" IsEnabled="{Binding IsEnabled}" HorizontalAlignment="Center" VerticalAlignment="Center" />
-    </Grid>
+    <Border BorderBrush="{Binding BorderColor}" BorderThickness="3" CornerRadius="5">
+        <Grid RowDefinitions="*" ColumnDefinitions="*,130" ShowGridLines="False">
+            <TextBlock Grid.Column="0"
+                       HorizontalAlignment="Left"
+                       VerticalAlignment="Center"
+                       FontWeight="Bold"
+                       Margin="10"
+                       Text="{Binding DependencyName}"/>
+            
+            <Rectangle Grid.Column="1"
+                       Fill="{Binding BorderColor}" />
+            
+            <Button Grid.Column="1" 
+                    Classes="transparent"
+                    Foreground="White"
+                    HorizontalAlignment="Stretch"
+                    VerticalAlignment="Stretch"
+                    Content="{Binding Status}"
+                    Command="{Binding RaiseClick}"
+                    Background="{Binding BorderColor}"
+                    IsEnabled="{Binding IsEnabled}"/>
+        </Grid>
+    </Border>
 </UserControl>

@@ -34,7 +34,7 @@
                 <ItemsRepeater.ItemTemplate>
                     <DataTemplate>
                         <StackPanel>
-                            <views:DependencyButton />
+                            <views:DependencyButton Margin="2" />
                         </StackPanel>
                     </DataTemplate>
                 </ItemsRepeater.ItemTemplate>

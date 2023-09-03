@@ -23,7 +23,6 @@ public partial class LateralBarView : ReactiveUserControl<LateralBarViewModel>
 {
     private static readonly Cursor _pointingHandCursor = new(StandardCursorType.Hand);
     private static readonly Cursor _arrow = new(StandardCursorType.Arrow);
-    private static readonly SolidColorBrush _transparentColor = new(Colors.Transparent);
     private readonly ReadOnlyAppConfig _appConfig;
 
     /// <summary>
@@ -86,7 +85,7 @@ public partial class LateralBarView : ReactiveUserControl<LateralBarViewModel>
     public void ResetBotButtonBorders()
     {
         foreach (var border in ButtonList.Children.Cast<Border>())
-            border.BorderBrush = _transparentColor;
+            border.BorderBrush = AppStatics.TransparentColorBrush;
     }
 
     /// <summary>

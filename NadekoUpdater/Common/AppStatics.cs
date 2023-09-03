@@ -1,4 +1,6 @@
 using Avalonia.Controls;
+using Avalonia.Media.Immutable;
+using Avalonia.Media;
 using Avalonia.Platform;
 using Avalonia.Platform.Storage;
 using System.Text.RegularExpressions;
@@ -43,6 +45,11 @@ public static partial class AppStatics
     /// Defines the location of the application's dependencies.
     /// </summary>
     public static string AppDepsUri { get; } = Path.Combine(AppDefaultConfigDirectoryUri, "Dependencies");
+
+    /// <summary>
+    /// Defines a transparent color brush.
+    /// </summary>
+    public static ImmutableSolidColorBrush TransparentColorBrush { get; } = new(Colors.Transparent);
 
     /// <summary>
     /// Represents the image formats supported by the views of this application.

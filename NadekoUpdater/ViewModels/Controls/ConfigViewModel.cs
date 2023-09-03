@@ -111,8 +111,8 @@ public class ConfigViewModel : ViewModelBase<ConfigView>
 
         DependencyButtons = new DependencyButtonViewModel[]
         {
-            new() { DependencyName = ffmpegResolver.DependencyName },
-            new() { DependencyName = ytdlpResolver.DependencyName }
+            new(mainWindow) { DependencyName = ffmpegResolver.DependencyName },
+            new(mainWindow) { DependencyName = ytdlpResolver.DependencyName }
         };
 
         _ = InitializeDependencyButtonAsync(DependencyButtons[0], ffmpegResolver);
@@ -178,6 +178,11 @@ public class ConfigViewModel : ViewModelBase<ConfigView>
             if (Application.Current is not null)
                 Application.Current.RequestedThemeVariant = _mainWindow.ActualThemeVariant;
 
+            // Update the color of the dependency buttons
+            foreach (var dependencyButton in DependencyButtons)
+                dependencyButton.RecheckButtonColor();
+
+            // Update the application settings
             await _appConfigManager.UpdateConfigAsync(x => x.Theme = selectedTheme);
         }
         catch (Exception ex)

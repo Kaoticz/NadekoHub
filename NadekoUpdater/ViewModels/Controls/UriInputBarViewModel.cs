@@ -40,13 +40,15 @@ public class UriInputBarViewModel : ViewModelBase<UriInputBar>
         get => _currentUri;
         set
         {
-            IsValidUri = IsValidDirectory(value);
-            this.RaiseAndSetIfChanged(ref _currentUri, value);
+            var sanitizedValue = value.ReplaceLineEndings(string.Empty).Trim();
+
+            IsValidUri = IsValidDirectory(sanitizedValue);
+            this.RaiseAndSetIfChanged(ref _currentUri, sanitizedValue);
 
             if (IsValidUri)
             {
-                OnValidUri?.Invoke(this, new(_lastValidUri, value));
-                _lastValidUri = value;
+                OnValidUri?.Invoke(this, new(_lastValidUri, sanitizedValue));
+                _lastValidUri = sanitizedValue;
             }
         }
     }

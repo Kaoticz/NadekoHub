@@ -29,6 +29,7 @@
                     Foreground="White"
                     HorizontalAlignment="Stretch"
                     VerticalAlignment="Stretch"
+                    Cursor="Hand"
                     Content="{Binding Status}"
                     Command="{Binding RaiseClick}"
                     Background="{Binding BorderColor}"

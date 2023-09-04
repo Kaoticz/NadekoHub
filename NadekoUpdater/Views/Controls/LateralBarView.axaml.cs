@@ -121,34 +121,6 @@ public partial class LateralBarView : ReactiveUserControl<LateralBarViewModel>
     }
 
     /// <summary>
-    /// Executed when the mouse pointer starts hovering the bot button.
-    /// </summary>
-    /// <param name="sender">The <see cref="Button"/>.</param>
-    /// <param name="eventArgs">The event arguments.</param>
-    private void BotButtonHover(object? sender, PointerEventArgs eventArgs)
-    {
-        // Blinking effect for bot buttons
-        if (Utilities.TryCastTo<Panel>(sender, out var panel) && Utilities.TryCastTo<SKImageView>(panel.Children[0], out var botAvatar))
-            botAvatar.Opacity = 0.8;
-
-        base.Cursor = _pointingHandCursor;
-    }
-
-    /// <summary>
-    /// Executed when the mouse pointer stops hovering the bot button.
-    /// </summary>
-    /// <param name="sender">The <see cref="Button"/>.</param>
-    /// <param name="eventArgs">The event arguments.</param>
-    private void BotButtonUnhover(object? sender, PointerEventArgs eventArgs)
-    {
-        // Blinking effect for bot buttons
-        if (Utilities.TryCastTo<Panel>(sender, out var panel) && Utilities.TryCastTo<SKImageView>(panel.Children[0], out var botAvatar))
-            botAvatar.Opacity = 1.0;
-
-        base.Cursor = _arrow;
-    }
-
-    /// <summary>
     /// Decreases the size of the bot avatar by 1 pixel.
     /// </summary>
     /// <param name="sender">The <see cref="Button"/> that was pressed.</param>

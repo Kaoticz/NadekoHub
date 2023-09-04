@@ -156,10 +156,17 @@ public sealed partial class NadekoResolver : IBotResolver
                 await zipStream.CopyToAsync(fileStream, cToken);
 
             // Extract the zip file
-            ZipFile.ExtractToDirectory(zipTempLocation, _tempDirectory);
+            await Task.Run(() => ZipFile.ExtractToDirectory(zipTempLocation, _tempDirectory), cToken);
 
             // Move the bot root directory while renaming it
-            Directory.Move(botTempLocation, installationUri);
+            if (Environment.OSVersion.Platform is not PlatformID.Unix)
+                Directory.Move(botTempLocation, installationUri);
+            else
+            {
+                // Circumvent this issue on Unix systems: https://github.com/dotnet/runtime/issues/31149
+                using var moveProcess = Utilities.StartProcess("mv", $"\"{botTempLocation}\" \"{installationUri}\"");
+                await moveProcess.WaitForExitAsync(cToken);
+            }
 
             // Reapply bot settings
             if (File.Exists(backupFileUri))

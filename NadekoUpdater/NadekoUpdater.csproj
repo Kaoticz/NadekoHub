@@ -11,6 +11,7 @@
     <EnforceCodeStyleInBuild>True</EnforceCodeStyleInBuild>
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
     <BuiltInComInteropSupport>True</BuiltInComInteropSupport>
+    <ApplicationIcon>Assets/Light/nadekoupdatericon.ico</ApplicationIcon>
 	  
 	<!--Avalonia Settings-->
     <ApplicationManifest>app.manifest</ApplicationManifest>

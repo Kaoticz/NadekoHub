@@ -112,7 +112,6 @@ public partial class AppView : ReactiveWindow<AppViewModel>
         base.Height = _appConfigManager.AppConfig.WindowSize.Height;
         base.Width = _appConfigManager.AppConfig.WindowSize.Width;
 
-
         // Set the user prefered theme
         base.RequestedThemeVariant = _appConfigManager.AppConfig.Theme switch
         {
@@ -121,10 +120,6 @@ public partial class AppView : ReactiveWindow<AppViewModel>
             ThemeType.Dark => ThemeVariant.Dark,
             _ => throw new UnreachableException($"No implementation for theme of type {_appConfigManager.AppConfig.Theme} was provided."),
         };
-
-        // Set the application's theme too, so the tray icon gets changed.
-        if (Application.Current is not null)
-            Application.Current.RequestedThemeVariant = base.ActualThemeVariant;
 
         base.OnOpened(eventArgs);
     }

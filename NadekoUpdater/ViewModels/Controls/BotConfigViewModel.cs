@@ -90,8 +90,10 @@ public class BotConfigViewModel : ViewModelBase<BotConfigView>, IDisposable
         get => _botName;
         set
         {
-            DirectoryHint = $"Select the absolute path to the bot directory. For example: {Path.Combine(_appConfigManager.AppConfig.BotsDirectoryUri, value)}";
-            this.RaiseAndSetIfChanged(ref _botName, value);
+            var sanitizedValue = value.ReplaceLineEndings(string.Empty).Trim();
+
+            DirectoryHint = $"Select the absolute path to the bot directory. For example: {Path.Combine(_appConfigManager.AppConfig.BotsDirectoryUri, sanitizedValue)}";
+            this.RaiseAndSetIfChanged(ref _botName, sanitizedValue);
         }
     }
 
@@ -194,6 +196,7 @@ public class BotConfigViewModel : ViewModelBase<BotConfigView>, IDisposable
             {
                 Directory.CreateDirectory(Directory.GetParent(BotDirectoryUriBar.CurrentUri)?.FullName ?? string.Empty);
                 Directory.Move(oldUri, BotDirectoryUriBar.CurrentUri);
+                BotDirectoryUriBar.RecheckCurrentUri();
             }
 
             // Update the application settings.
@@ -355,9 +358,19 @@ public class BotConfigViewModel : ViewModelBase<BotConfigView>, IDisposable
             BotDirectoryUriBar.RecheckCurrentUri();
             EnableButtons(false, true);
         }
+        catch (ObjectDisposedException ex)
+        {
+            await _mainWindow.ShowDialogWindowAsync(
+                $"An error occurred while updating {Resolver.DependencyName}:\n{ex.Message}\n" +
+                "Restarting the application might solve this issue.",
+                DialogType.Error,
+                Icon.Error
+            );
+            UpdateBar.Status = originalStatus;
+        }
         catch (Exception ex)
         {
-            await _mainWindow.ShowDialogWindowAsync($"An error occurred while updating {Resolver.DependencyName}:\n{ex.Message}", DialogType.Error, Icon.Error);
+            await _mainWindow.ShowDialogWindowAsync($"An error occurred while updating {Resolver.DependencyName}:\n{ex}", DialogType.Error, Icon.Error);
             UpdateBar.Status = originalStatus;
         }
     }

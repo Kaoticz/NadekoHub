@@ -174,10 +174,6 @@ public class ConfigViewModel : ViewModelBase<ConfigView>
                 _ => throw new UnreachableException($"No implementation for theme of type {selectedTheme} was provided."),
             };
 
-            // Set the application's theme too, so the tray icon gets changed.
-            if (Application.Current is not null)
-                Application.Current.RequestedThemeVariant = _mainWindow.ActualThemeVariant;
-
             // Update the color of the dependency buttons
             foreach (var dependencyButton in DependencyButtons)
                 dependencyButton.RecheckButtonColor();
@@ -234,9 +230,19 @@ public class ConfigViewModel : ViewModelBase<ConfigView>
             await dialogWindowTask;
             buttonViewModel.Status = DependencyStatus.Installed;
         }
+        catch (ObjectDisposedException ex)
+        {
+            await _mainWindow.ShowDialogWindowAsync(
+                $"An error occurred while updating {buttonViewModel.DependencyName}:\n{ex.Message}\n" +
+                "Restarting the application might solve this issue.",
+                DialogType.Error,
+                Icon.Error
+            );
+            buttonViewModel.Status = originalStatus;
+        }
         catch (Exception ex)
         {
-            await _mainWindow.ShowDialogWindowAsync($"An error occurred while updating {dependencyResolver.DependencyName}:\n{ex.Message}", DialogType.Error, Icon.Error);
+            await _mainWindow.ShowDialogWindowAsync($"An error occurred while updating {dependencyResolver.DependencyName}:\n{ex}", DialogType.Error, Icon.Error);
             buttonViewModel.Status = originalStatus;
         }
     }

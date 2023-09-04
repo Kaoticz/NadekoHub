@@ -33,8 +33,7 @@
             <Border Classes="circular" HorizontalAlignment="Center" VerticalAlignment="Center">
                 <Button Classes="accent"
                         Content="+"
-                        PointerEntered="BotButtonHover"
-                        PointerExited="BotButtonUnhover"
+                        Cursor="Hand"
                         Command="{Binding AddBotButtonAsync}"/>
             </Border>
         </StackPanel>
@@ -49,15 +48,18 @@
                                 BorderThickness="3"
                                 CornerRadius="4"
                                 Margin="5,5,5,0">
-                            <Panel AttachedToVisualTree="OnBotButtonLoad"
-                                   PointerEntered="BotButtonHover"
-                                   PointerExited="BotButtonUnhover">
-                                <siv:SKImageView Stretch="UniformToFill" />
+                            <Panel AttachedToVisualTree="OnBotButtonLoad">
+                                <siv:SKImageView Stretch="UniformToFill"
+                                                 IsHitTestVisible="False"
+                                                 MinHeight="52"
+                                                 MinWidth="52"/>
+                                
                                 <Button Opacity="0"
+                                        Cursor="Hand"
                                         HorizontalAlignment="Stretch"
                                         VerticalAlignment="Stretch"
                                         Click="LoadBotViewModel"
-                                        Content="{Binding Content}" />
+                                        Content="{Binding Content}"/>
                             </Panel>
                         </Border>
                     </DataTemplate>

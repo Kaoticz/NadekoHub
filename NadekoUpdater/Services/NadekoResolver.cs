@@ -166,6 +166,10 @@ public sealed partial class NadekoResolver : IBotResolver
                 // Circumvent this issue on Unix systems: https://github.com/dotnet/runtime/issues/31149
                 using var moveProcess = Utilities.StartProcess("mv", $"\"{botTempLocation}\" \"{installationUri}\"");
                 await moveProcess.WaitForExitAsync(cToken);
+
+                // Set executable permission
+                using var chmod = Utilities.StartProcess("chmod", $"+x \"{Path.Combine(installationUri, FileName)}\"");
+                await chmod.WaitForExitAsync(cToken);
             }
 
             // Reapply bot settings

@@ -358,19 +358,9 @@ public class BotConfigViewModel : ViewModelBase<BotConfigView>, IDisposable
             BotDirectoryUriBar.RecheckCurrentUri();
             EnableButtons(false, true);
         }
-        catch (ObjectDisposedException ex)
-        {
-            await _mainWindow.ShowDialogWindowAsync(
-                $"An error occurred while updating {Resolver.DependencyName}:\n{ex.Message}\n" +
-                "Restarting the application might solve this issue.",
-                DialogType.Error,
-                Icon.Error
-            );
-            UpdateBar.Status = originalStatus;
-        }
         catch (Exception ex)
         {
-            await _mainWindow.ShowDialogWindowAsync($"An error occurred while updating {Resolver.DependencyName}:\n{ex}", DialogType.Error, Icon.Error);
+            await _mainWindow.ShowDialogWindowAsync($"An error occurred while updating {Resolver.DependencyName}:\n{ex.Message}", DialogType.Error, Icon.Error);
             UpdateBar.Status = originalStatus;
         }
     }

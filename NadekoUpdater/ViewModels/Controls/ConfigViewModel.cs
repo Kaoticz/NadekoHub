@@ -230,19 +230,9 @@ public class ConfigViewModel : ViewModelBase<ConfigView>
             await dialogWindowTask;
             buttonViewModel.Status = DependencyStatus.Installed;
         }
-        catch (ObjectDisposedException ex)
-        {
-            await _mainWindow.ShowDialogWindowAsync(
-                $"An error occurred while updating {buttonViewModel.DependencyName}:\n{ex.Message}\n" +
-                "Restarting the application might solve this issue.",
-                DialogType.Error,
-                Icon.Error
-            );
-            buttonViewModel.Status = originalStatus;
-        }
         catch (Exception ex)
         {
-            await _mainWindow.ShowDialogWindowAsync($"An error occurred while updating {dependencyResolver.DependencyName}:\n{ex}", DialogType.Error, Icon.Error);
+            await _mainWindow.ShowDialogWindowAsync($"An error occurred while updating {dependencyResolver.DependencyName}:\n{ex.Message}", DialogType.Error, Icon.Error);
             buttonViewModel.Status = originalStatus;
         }
     }

@@ -151,8 +151,9 @@
                 Grid.Column="0"
                 Classes="transparent"
                 Content="Tip me on Paypal"
-                FontSize="12"
                 Foreground="White"
+                FontSize="12"
+                Cursor="Hand"
                 HorizontalAlignment="Stretch"
                 CommandParameter="https://paypal.me/kwoth"
                 Command="{Binding OpenUrl}"/>
@@ -169,8 +170,9 @@
                 Grid.Column="1"
                 Classes="transparent"
                 Content="Support on Patreon"
-                FontSize="12"
                 Foreground="White"
+                FontSize="12"
+                Cursor="Hand"
                 HorizontalAlignment="Stretch"
                 CommandParameter="https://patreon.com/nadekobot"
                 Command="{Binding OpenUrl}"/>

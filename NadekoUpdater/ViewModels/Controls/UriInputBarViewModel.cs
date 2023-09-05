@@ -40,7 +40,7 @@ public class UriInputBarViewModel : ViewModelBase<UriInputBar>
         get => _currentUri;
         set
         {
-            var sanitizedValue = value.ReplaceLineEndings(string.Empty).Trim();
+            var sanitizedValue = value.ReplaceLineEndings(string.Empty);
 
             IsValidUri = IsValidDirectory(sanitizedValue);
             this.RaiseAndSetIfChanged(ref _currentUri, sanitizedValue);

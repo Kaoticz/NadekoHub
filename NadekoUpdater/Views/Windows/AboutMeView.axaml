@@ -23,18 +23,33 @@
                    Margin="0 0 0 10"/>
 
         <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-            <Button Content="Paypal"
-                    CommandParameter="https://www.paypal.com/paypalme/kwoth"
-                    Command="{Binding OpenUrl}"/>
-            
-            <Button Content="Official Website"
-                    Margin="10 0 10 0"
+            <Button CommandParameter="https://www.paypal.com/paypalme/kwoth"
+                    Command="{Binding OpenUrl}">
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Text="Paypal " />
+                    <Image Classes="icon-url"
+                           Source="{DynamicResource UrlIcon}" />
+                </StackPanel>
+            </Button>
+
+            <Button Margin="10 0 10 0"
                     CommandParameter="https://nadeko.bot"
-                    Command="{Binding OpenUrl}"/>
-            
-            <Button Content="Patreon"
-                    CommandParameter="https://www.patreon.com/nadekobot"
-                    Command="{Binding OpenUrl}"/>
+                    Command="{Binding OpenUrl}">
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Text="Official Website " />
+                    <Image Classes="icon-url"
+                           Source="{DynamicResource UrlIcon}" />
+                </StackPanel>
+            </Button>
+
+            <Button CommandParameter="https://www.patreon.com/nadekobot"
+                    Command="{Binding OpenUrl}">
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Text="Patreon " />
+                    <Image Classes="icon-url"
+                           Source="{DynamicResource UrlIcon}" />
+                </StackPanel>
+            </Button>
         </StackPanel>
         
         <Separator Margin="20"
@@ -42,11 +57,16 @@
 
         <TextBlock Text="This tool was made by Kotz. If it has been useful to you, consider showing your support by buying me a coffee."
                    Margin="0 0 0 10" />
-        
-        <Button Content="Buy me a Ko-fi"
-                HorizontalAlignment="Center"
+
+        <Button HorizontalAlignment="Center"
                 CommandParameter="https://ko-fi.com/kaoticz"
-                Command="{Binding OpenUrl}"/>
+                Command="{Binding OpenUrl}">
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="Buy me a Ko-fi " />
+                <Image Classes="icon-url"
+                       Source="{DynamicResource UrlIcon}" />
+            </StackPanel>
+        </Button>
         
         <TextBlock Text="© 2023 NadekoUpdater"
                    FontSize="11"

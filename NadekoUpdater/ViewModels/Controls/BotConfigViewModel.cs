@@ -39,6 +39,14 @@ public class BotConfigViewModel : ViewModelBase<BotConfigView>, IDisposable
     /// </summary>
     public event AsyncEventHandler<BotConfigViewModel, AvatarChangedEventArgs>? AvatarChanged;
 
+
+
+    /// <summary>
+    /// The name of the bot as defined in the settings file.
+    /// </summary>
+    protected string ActualBotName
+        => _appConfigManager.AppConfig.BotEntries[Resolver.Id].Name;
+
     /// <summary>
     /// The bot resolver to be used.
     /// </summary>
@@ -90,7 +98,7 @@ public class BotConfigViewModel : ViewModelBase<BotConfigView>, IDisposable
         get => _botName;
         set
         {
-            var sanitizedValue = value.ReplaceLineEndings(string.Empty).Trim();
+            var sanitizedValue = value.ReplaceLineEndings(string.Empty);
 
             DirectoryHint = $"Select the absolute path to the bot directory. For example: {Path.Combine(_appConfigManager.AppConfig.BotsDirectoryUri, sanitizedValue)}";
             this.RaiseAndSetIfChanged(ref _botName, sanitizedValue);
@@ -279,8 +287,8 @@ public class BotConfigViewModel : ViewModelBase<BotConfigView>, IDisposable
         var backupUri = await Resolver.CreateBackupAsync();
 
         await ((string.IsNullOrWhiteSpace(backupUri))
-            ? _mainWindow.ShowDialogWindowAsync($"Bot {Resolver.BotName} not found.", DialogType.Error, Icon.Error)
-            : _mainWindow.ShowDialogWindowAsync($"Successfully backed up {Resolver.BotName} to:{Environment.NewLine}{backupUri}", iconType: Icon.Success));
+            ? _mainWindow.ShowDialogWindowAsync($"Bot {ActualBotName} not found.", DialogType.Error, Icon.Error)
+            : _mainWindow.ShowDialogWindowAsync($"Successfully backed up {ActualBotName} to:{Environment.NewLine}{backupUri}", iconType: Icon.Success));
 
         EnableButtons(false, true);
     }
@@ -294,7 +302,7 @@ public class BotConfigViewModel : ViewModelBase<BotConfigView>, IDisposable
         {
             ButtonDefinitions = ButtonEnum.OkCancel,
             ContentTitle = "Are you sure?",
-            ContentMessage = $"Are you sure you want to delete {Resolver.BotName}?{Environment.NewLine}This action cannot be undone.",
+            ContentMessage = $"Are you sure you want to delete {ActualBotName}?{Environment.NewLine}This action cannot be undone.",
             MaxWidth = int.Parse(WindowConstants.DefaultWindowWidth) / 2.0,
             SizeToContent = SizeToContent.WidthAndHeight,
             ShowInCenter = true,
@@ -440,7 +448,7 @@ public class BotConfigViewModel : ViewModelBase<BotConfigView>, IDisposable
         if (eventArgs.Id != Resolver.Id)
             return;
 
-        var message = Environment.NewLine + Resolver.BotName + " stopped." + Environment.NewLine;
+        var message = Environment.NewLine + ActualBotName + " stopped." + Environment.NewLine;
 
         _logWriter.TryAdd(Resolver.Id, message);
         FakeConsole.Content += message;

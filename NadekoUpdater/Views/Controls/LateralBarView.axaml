@@ -50,9 +50,9 @@
                                 Margin="5,5,5,0">
                             <Panel AttachedToVisualTree="OnBotButtonLoad">
                                 <siv:SKImageView Stretch="UniformToFill"
-                                                 IsHitTestVisible="False"
-                                                 MinHeight="52"
-                                                 MinWidth="52"/>
+                                                     IsHitTestVisible="False"
+                                                     MinHeight="52"
+                                                     MinWidth="52"/>
                                 
                                 <Button Opacity="0"
                                         Cursor="Hand"
@@ -73,7 +73,7 @@
                 Name="ConfigButton"
                 HorizontalAlignment="Stretch"
                 VerticalAlignment="Center">
-            <Image Classes="icon"
+            <Image MaxHeight="17"
                    Source="{DynamicResource ConfigIcon}"/>
         </Button>
     </Grid>

@@ -105,7 +105,7 @@ public partial class LateralBarView : ReactiveUserControl<LateralBarViewModel>
     private void OnBotButtonLoad(object? sender, VisualTreeAttachmentEventArgs eventArgs)
     {
         if (!Utilities.TryCastTo<Panel>(sender, out var panel)
-            || !Utilities.TryCastTo<SKImageView>(panel.Children[0], out var botAvatar)
+            || !Utilities.TryCastTo<SKImageView>(((Border)panel.Children[0]).Child, out var botAvatar)
             || !Utilities.TryCastTo<Button>(panel.Children[1], out var button)
             || !Utilities.TryCastTo<Guid>(button.Content, out var botId))
             throw new InvalidOperationException("Visual tree has an unexpected structure.");
@@ -182,7 +182,9 @@ public partial class LateralBarView : ReactiveUserControl<LateralBarViewModel>
             .Cast<Panel>()
             .Where(x => botId.Equals((x.Children[1] as Button)?.Content))
             .SelectMany(x => x.Children)
-            .OfType<SKImageView>()
+            .OfType<Border>()
+            .Select(x => x.Child)
+            .Cast<SKImageView>()
             .First();
     }
 }

@@ -30,7 +30,7 @@
                        VerticalAlignment="Center" />
         
             <!--Button that adds new bot buttons-->
-            <Border Classes="circular" HorizontalAlignment="Center" VerticalAlignment="Center">
+            <Border Classes="circular">
                 <Button Classes="accent"
                         Content="+"
                         Cursor="Hand"
@@ -43,16 +43,21 @@
             <ItemsRepeater Name="ButtonList" ItemsSource="{Binding BotButtonList}">
                 <ItemsRepeater.ItemTemplate>
                     <DataTemplate>
-                        <Border BorderBrush="Transparent"
-                                ClipToBounds="True"
-                                BorderThickness="3"
-                                CornerRadius="4"
+                        <Border Classes="circular"
+                                BorderBrush="Transparent"
+                                BorderThickness="4"
+                                CornerRadius="20"
                                 Margin="5,5,5,0">
                             <Panel AttachedToVisualTree="OnBotButtonLoad">
-                                <siv:SKImageView Stretch="UniformToFill"
+                                <!--This extra border is a hack around this issue:-->
+                                <!-- https://github.com/AvaloniaUI/Avalonia/issues/2105 -->
+                                <Border Classes="circular"
+                                        CornerRadius="17">
+                                    <siv:SKImageView Stretch="UniformToFill"
                                                      IsHitTestVisible="False"
                                                      MinHeight="52"
                                                      MinWidth="52"/>
+                                </Border>
                                 
                                 <Button Opacity="0"
                                         Cursor="Hand"

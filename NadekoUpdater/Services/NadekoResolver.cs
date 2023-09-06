@@ -1,4 +1,5 @@
 using NadekoUpdater.Services.Abstractions;
+using System.Formats.Tar;
 using System.IO.Compression;
 using System.Reflection;
 using System.Runtime.InteropServices;
@@ -142,28 +143,36 @@ public sealed partial class NadekoResolver : IBotResolver
         Directory.CreateDirectory(_appConfigManager.AppConfig.BotsDirectoryUri);
 
         var http = _httpClientFactory.CreateClient();
-        var zipFileName = GetDownloadFileName(latestVersion);
-        var botTempLocation = Path.Combine(_tempDirectory, "nadekobot-" + _unzipedDirRegex.Match(zipFileName).Groups[1].Value);
-        var zipTempLocation = Path.Combine(_tempDirectory, zipFileName);
+        var downloadFileName = GetDownloadFileName(latestVersion);
+        var botTempLocation = Path.Combine(_tempDirectory, "nadekobot-" + _unzipedDirRegex.Match(downloadFileName).Groups[1].Value);
+        var zipTempLocation = Path.Combine(_tempDirectory, downloadFileName);
 
         try
         {
-            var zipStream = await http.GetStreamAsync(
-                $"https://gitlab.com/api/v4/projects/9321079/packages/generic/NadekoBot-build/{latestVersion}/{zipFileName}",
+            using var downloadStream = await http.GetStreamAsync(
+                $"https://gitlab.com/api/v4/projects/9321079/packages/generic/NadekoBot-build/{latestVersion}/{downloadFileName}",
                 cToken
             );
-            using (var fileStream = new FileStream(zipTempLocation, FileMode.Create))
-                await zipStream.CopyToAsync(fileStream, cToken);
-
-            // Extract the zip file
-            await Task.Run(() => ZipFile.ExtractToDirectory(zipTempLocation, _tempDirectory), cToken);
 
             // Move the bot root directory while renaming it
             if (Environment.OSVersion.Platform is not PlatformID.Unix)
+            {
+                // Save the zip file
+                using (var fileStream = new FileStream(zipTempLocation, FileMode.Create))
+                    await downloadStream.CopyToAsync(fileStream, cToken);
+
+                // Extract the zip file
+                await Task.Run(() => ZipFile.ExtractToDirectory(zipTempLocation, _tempDirectory), cToken);
+
+                // Move the bot root directory while renaming it
                 Directory.Move(botTempLocation, installationUri);
+            }
             else
             {
-                // Circumvent this issue on Unix systems: https://github.com/dotnet/runtime/issues/31149
+                // Extract the tar ball
+                await TarFile.ExtractToDirectoryAsync(downloadStream, _tempDirectory, true, cToken);
+
+                // Move the bot root directory with "mv" to circumvent this issue on Unix systems: https://github.com/dotnet/runtime/issues/31149
                 using var moveProcess = Utilities.StartProcess("mv", $"\"{botTempLocation}\" \"{installationUri}\"");
                 await moveProcess.WaitForExitAsync(cToken);
 
@@ -242,12 +251,12 @@ public sealed partial class NadekoResolver : IBotResolver
             Architecture.Arm64 when OperatingSystem.IsWindows() => "-windows-arm64-build.zip",
 
             // Linux
-            Architecture.X64 when OperatingSystem.IsLinux() => "-linux-x64-build.zip",
-            Architecture.Arm64 when OperatingSystem.IsLinux() => "-linux-arm64-build.zip",
+            Architecture.X64 when OperatingSystem.IsLinux() => "-linux-x64-build.tar",
+            Architecture.Arm64 when OperatingSystem.IsLinux() => "-linux-arm64-build.tar",
 
             // MacOS
-            Architecture.X64 when OperatingSystem.IsMacOS() => "-osx-x64-build.zip",
-            Architecture.Arm64 when OperatingSystem.IsMacOS() => "-osx-arm64-build.zip",
+            Architecture.X64 when OperatingSystem.IsMacOS() => "-osx-x64-build.tar",
+            Architecture.Arm64 when OperatingSystem.IsMacOS() => "-osx-arm64-build.tar",
             _ => throw new NotSupportedException($"Architecture of type {RuntimeInformation.OSArchitecture} is not supported by NadekoBot on this OS.")
         };
     }

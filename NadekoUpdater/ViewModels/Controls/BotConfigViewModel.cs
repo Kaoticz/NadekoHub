@@ -10,6 +10,7 @@ using ReactiveUI;
 using SkiaSharp;
 using System.Diagnostics;
 using System.Reactive.Disposables;
+using System.Runtime.InteropServices;
 
 namespace NadekoUpdater.ViewModels.Controls;
 
@@ -203,7 +204,26 @@ public class BotConfigViewModel : ViewModelBase<BotConfigView>, IDisposable
             if (hasNewUri && Directory.Exists(oldUri))
             {
                 Directory.CreateDirectory(Directory.GetParent(BotDirectoryUriBar.CurrentUri)?.FullName ?? string.Empty);
-                Directory.Move(oldUri, BotDirectoryUriBar.CurrentUri);
+
+                // If destination directory exists but is empty, it's safe to delete it so moving the bot doesn't fail
+                // If destination directory exists but is not empty, throw exception
+                if (Directory.Exists(BotDirectoryUriBar.CurrentUri))
+                {
+                    if (Directory.EnumerateFileSystemEntries(BotDirectoryUriBar.CurrentUri).Any())
+                        throw new InvalidOperationException($"Cannot move {oldName} because the destination folder is not empty.");
+                    else
+                        Directory.Delete(BotDirectoryUriBar.CurrentUri);
+                }
+
+                if (Environment.OSVersion.Platform is not PlatformID.Unix)
+                    Directory.Move(oldUri, BotDirectoryUriBar.CurrentUri);
+                else
+                {
+                    // Move the bot root directory with "mv" to circumvent this issue on Unix systems: https://github.com/dotnet/runtime/issues/31149
+                    using var moveProcess = Utilities.StartProcess("mv", $"\"{oldUri}\" \"{BotDirectoryUriBar.CurrentUri}\"");
+                    await moveProcess.WaitForExitAsync();
+                }
+
                 BotDirectoryUriBar.RecheckCurrentUri();
             }
 
@@ -220,6 +240,7 @@ public class BotConfigViewModel : ViewModelBase<BotConfigView>, IDisposable
         catch (Exception ex)
         {
             await _mainWindow.ShowDialogWindowAsync($"An error occurred while moving/renaming {oldName}:\n{ex.Message}", DialogType.Error, Icon.Error);
+            BotDirectoryUriBar.CurrentUri = oldUri;
         }
         finally
         {

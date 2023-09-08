@@ -46,7 +46,7 @@ public interface IDependencyResolver
     /// <summary>
     /// Installs or updates the dependency on this system.
     /// </summary>
-    /// <param name="dependenciesUri">The absolute path to the directory where the dependency should be installed to.</param>
+    /// <param name="installationUri">The absolute path to the directory where the dependency should be installed to.</param>
     /// <param name="cToken">The cancellation token.</param>
     /// <returns>
     /// A tuple that may or may not contain the old and new versions of the dependency. <br />
@@ -55,5 +55,5 @@ public interface IDependencyResolver
     /// (<see langword="null"/>, <see langword="string"/>): the dependency got installed. <br />
     /// (<see langword="string"/>, <see langword="string"/>): the dependency got updated.
     /// </returns>
-    ValueTask<(string? OldVersion, string? NewVersion)> InstallOrUpdateAsync(string dependenciesUri, CancellationToken cToken = default);
+    ValueTask<(string? OldVersion, string? NewVersion)> InstallOrUpdateAsync(string installationUri, CancellationToken cToken = default);
 }

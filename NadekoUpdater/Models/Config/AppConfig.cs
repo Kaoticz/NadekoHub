@@ -30,6 +30,11 @@ public sealed class AppConfig
     public ThemeType Theme { get; set; } = ThemeType.Auto;
 
     /// <summary>
+    /// Determines whether the application should update itself.
+    /// </summary>
+    public bool AutomaticUpdates { get; set; } = true;
+
+    /// <summary>
     /// Determines whether the application should be minimized to the system tray when closed.
     /// </summary>
     public bool MinimizeToTray { get; set; } = true;

@@ -54,6 +54,7 @@ public static class IServiceCollectionExt
         // Internal
         serviceCollection.AddMemoryCache();
         serviceCollection.AddSingleton<ILogWriter, LogWriter>();
+        serviceCollection.AddSingleton<IAppResolver, AppResolver>();
         serviceCollection.AddSingleton<IBotOrchestrator, NadekoOrchestrator>();
         serviceCollection.AddSingleton(x => x.GetRequiredService<AppView>().StorageProvider);
 

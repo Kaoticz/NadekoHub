@@ -1,4 +1,3 @@
-using Avalonia;
 using Avalonia.Controls;
 using Avalonia.ReactiveUI;
 using Avalonia.Styling;
@@ -26,6 +25,7 @@ public partial class AppView : ReactiveWindow<AppViewModel>
     private readonly IAppConfigManager _appConfigManager;
     private readonly IBotOrchestrator _botOrchestrator;
     private readonly ILogWriter _logWriter;
+    private readonly IAppResolver _appResolver;
     private readonly LateralBarView _lateralBarView;
 
     /// <summary>
@@ -37,6 +37,7 @@ public partial class AppView : ReactiveWindow<AppViewModel>
             DesignStatics.Services.GetRequiredService<IBotOrchestrator>(),
             DesignStatics.Services.GetRequiredService<ILogWriter>(),
             DesignStatics.Services.GetRequiredService<IAppConfigManager>(),
+            DesignStatics.Services.GetRequiredService<IAppResolver>(),
             DesignStatics.Services.GetRequiredService<AppViewModel>(),
             DesignStatics.Services.GetRequiredService<LateralBarView>()
         )
@@ -50,16 +51,18 @@ public partial class AppView : ReactiveWindow<AppViewModel>
     /// <param name="botOrchestrator">The bot orchestrator.</param>
     /// <param name="logWriter">The service responsible for creating log files.</param>
     /// <param name="appConfigManager">The manager for the application settings.</param>
+    /// <param name="appResolver">The service that updates this application.</param>
     /// <param name="viewModel">The view-model of this view.</param>
     /// <param name="lateralBarView">The lateral bar view.</param>
     public AppView(IServiceScopeFactory scopeFactory, IBotOrchestrator botOrchestrator, ILogWriter logWriter,
-        IAppConfigManager appConfigManager, AppViewModel viewModel, LateralBarView lateralBarView)
+        IAppConfigManager appConfigManager, IAppResolver appResolver, AppViewModel viewModel, LateralBarView lateralBarView)
     {
         _scopeFactory = scopeFactory;
         _appConfigManager = appConfigManager;
         _botOrchestrator = botOrchestrator;
         _logWriter = logWriter;
         _lateralBarView = lateralBarView;
+        _appResolver = appResolver;
 
         _lateralBarView.ConfigButton.Click += (_, _) =>
         {
@@ -120,6 +123,9 @@ public partial class AppView : ReactiveWindow<AppViewModel>
             ThemeType.Dark => ThemeVariant.Dark,
             _ => throw new UnreachableException($"No implementation for theme of type {_appConfigManager.AppConfig.Theme} was provided."),
         };
+
+        // Update the application, if one is available
+        _ = UpdateAndCloseAsync();
 
         base.OnOpened(eventArgs);
     }
@@ -222,6 +228,24 @@ public partial class AppView : ReactiveWindow<AppViewModel>
         lateralBarView.ApplyBotButtonBorder(button);
 
         return botConfigViewModel;
+    }
+
+    /// <summary>
+    /// Updates this application, if a new version is available.
+    /// </summary>
+    private async Task UpdateAndCloseAsync()
+    {
+        _appResolver.RemoveOldFiles();
+
+        if (!_appConfigManager.AppConfig.AutomaticUpdates || await _appResolver.CanUpdateAsync() is not true)
+            return;
+
+        _ = new UpdateView().ShowDialog(this);
+
+        await _appResolver.InstallOrUpdateAsync(AppContext.BaseDirectory);
+        _appResolver.LaunchNewVersion();
+
+        base.Close();
     }
 
     /// <summary>

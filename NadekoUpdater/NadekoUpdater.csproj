@@ -12,6 +12,10 @@
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
     <BuiltInComInteropSupport>True</BuiltInComInteropSupport>
     <ApplicationIcon>Assets/Light/nadekoupdatericon.ico</ApplicationIcon>
+      
+    <!--Version-->
+    <VersionPrefix>0.0.1.0</VersionPrefix>
+    <VersionSuffix>beta-01</VersionSuffix>
 	  
 	<!--Avalonia Settings-->
     <ApplicationManifest>app.manifest</ApplicationManifest>
@@ -27,6 +31,10 @@
     <!--Watch XAML files for hot reload-->
     <Watch Include="**\*.xaml" />
     <Watch Include="**\*.axaml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Watch Remove="Views\Windows\UpdateView.axaml" />
   </ItemGroup>
 
   <ItemGroup>

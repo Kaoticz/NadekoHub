@@ -12,7 +12,7 @@ public sealed class YtdlpResolver : IYtdlpResolver
 {
     private const string _cachedCurrentVersionKey = "currentVersion:yt-dlp";
     private const string _ytdlpProcessName = "yt-dlp";
-    private readonly string _downloadedFileName = GetDownloadFileName();
+    private static readonly string _downloadedFileName = GetDownloadFileName();
     private bool _isUpdating = false;
     private readonly IHttpClientFactory _httpClientFactory;
     private readonly IMemoryCache _memoryCache;
@@ -37,14 +37,19 @@ public sealed class YtdlpResolver : IYtdlpResolver
     /// <inheritdoc />
     public async ValueTask<bool?> CanUpdateAsync(CancellationToken cToken = default)
     {
-        var currentVer = await GetCurrentVersionAsync(cToken);
+        var currentVersion = await GetCurrentVersionAsync(cToken);
 
-        if (currentVer is null)
+        if (currentVersion is null)
             return null;
 
-        var latestVer = await GetLatestVersionAsync(cToken);
+        var latestVersion = await GetLatestVersionAsync(cToken);
 
-        return !latestVer.Equals(currentVer, StringComparison.Ordinal);
+        if (latestVersion.Equals(currentVersion, StringComparison.Ordinal))
+            return false;
+
+        var http = _httpClientFactory.CreateClient();
+
+        return await http.IsUrlValidAsync($"https://github.com/yt-dlp/yt-dlp/releases/download/{latestVersion}/{_downloadedFileName}", cToken);
     }
 
     /// <inheritdoc />

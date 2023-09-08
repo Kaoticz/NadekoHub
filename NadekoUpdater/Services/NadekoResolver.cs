@@ -55,7 +55,15 @@ public sealed partial class NadekoResolver : IBotResolver
 
         var latestVersion = await GetLatestVersionAsync(cToken);
 
-        return !latestVersion.Equals(currentVersion, StringComparison.Ordinal);
+        if (latestVersion.Equals(currentVersion, StringComparison.Ordinal))
+            return false;
+
+        var http = _httpClientFactory.CreateClient();
+
+        return await http.IsUrlValidAsync(
+            $"https://gitlab.com/api/v4/projects/9321079/packages/generic/NadekoBot-build/{latestVersion}/{GetDownloadFileName(latestVersion)}",
+            cToken
+        );
     }
 
     /// <inheritdoc/>

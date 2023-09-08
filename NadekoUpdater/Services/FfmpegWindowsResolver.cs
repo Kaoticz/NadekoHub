@@ -30,7 +30,7 @@ public sealed class FfmpegWindowsResolver : FfmpegResolver
     public override ValueTask<bool?> CanUpdateAsync(CancellationToken cToken = default)
     {
         // I could not find any ARM build of ffmpeg for Windows.
-        return (RuntimeInformation.OSArchitecture is Architecture.X86 or Architecture.X64)
+        return (RuntimeInformation.OSArchitecture is Architecture.X64)
             ? base.CanUpdateAsync(cToken)
             : ValueTask.FromResult<bool?>(false);
     }

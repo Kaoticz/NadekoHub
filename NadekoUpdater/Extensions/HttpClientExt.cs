@@ -23,4 +23,19 @@ public static class HttpClientExt
         return JsonSerializer.Deserialize<T>(responseString)
             ?? throw new InvalidOperationException($"Could not deserialize response to {nameof(T)}.");
     }
+
+    /// <summary>
+    /// Checks if a request to the specified <paramref name="url"/> returns a successful HTTP response.
+    /// </summary>
+    /// <param name="http">This http client.</param>
+    /// <param name="url">The url to check.</param>
+    /// <param name="cToken">The cancellation token.</param>
+    /// <returns><see langword="true"/> if the <paramref name="url"/> is valid, <see langword="false"/> otherwise.</returns>
+    public static async Task<bool> IsUrlValidAsync(this HttpClient http, string url, CancellationToken cToken = default)
+    {
+        var request = new HttpRequestMessage(HttpMethod.Head, url);
+        var response = await http.SendAsync(request, cToken);
+
+        return response.IsSuccessStatusCode;
+    }
 }

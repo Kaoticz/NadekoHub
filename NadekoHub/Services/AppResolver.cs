@@ -69,7 +69,7 @@ public sealed class AppResolver : IAppResolver
 
         var http = _httpClientFactory.CreateClient();
 
-        return await http.IsUrlValidAsync($"https://github.com/Kaoticz/NadekoBot/releases/download/{latestVersion}/{_downloadedFileName}", cToken);
+        return await http.IsUrlValidAsync($"https://github.com/Kaoticz/NadekoHub/releases/download/{latestVersion}/{_downloadedFileName}", cToken);
     }
 
     /// <inheritdoc/>
@@ -86,10 +86,9 @@ public sealed class AppResolver : IAppResolver
     /// <inheritdoc/>
     public async ValueTask<string> GetLatestVersionAsync(CancellationToken cToken = default)
     {
-        // TODO: pull from Gitlab
         var http = _httpClientFactory.CreateClient(AppConstants.NoRedirectClient);
 
-        var response = await http.GetAsync("https://github.com/Kaoticz/NadekoBot/releases/latest", cToken);
+        var response = await http.GetAsync("https://github.com/Kaoticz/NadekoHub/releases/latest", cToken);
 
         var lastSlashIndex = response.Headers.Location?.OriginalString.LastIndexOf('/')
             ?? throw new InvalidOperationException("Failed to get the latest NadekoBotUpdater version.");
@@ -112,8 +111,7 @@ public sealed class AppResolver : IAppResolver
 
         try
         {
-            // TODO: pull from Gitlab
-            using var downloadStream = await http.GetStreamAsync($"https://github.com/Kaoticz/NadekoBot/releases/download/{latestVersion}/{_downloadedFileName}", cToken);
+            using var downloadStream = await http.GetStreamAsync($"https://github.com/Kaoticz/NadekoHub/releases/download/{latestVersion}/{_downloadedFileName}", cToken);
 
             // Save the zip file
             using (var fileStream = new FileStream(zipTempLocation, FileMode.Create))

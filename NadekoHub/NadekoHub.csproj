@@ -8,10 +8,14 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <WarningsAsErrors>Nullable</WarningsAsErrors>
+	<TreatWarningsAsErrors>True</TreatWarningsAsErrors>
     <EnforceCodeStyleInBuild>True</EnforceCodeStyleInBuild>
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
     <BuiltInComInteropSupport>True</BuiltInComInteropSupport>
     <ApplicationIcon>Assets/Light/nadekoupdatericon.ico</ApplicationIcon>
+      
+    <!--Publishing-->
+    <PublishSingleFile>true</PublishSingleFile>
       
     <!--Version-->
     <VersionPrefix>0.0.1.0</VersionPrefix>

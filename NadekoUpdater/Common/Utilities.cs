@@ -152,6 +152,32 @@ internal static class Utilities
     }
 
     /// <summary>
+    /// Checks if this application can write to <paramref name="directoryUri"/>.
+    /// </summary>
+    /// <param name="directoryUri">The absolute path to a directory.</param>
+    /// <returns><see langword="true"/> if writing is allowed, <see langword="false"/> otherwise.</returns>
+    /// <exception cref="PathTooLongException" />
+    /// <exception cref="DirectoryNotFoundException" />
+    public static bool CanWriteTo(string directoryUri)
+    {
+        var tempFileUri = Path.Combine(directoryUri, $"{Guid.NewGuid()}.tmp");
+
+        try
+        {
+            using var fileStream = File.Create(tempFileUri);
+            return true;
+        }
+        catch (UnauthorizedAccessException)
+        {
+            return false;
+        }
+        finally
+        {
+            TryDeleteFile(tempFileUri);
+        }
+    }
+
+    /// <summary>
     /// Adds a directory path to the PATH environment variable.
     /// </summary>
     /// <param name="directoryUri">The absolute path to a directory.</param>

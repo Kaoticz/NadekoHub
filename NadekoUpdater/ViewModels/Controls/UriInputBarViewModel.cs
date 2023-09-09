@@ -92,32 +92,5 @@ public class UriInputBarViewModel : ViewModelBase<UriInputBar>
     /// <param name="directoryUri">The absolute path to a directory.</param>
     /// <returns><see langword="true"/> if the directory is valid, <see langword="false"/> otherwise.</returns>
     private bool IsValidDirectory(string directoryUri)
-        => Directory.Exists(directoryUri) && HasWritePermission(directoryUri);
-
-    /// <summary>
-    /// Checks if the application can write to <paramref name="directoryUri"/>.
-    /// </summary>
-    /// <param name="directoryUri">The absolute path to a directory.</param>
-    /// <returns><see langword="true"/> if there is write permission, <see langword="false"/> otherwise.</returns>
-    /// <exception cref="PathTooLongException" />
-    /// <exception cref="DirectoryNotFoundException" />
-    private static bool HasWritePermission(string directoryUri)
-    {
-        var tempFileUri = Path.Combine(directoryUri, $"{Guid.NewGuid()}.tmp");
-
-        try
-        {
-            using var fileStream = File.Create(tempFileUri);
-            return true;
-        }
-        catch (UnauthorizedAccessException)
-        {
-            return false;
-        }
-        finally
-        {
-            if (File.Exists(tempFileUri))
-                File.Delete(tempFileUri);
-        }
-    }
+        => Directory.Exists(directoryUri) && Utilities.CanWriteTo(directoryUri);
 }

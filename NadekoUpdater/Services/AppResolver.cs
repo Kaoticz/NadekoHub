@@ -46,9 +46,17 @@ public sealed class AppResolver : IAppResolver
     public void LaunchNewVersion()
         => Utilities.StartProcess(BinaryUri);
 
+    /// <returns>
+    /// <see langword="true"/> if the updater can be updated,
+    /// <see langword="false"/> if the updater is up-to-date,
+    /// <see langword="null"/> if the updater cannot update itself.
+    /// </returns>
     /// <inheritdoc/>
     public async ValueTask<bool?> CanUpdateAsync(CancellationToken cToken = default)
     {
+        if (!Utilities.CanWriteTo(AppContext.BaseDirectory))
+            return null;
+
         var currentVersion = await GetCurrentVersionAsync(cToken);
 
         if (currentVersion is null)

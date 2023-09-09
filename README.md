@@ -1,1 +1,1 @@
-# NadekoUpdater
+# NadekoHub

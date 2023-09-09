@@ -1,0 +1,50 @@
+<Application xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="using:NadekoHub"
+             RequestedThemeVariant="Default"
+             x:Class="NadekoHub.App">
+             <!-- "Default" ThemeVariant follows system theme variant. "Dark" or "Light" are other available options. -->
+
+    <Application.DataTemplates>
+        <local:ViewLocator/>
+    </Application.DataTemplates>
+
+    <!--Resources-->
+    <!--Think of them like global variables-->
+    <Application.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceInclude Source="/Resources/Colors.axaml" />
+                <ResourceInclude Source="/Resources/Fonts.axaml" />
+                <ResourceInclude Source="/Resources/Images.axaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Application.Resources>
+
+    <!--Styles-->
+    <!--Think of them like CSS classes-->
+    <Application.Styles>
+        <StyleInclude Source="/Styles/NadekoStyles.axaml" />
+        <!--Generated Here: https://theme.xaml.live/-->
+        <FluentTheme>
+          <FluentTheme.Palettes>
+            <ColorPaletteResources x:Key="Light" Accent="#ff0073cf" AltHigh="White" AltLow="White" AltMedium="White" AltMediumHigh="White" AltMediumLow="White" BaseHigh="Black" BaseLow="#6fcccccc" BaseMedium="#c5898989" BaseMediumHigh="#ff5d5d5d" BaseMediumLow="#e2737373" ChromeAltLow="#ff5d5d5d" ChromeBlackHigh="Black" ChromeBlackLow="#6fcccccc" ChromeBlackMedium="#ff5d5d5d" ChromeBlackMediumLow="#c5898989" ChromeDisabledHigh="#6fcccccc" ChromeDisabledLow="#c5898989" ChromeGray="#e2737373" ChromeHigh="#6fcccccc" ChromeLow="#ffececec" ChromeMedium="#e2e6e6e6" ChromeMediumLow="#ffececec" ChromeWhite="White" ListLow="#e2e6e6e6" ListMedium="#6fcccccc" RegionColor="White" />
+            <ColorPaletteResources x:Key="Dark" Accent="#ff0073cf" AltHigh="Black" AltLow="Black" AltMedium="Black" AltMediumHigh="Black" AltMediumLow="Black" BaseHigh="White" BaseLow="#ff333333" BaseMedium="#ff9a9a9a" BaseMediumHigh="#ffb4b4b4" BaseMediumLow="#ff676767" ChromeAltLow="#ffb4b4b4" ChromeBlackHigh="Black" ChromeBlackLow="#ffb4b4b4" ChromeBlackMedium="Black" ChromeBlackMediumLow="Black" ChromeDisabledHigh="#ff333333" ChromeDisabledLow="#ff9a9a9a" ChromeGray="Gray" ChromeHigh="Gray" ChromeLow="#ff151515" ChromeMedium="#ff1d1d1d" ChromeMediumLow="#ff2c2c2c" ChromeWhite="White" ListLow="#ff1d1d1d" ListMedium="#ff333333" RegionColor="#ff181818" />
+          </FluentTheme.Palettes>
+        </FluentTheme>
+    </Application.Styles>
+
+    <TrayIcon.Icons>
+      <TrayIcons>
+        <TrayIcon Clicked="TrayDoubleClick" ToolTipText="Nadeko Updater" Icon="{DynamicResource NadekoHubIcon}">
+          <TrayIcon.Menu>
+            <NativeMenu>
+              <NativeMenuItem Header="Open" Click="ShowApp" />
+              <NativeMenuItemSeparator />
+              <NativeMenuItem Header="Close" Click="CloseApp" />
+            </NativeMenu>
+          </TrayIcon.Menu>
+        </TrayIcon>
+      </TrayIcons>
+    </TrayIcon.Icons>
+</Application>

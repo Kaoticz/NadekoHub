@@ -1,0 +1,188 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:vm="using:NadekoHub.ViewModels.Controls"
+        xmlns:views="using:NadekoHub.Views.Controls"
+        xmlns:const="using:NadekoHub.Common"
+        xmlns:dd="using:NadekoHub.DesignData.Controls"
+        mc:Ignorable="d"
+        d:DesignWidth="{x:Static const:WindowConstants.MinWindowWidth}"
+        d:DesignHeight="{x:Static const:WindowConstants.DefaultWindowHeight}"
+        x:Class="NadekoHub.Views.Controls.ConfigView"
+        x:DataType="vm:ConfigViewModel">
+
+    <Design.DataContext>
+        <dd:DesignConfigViewModel/>
+    </Design.DataContext>
+
+    <ScrollViewer VerticalAlignment="Stretch">
+        <Grid RowDefinitions="80,*" ColumnDefinitions="*" ShowGridLines="False">
+            <!--Background Colors-->
+            <Rectangle Grid.Row="0"
+                       Fill="{DynamicResource HeavyBackground}" />
+
+            <Rectangle Grid.Row="1"
+                       Grid.RowSpan="2"
+                       Fill="{DynamicResource MediumBackground}"/>
+
+            <!--Settings Title-->
+            <TextBlock Grid.Row="0"
+                       Text="Settings"
+                       FontSize="28"
+                       Margin="5 0 0 0"
+                       HorizontalAlignment="Left"
+                       VerticalAlignment="Center"/>
+
+            <StackPanel Grid.Row="1" Margin="5 0 0 0" Spacing="2">
+                <!--Dependencies Text-->
+                <TextBlock Text="Dependencies"
+                           FontSize="22"/>
+
+                <TextBlock Text="Make sure the dependencies below are installed if you want to use NadekoBot to play music."/>
+
+                <!--Dependency Buttons-->
+                <ItemsRepeater ItemsSource="{Binding DependencyButtons}">
+                    <ItemsRepeater.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel>
+                                <views:DependencyButton Margin="2"/>
+                            </StackPanel>
+                        </DataTemplate>
+                    </ItemsRepeater.ItemTemplate>
+                </ItemsRepeater>
+
+                <!--Separator-->
+                <Separator Margin="0 8 0 8"
+                           HorizontalAlignment="Stretch"/>
+
+                <!--Application Settings-->
+                <!--I tried referencing the control directly, but it doesn't work for some reason-->
+                <!--So I had to 'rewrite' the control in here-->
+                <Grid RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto" ColumnDefinitions="*,Auto,Auto" ShowGridLines="False">
+                    <!--Bot Directory Bar-->
+                    <TextBlock Grid.Row="0"
+                               Text="Bot Directory:"
+                               ToolTip.Tip="Defines the directory the updater is going to install the bot instances."/>
+
+                    <TextBox Grid.Row="1"
+                             Grid.Column="0"
+                             Margin="0 0 2 0"
+                             Watermark="Enter a directory"
+                             Text="{Binding BotsUriBar.CurrentUri}"/>
+
+                    <Button Grid.Row="1"
+                            Grid.Column="1"
+                            Margin="2 0 2 0"
+                            Content="Browse"
+                            Command="{Binding BotsUriBar.SelectFolderAsync}"/>
+
+                    <Button Grid.Row="1"
+                            Grid.Column="2"
+                            Margin="2 0 0 0"
+                            Content="Open"
+                            IsEnabled="{Binding BotsUriBar.IsValidUri}"
+                            Command="{Binding BotsUriBar.OpenFolder}"
+                            CommandParameter="{Binding BotsUriBar.CurrentUri}"/>
+
+                    <!--Backup Directory Bar-->
+                    <TextBlock Grid.Row="2"
+                               Margin="0 8 0 0"
+                               Text="Backup Directory:"
+                               ToolTip.Tip="Defines the directory the updater is going to store the backup of the bot instances."/>
+
+                    <TextBox Grid.Row="3"
+                             Grid.Column="0"
+                             Margin="0 0 2 0"
+                             Text="{Binding BackupsUriBar.CurrentUri}"
+                             Watermark="Enter a directory"/>
+
+                    <Button Grid.Row="3"
+                            Grid.Column="1"
+                            Margin="2 0 2 0"
+                            Content="Browse"
+                            Command="{Binding BackupsUriBar.SelectFolderAsync}"/>
+
+                    <Button Grid.Row="3"
+                            Grid.Column="2"
+                            Margin="2 0 0 0"
+                            Content="Open"
+                            IsEnabled="{Binding BackupsUriBar.IsValidUri}"
+                            Command="{Binding BackupsUriBar.OpenFolder}"
+                            CommandParameter="{Binding BackupsUriBar.CurrentUri}"/>
+
+                    <!--Logs directory Bar-->
+                    <TextBlock Grid.Row="4"
+                               Margin="0 8 0 0"
+                               Text="Logs Directory:"
+                               ToolTip.Tip="Defines the directory the updater is going to store the logs of the bot instances."/>
+
+                    <TextBox Grid.Row="5"
+                             Grid.Column="0"
+                             Margin="0 0 2 0"
+                             Watermark="Enter a directory"
+                             Text="{Binding LogsUriBar.CurrentUri}"/>
+
+                    <Button Grid.Row="5"
+                            Grid.Column="1"
+                            Margin="2 0 2 0"
+                            Content="Browse"
+                            Command="{Binding LogsUriBar.SelectFolderAsync}"/>
+
+                    <Button Grid.Row="5"
+                            Grid.Column="2"
+                            Margin="2 0 0 0"
+                            Content="Open"
+                            IsEnabled="{Binding LogsUriBar.IsValidUri}"
+                            Command="{Binding LogsUriBar.OpenFolder}"
+                            CommandParameter="{Binding LogsUriBar.CurrentUri}"/>
+                </Grid>
+
+                <Grid RowDefinitions="Auto,Auto,Auto" ColumnDefinitions="*,Auto,Auto" ShowGridLines="False">
+                    <!--Log Maximum Size Button Spinner-->
+                    <TextBlock Grid.Row="0"
+                               Grid.Column="0"
+                               Margin="0 8 0 0"
+                               Text="Maximum log file size (in MB):"
+                               ToolTip.Tip="Defines the maximum size a log file is allowed to have. Set to 0 to disable logging."/>
+
+                    <ButtonSpinner Grid.Row="1"
+                                   Grid.Column="0"
+                                   ButtonSpinnerLocation="Right"
+                                   HorizontalAlignment="Left"
+                                   Spin="ButtonSpun"
+                                   Content="{Binding MaxLogSize}"/>
+
+                    <!--Minimize to Tray CheckBox-->
+                    <CheckBox Grid.Row="2"
+                              Grid.Column="0"
+                              Content="Minimize to system tray."
+                              ToolTip.Tip="Defines whether the updater should be minimized to the system tray rather than closed."
+                              IsChecked="{Binding MinimizeToTray}"
+                              Command="{Binding ToggleMinimizeToTrayAsync}"/>
+
+                    <!--Theme Selector-->
+                    <TextBlock Grid.Row="1"
+                               Grid.Column="1"
+                               Margin="5"
+                               Text="Theme"
+                               VerticalAlignment="Center" />
+
+                    <ComboBox Name="ThemeBox" Grid.Row="1" Grid.Column="2" SelectedIndex="{Binding SelectedThemeIndex}">
+                        <!--The order of these items corresponds to the enum type "ThemeType"-->
+                        <ComboBoxItem Content="Auto" />
+                        <ComboBoxItem Content="Light" />
+                        <ComboBoxItem Content="Dark" />
+                    </ComboBox>
+
+                    <!--About Button-->
+                    <Button Grid.Row="2"
+                            Grid.Column="2"
+                            Margin="0 5 30 0"
+                            Content="About"
+                            Command="{Binding OpenAboutMeAsync}"/>
+                </Grid>
+            </StackPanel>
+        </Grid>
+    </ScrollViewer>
+</UserControl>

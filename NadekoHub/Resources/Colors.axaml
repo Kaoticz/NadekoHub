@@ -22,12 +22,14 @@
             <SolidColorBrush x:Key='MediumBackground'>#FCFAFC</SolidColorBrush>
             <SolidColorBrush x:Key='HeavyBackground'>#FFFAFD</SolidColorBrush>
             <SolidColorBrush x:Key='BotSelectionColor'>#FF0067</SolidColorBrush>
+            <SolidColorBrush x:Key='HyperlinkColor'>Blue</SolidColorBrush>
         </ResourceDictionary>
         <ResourceDictionary x:Key='Dark'>
             <SolidColorBrush x:Key='LightBackground'>#252525</SolidColorBrush>
             <SolidColorBrush x:Key='MediumBackground'>#202020</SolidColorBrush>
             <SolidColorBrush x:Key='HeavyBackground'>#181818</SolidColorBrush>
             <SolidColorBrush x:Key='BotSelectionColor'>#D90058</SolidColorBrush>
+            <SolidColorBrush x:Key='HyperlinkColor'>#5090BB</SolidColorBrush>
         </ResourceDictionary>
     </ResourceDictionary.ThemeDictionaries>
 </ResourceDictionary>

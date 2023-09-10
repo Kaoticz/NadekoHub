@@ -73,8 +73,15 @@
                    HorizontalAlignment="Center"
                    Margin="0 30 0 0"/>
         
-        <TextBlock Text="License: to-do"
-                   FontSize="11"
-                   HorizontalAlignment="Center"/>
+        <StackPanel Orientation="Horizontal"
+                    HorizontalAlignment="Center">
+            <TextBlock Text="License: "
+                       FontSize="11" />
+            <Button Classes="link-11"
+                    FontSize="11"
+                    Content="GNU General Public License Version 3"
+                    CommandParameter="https://github.com/Kaoticz/NadekoHub/blob/main/LICENSE"
+                    Command="{Binding OpenUrl}" />
+        </StackPanel>
     </StackPanel>
 </Window>

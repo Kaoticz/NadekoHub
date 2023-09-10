@@ -16,6 +16,7 @@
                 <Border Classes="circular">
                     <Button Classes="accent" Content="+" />
                 </Border>
+                <Button Classes="link-11" Content="HyperlinkButton" />
                 <TextBlock Text="Text Block" />
                 <TextBox Classes="console" Watermark="Fake Console" />
                 <TextBox Watermark="Regular Text Box" Text="Sample Text" />
@@ -83,6 +84,31 @@
             <Setter Property="BorderBrush" Value="{DynamicResource AccentButtonBorderBrushPressed}" />
             <Setter Property="Foreground" Value="{DynamicResource AccentButtonForegroundPressed}" />
         </Style>
+    </Style>
+
+    <!--Button styled like a hyperlink text-->
+    <Style Selector="Button.link-11">
+        <Setter Property="Foreground" Value="{DynamicResource HyperlinkColor}" />
+        <Setter Property="Padding" Value="0" />
+        <Setter Property="Cursor" Value="Hand" />
+        <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="Template">
+            <ControlTemplate>
+                <ContentPresenter Content="{TemplateBinding Content}">
+                    <ContentPresenter.Styles>
+                        <Style Selector="TextBlock">
+                            <Setter Property="Foreground" Value="{TemplateBinding Foreground}"/>
+                            <!--This should be binding to the template's FontSize, but since I'm overriding-->
+                            <!--the main TextBlock class, this doesn't seem to work properly, so I have to set-->
+                            <!--the value manually-->
+                            <Setter Property="FontSize" Value="11"/>
+                            <Setter Property="TextDecorations" Value="Underline"/>
+                        </Style>
+                    </ContentPresenter.Styles>
+                </ContentPresenter>
+            </ControlTemplate>
+        </Setter>
     </Style>
 
     <!--Circular Border-->

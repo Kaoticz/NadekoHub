@@ -16,10 +16,10 @@
       
     <!--Publishing-->
     <PublishSingleFile>true</PublishSingleFile>
-      
+    <DebugType>embedded</DebugType>
+
     <!--Version-->
-    <VersionPrefix>0.0.1.0</VersionPrefix>
-    <VersionSuffix>beta-01</VersionSuffix>
+    <VersionPrefix>1.0.0.0</VersionPrefix>
 	  
 	<!--Avalonia Settings-->
     <ApplicationManifest>app.manifest</ApplicationManifest>

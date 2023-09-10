@@ -4,6 +4,18 @@
 
 # NadekoHub
 
+1
+![HomeView]
+
+2
+![ConfigView]
+
+3
+![BotConfigeView]
+
+[HomeView]: ./.github/readme_assets/nadekohub_home.png
+[ConfigView]: ./.github/readme_assets/nadekohub_config.png
+[BotConfigeView]: ./.github/readme_assets/nadekohub_botconfig.png
 [CodeFactor-Url]: https://www.codefactor.io/repository/github/kaoticz/nadekohub/overview/main
 [CodeFactor-Badge]: https://www.codefactor.io/repository/github/kaoticz/nadekohub/badge/main
 [.NET-Url]: ../../actions/workflows/dotnet.yml

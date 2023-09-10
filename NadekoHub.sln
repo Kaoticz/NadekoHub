@@ -26,6 +26,17 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "workflows", "workflows", "{
 		.github\workflows\publish-release.yml = .github\workflows\publish-release.yml
 	EndProjectSection
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ISSUE_TEMPLATE", "ISSUE_TEMPLATE", "{F1442B78-5F46-4A56-A795-196709E4C25B}"
+	ProjectSection(SolutionItems) = preProject
+		.github\ISSUE_TEMPLATE\bug_report.yml = .github\ISSUE_TEMPLATE\bug_report.yml
+		.github\ISSUE_TEMPLATE\feature_request.yml = .github\ISSUE_TEMPLATE\feature_request.yml
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "PULL_REQUEST_TEMPLATE", "PULL_REQUEST_TEMPLATE", "{AEFE9300-605D-4613-B10B-9821DA5BFAF7}"
+	ProjectSection(SolutionItems) = preProject
+		.github\PULL_REQUEST_TEMPLATE\pull_request_template.md = .github\PULL_REQUEST_TEMPLATE\pull_request_template.md
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -43,6 +54,8 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{C429233C-A5D7-4BEF-A7C1-1C38DF4E6E19} = {77CDC297-174D-4173-96B2-A44FFFFE9452}
 		{F7FC56A9-2C60-4FF7-97F5-9775E40D0772} = {C429233C-A5D7-4BEF-A7C1-1C38DF4E6E19}
+		{F1442B78-5F46-4A56-A795-196709E4C25B} = {C429233C-A5D7-4BEF-A7C1-1C38DF4E6E19}
+		{AEFE9300-605D-4613-B10B-9821DA5BFAF7} = {C429233C-A5D7-4BEF-A7C1-1C38DF4E6E19}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {B1516EC2-1D94-4363-9576-B97E7C33DEB8}

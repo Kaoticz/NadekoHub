@@ -9,6 +9,7 @@
                     <Image Classes="icon" Source="{DynamicResource NadekoAvatar}" />
                     <Image Classes="icon" Source="{DynamicResource PaypalIcon}" />
                     <Image Classes="icon" Source="{DynamicResource PatreonIcon}" />
+                    <Image Classes="icon" Source="{DynamicResource KofiIcon}" />
                 </StackPanel>
                 <StackPanel Spacing="5" Orientation="Horizontal">
                     <Image Classes="icon" Source="{DynamicResource CheckForUpdateIcon}" />
@@ -34,6 +35,7 @@
     <Bitmap x:Key="NadekoAvatar">avares://NadekoHub/Assets/nadeko.png</Bitmap>
     <Bitmap x:Key="PaypalIcon">avares://NadekoHub/Assets/paypal.png</Bitmap>
     <Bitmap x:Key="PatreonIcon">avares://NadekoHub/Assets/patreon.png</Bitmap>
+    <Bitmap x:Key="KofiIcon">avares://NadekoHub/Assets/ko-fi.webp</Bitmap>
     
     <!--Themed Images-->
     <ResourceDictionary.ThemeDictionaries>

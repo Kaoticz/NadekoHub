@@ -150,12 +150,12 @@
         <Button Grid.Row="5"
                 Grid.Column="0"
                 Classes="transparent"
-                Content="Tip me on Paypal"
+                Content="Buy me a Ko-fi"
                 Foreground="White"
                 FontSize="12"
                 Cursor="Hand"
                 HorizontalAlignment="Stretch"
-                CommandParameter="https://paypal.me/kwoth"
+                CommandParameter="https://ko-fi.com/kaoticz"
                 Command="{Binding OpenUrl}"/>
         
         <Image Grid.Row="5"
@@ -164,12 +164,13 @@
                MaxHeight="30"
                IsHitTestVisible="False"
                HorizontalAlignment="Right"
-               Source="{DynamicResource PaypalIcon}"/>
+               Margin="0 0 3 0"
+               Source="{DynamicResource KofiIcon}"/>
         
         <Button Grid.Row="5"
                 Grid.Column="1"
                 Classes="transparent"
-                Content="Support on Patreon"
+                Content="Support NadekoBot"
                 Foreground="White"
                 FontSize="12"
                 Cursor="Hand"
@@ -183,6 +184,7 @@
                MaxHeight="30"
                IsHitTestVisible="False"
                HorizontalAlignment="Right"
+               Margin="0 0 3 0"
                Source="{DynamicResource PatreonIcon}"/>
         
         <TextBlock Grid.Row="5"

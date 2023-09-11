@@ -52,7 +52,7 @@
         <TextBlock Grid.Row="0"
                    Grid.Column="1"
                    Grid.ColumnSpan="3"
-                   Text="Welcome to NadekoBot v4"
+                   Text="Welcome to NadekoHub"
                    FontSize="30"
                    FontWeight="Bold"
                    HorizontalAlignment="Center"
@@ -106,7 +106,7 @@
                 Classes="transparent"
                 HorizontalAlignment="Stretch"
                 VerticalAlignment="Center"
-                CommandParameter="https://invite.nadeko.bot/"
+                CommandParameter="https://discord.nadeko.bot/"
                 Command="{Binding OpenUrl}">
             <StackPanel Orientation="Horizontal">
                 <Image Classes="icon"

@@ -68,7 +68,7 @@
             </StackPanel>
         </Button>
         
-        <TextBlock Text="© 2023 NadekoHub"
+        <TextBlock Text="© 2023 Kotz"
                    FontSize="11"
                    HorizontalAlignment="Center"
                    Margin="0 30 0 0"/>

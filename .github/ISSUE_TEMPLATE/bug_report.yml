@@ -13,6 +13,7 @@ body:
       - label: Linux arm64
       - label: MacOS x64
       - label: MacOS arm64
+      - label: I compiled from source
   validations:
     required: true
 - type: "textarea"

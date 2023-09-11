@@ -26,22 +26,24 @@ jobs:
 
       - name: Publish
         run: |
-          dotnet publish -c Release -r win-x64 -o ~/build/NadekoUpdater_win-x64 --self-contained
-          dotnet publish -c Release -r win-arm64 -o ~/build/NadekoUpdater_win-arm64 --self-contained
-          dotnet publish -c Release -r linux-x64 -o ~/build/NadekoUpdater_linux-x64 --self-contained
-          dotnet publish -c Release -r linux-arm64 -o ~/build/NadekoUpdater_linux-arm64 --self-contained
-          dotnet publish -c Release -r osx-x64 -o ~/build/NadekoUpdater_osx-x64 --self-contained
-          dotnet publish -c Release -r osx-arm64 -o ~/build/NadekoUpdater_osx-arm64 --self-contained
+          cd ./NadekoHub
+          dotnet publish -c Release -r win-x64 -o ~/build/NadekoHub_win-x64 --self-contained
+          dotnet publish -c Release -r win-arm64 -o ~/build/NadekoHub_win-arm64 --self-contained
+          dotnet publish -c Release -r linux-x64 -o ~/build/NadekoHub_linux-x64 --self-contained
+          dotnet publish -c Release -r linux-arm64 -o ~/build/NadekoHub_linux-arm64 --self-contained
+          dotnet publish -c Release -r osx-x64 -o ~/build/NadekoHub_osx-x64 --self-contained
+          dotnet publish -c Release -r osx-arm64 -o ~/build/NadekoHub_osx-arm64 --self-contained
+          cd ../
 
       - name: Package
         run: |
           mkdir -p ~/build/zips
-          zip -r9 ~/build/zips/NadekoUpdater_win-x64.zip ~/build/NadekoUpdater_win-x64/*
-          zip -r9 ~/build/zips/NadekoUpdater_win-arm64.zip ~/build/NadekoUpdater_win-arm64/*
-          zip -r9 ~/build/zips/NadekoUpdater_linux-x64.zip ~/build/NadekoUpdater_linux-x64/*
-          zip -r9 ~/build/zips/NadekoUpdater_linux-arm64.zip ~/build/NadekoUpdater_linux-arm64/*
-          zip -r9 ~/build/zips/NadekoUpdater_osx-x64.zip ~/build/NadekoUpdater_osx-x64/*
-          zip -r9 ~/build/zips/NadekoUpdater_osx-arm64.zip ~/build/NadekoUpdater_osx-arm64/*
+          zip -r9 ~/build/zips/NadekoHub_win-x64.zip ~/build/NadekoHub_win-x64/*
+          zip -r9 ~/build/zips/NadekoHub_win-arm64.zip ~/build/NadekoHub_win-arm64/*
+          zip -r9 ~/build/zips/NadekoHub_linux-x64.zip ~/build/NadekoHub_linux-x64/*
+          zip -r9 ~/build/zips/NadekoHub_linux-arm64.zip ~/build/NadekoHub_linux-arm64/*
+          zip -r9 ~/build/zips/NadekoHub_osx-x64.zip ~/build/NadekoHub_osx-x64/*
+          zip -r9 ~/build/zips/NadekoHub_osx-arm64.zip ~/build/NadekoHub_osx-arm64/*
 
       - name: "Upload Packages To Github Release"
         uses: "ncipollo/release-action@v1"

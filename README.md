@@ -6,8 +6,6 @@
 
 NadekoHub is a cross-platform user-friendly desktop application designed for effortless management of [NadekoBot][NadekoWebsite] Discord bot instances. Streamline the addition, updating, and removal of bot instances from a centralized location.
 
-![HomeView]
-
 ## Features
 
 - Install, update, and remove Nadeko bots.
@@ -16,9 +14,11 @@ NadekoHub is a cross-platform user-friendly desktop application designed for eff
 - Start and stop your bots directly from the Hub.
 - Create backups of your bots whenever you want.
 - Watch logs of your bots in real time and have them saved automatically for later inspection.
+- Works on Windows, Linux, and MacOS.
 
 ## Screenshots
 
+![HomeView]
 ![ConfigView]
 ![BotConfigeView]
 

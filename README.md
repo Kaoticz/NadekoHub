@@ -53,5 +53,5 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 [CodeFactor-Badge]: https://www.codefactor.io/repository/github/kaoticz/nadekohub/badge/main
 [.NET-Url]: ../../actions/workflows/dotnet.yml
 [.NET-Badge]: ../../actions/workflows/dotnet.yml/badge.svg
-[CodeQL-Url]: ../../actions/workflows/codeql-analysis.yml
-[CodeQL-Badge]: ../../actions/workflows/codeql-analysis.yml/badge.svg
+[CodeQL-Url]: ../../actions/workflows/codeql.yml
+[CodeQL-Badge]: ../../actions/workflows/codeql.yml/badge.svg

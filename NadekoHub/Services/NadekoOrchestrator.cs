@@ -30,11 +30,9 @@ public sealed class NadekoOrchestrator : IBotOrchestrator
     public NadekoOrchestrator(ReadOnlyAppConfig appConfig)
         => _appConfig = appConfig;
 
-
     /// <inheritdoc/>
     public bool IsBotRunning(Guid botId)
         => _runningBots.ContainsKey(botId);
-
 
     /// <inheritdoc/>
     public bool Start(Guid botId)

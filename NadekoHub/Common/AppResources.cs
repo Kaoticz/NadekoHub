@@ -95,18 +95,15 @@ public static class AppResources
     /// </summary>
     public const string LightBackground = "LightBackground";
 
-
     /// <summary>
     /// Resource type: <see cref="ImmutableSolidColorBrush"/>
     /// </summary>
     public const string MediumBackground = "MediumBackground";
 
-
     /// <summary>
     /// Resource type: <see cref="ImmutableSolidColorBrush"/>
     /// </summary>
     public const string HeavyBackground = "HeavyBackground";
-
 
     /// <summary>
     /// Resource type: <see cref="ImmutableSolidColorBrush"/>

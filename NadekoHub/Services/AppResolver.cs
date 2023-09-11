@@ -23,7 +23,7 @@ public sealed class AppResolver : IAppResolver
 
     /// <inheritdoc/>
     public string FileName { get; }
-   
+
     /// <inheritdoc/>
     public string BinaryUri { get; }
 
@@ -126,7 +126,7 @@ public sealed class AppResolver : IAppResolver
             foreach (var newFileUri in newFilesUris)
             {
                 var destinationUri = Path.Combine(AppContext.BaseDirectory, newFileUri[(newFileUri.LastIndexOf(Path.DirectorySeparatorChar) + 1)..]);
-                
+
                 // Rename the original file from "file" to "file_old".
                 if (File.Exists(destinationUri))
                     File.Move(destinationUri, destinationUri + OldFileSuffix);

@@ -10,7 +10,6 @@ using ReactiveUI;
 using SkiaSharp;
 using System.Diagnostics;
 using System.Reactive.Disposables;
-using System.Runtime.InteropServices;
 
 namespace NadekoHub.ViewModels.Controls;
 

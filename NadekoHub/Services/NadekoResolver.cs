@@ -162,52 +162,15 @@ public sealed partial class NadekoResolver : IBotResolver
                 cToken
             );
 
-            // Move the bot root directory while renaming it
+            // Move the bot root directory
             if (Environment.OSVersion.Platform is not PlatformID.Unix)
-            {
-                // Save the zip file
-                using (var fileStream = new FileStream(zipTempLocation, FileMode.Create))
-                    await downloadStream.CopyToAsync(fileStream, cToken);
-
-                // Extract the zip file
-                await Task.Run(() => ZipFile.ExtractToDirectory(zipTempLocation, _tempDirectory), cToken);
-
-                // Move the bot root directory while renaming it
-                Directory.Move(botTempLocation, installationUri);
-            }
+                await InstallToWindowsAsync(downloadStream, installationUri, zipTempLocation, botTempLocation, cToken);
             else
-            {
-                // Extract the tar ball
-                await TarFile.ExtractToDirectoryAsync(downloadStream, _tempDirectory, true, cToken);
-
-                // Move the bot root directory with "mv" to circumvent this issue on Unix systems: https://github.com/dotnet/runtime/issues/31149
-                using var moveProcess = Utilities.StartProcess("mv", $"\"{botTempLocation}\" \"{installationUri}\"");
-                await moveProcess.WaitForExitAsync(cToken);
-
-                // Set executable permission
-                using var chmod = Utilities.StartProcess("chmod", $"+x \"{Path.Combine(installationUri, FileName)}\"");
-                await chmod.WaitForExitAsync(cToken);
-            }
+                await InstallToUnixAsync(downloadStream, installationUri, botTempLocation, cToken);
 
             // Reapply bot settings
             if (File.Exists(backupFileUri))
-            {
-                using var zipFile = ZipFile.OpenRead(backupFileUri);
-                var zippedFiles = zipFile.Entries
-                    .Where(x =>
-                        x.Name is "creds.yml" or "creds_example.yml"
-                        || (!string.IsNullOrWhiteSpace(x.Name) && x.FullName.Contains("data/"))
-                    );
-
-                foreach (var zippedFile in zippedFiles)
-                {
-                    var fileDestinationPath = zippedFile.FullName.Split('/')
-                        .Prepend(Directory.GetParent(installationUri)?.FullName ?? string.Empty)
-                        .ToArray();
-
-                    await RestoreFileAsync(zippedFile, Path.Combine(fileDestinationPath), cToken);
-                }
-            }
+                await ReaplyBotSettingsAsync(installationUri, backupFileUri, cToken);
 
             // Update settings
             await _appConfigManager.UpdateBotEntryAsync(Id, x => x with { Version = latestVersion }, cToken);
@@ -227,6 +190,73 @@ public sealed partial class NadekoResolver : IBotResolver
             // Cleanup
             Utilities.TryDeleteFile(zipTempLocation);
             Utilities.TryDeleteDirectory(botTempLocation);
+        }
+    }
+
+    /// <summary>
+    /// Installs the Nadeko instance on a Unix system.
+    /// </summary>
+    /// <param name="downloadStream">The stream of data downloaded from the source.</param>
+    /// <param name="installationUri">The absolute path to the directory the bot got installed to.</param>
+    /// <param name="botTempLocation">The absolute path to the temporary directory the bot is extracted to.</param>
+    /// <param name="cToken">The cancellation token.</param>
+    private async ValueTask InstallToUnixAsync(Stream downloadStream, string installationUri, string botTempLocation, CancellationToken cToken = default)
+    {
+        // Extract the tar ball
+        await TarFile.ExtractToDirectoryAsync(downloadStream, _tempDirectory, true, cToken);
+
+        // Move the bot root directory with "mv" to circumvent this issue on Unix systems: https://github.com/dotnet/runtime/issues/31149
+        using var moveProcess = Utilities.StartProcess("mv", $"\"{botTempLocation}\" \"{installationUri}\"");
+        await moveProcess.WaitForExitAsync(cToken);
+
+        // Set executable permission
+        using var chmod = Utilities.StartProcess("chmod", $"+x \"{Path.Combine(installationUri, FileName)}\"");
+        await chmod.WaitForExitAsync(cToken);
+    }
+
+    /// <summary>
+    /// Installs the Nadeko instance on a non-Unix system.
+    /// </summary>
+    /// <param name="downloadStream">The stream of data downloaded from the source.</param>
+    /// <param name="installationUri">The absolute path to the directory the bot got installed to.</param>
+    /// <param name="zipTempLocation">The absolute path to the zip file the bot is initially on.</param>
+    /// <param name="botTempLocation">The absolute path to the temporary directory the bot is extracted to.</param>
+    /// <param name="cToken">The cancellation token.</param>
+    private async static ValueTask InstallToWindowsAsync(Stream downloadStream, string installationUri, string zipTempLocation, string botTempLocation, CancellationToken cToken = default)
+    {
+        // Save the zip file
+        using (var fileStream = new FileStream(zipTempLocation, FileMode.Create))
+            await downloadStream.CopyToAsync(fileStream, cToken);
+
+        // Extract the zip file
+        await Task.Run(() => ZipFile.ExtractToDirectory(zipTempLocation, _tempDirectory), cToken);
+
+        // Move the bot root directory while renaming it
+        Directory.Move(botTempLocation, installationUri);
+    }
+
+    /// <summary>
+    /// Reaplies the bot settings and user-defined data from the specified backup.
+    /// </summary>
+    /// <param name="installationUri">The absolute path to the directory the bot got installed to.</param>
+    /// <param name="backupFileUri">The absolute path to the backup zip file.</param>
+    /// <param name="cToken">The cancellation token.</param>
+    private async static ValueTask ReaplyBotSettingsAsync(string installationUri, string backupFileUri, CancellationToken cToken = default)
+    {
+        using var zipFile = ZipFile.OpenRead(backupFileUri);
+        var zippedFiles = zipFile.Entries
+            .Where(x =>
+                x.Name is "creds.yml" or "creds_example.yml"
+                || (!string.IsNullOrWhiteSpace(x.Name) && x.FullName.Contains("data/"))
+            );
+
+        foreach (var zippedFile in zippedFiles)
+        {
+            var fileDestinationPath = zippedFile.FullName.Split('/')
+                .Prepend(Directory.GetParent(installationUri)?.FullName ?? string.Empty)
+                .ToArray();
+
+            await RestoreFileAsync(zippedFile, Path.Combine(fileDestinationPath), cToken);
         }
     }
 

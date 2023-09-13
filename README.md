@@ -6,6 +6,8 @@
 
 NadekoHub is a cross-platform user-friendly desktop application designed for effortless management of [NadekoBot][NadekoWebsite] Discord bot instances. Streamline the addition, updating, and removal of bot instances from a centralized location.
 
+Download it [here][NadekoHubReleases].
+
 ## Features
 
 - Install, update, and remove Nadeko bots.
@@ -22,7 +24,7 @@ NadekoHub is a cross-platform user-friendly desktop application designed for eff
 ![ConfigView]
 ![BotConfigeView]
 
-## Wiki
+## Details
 
 For more information about this project, please visit our [wiki][GithubWiki].
 
@@ -49,6 +51,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 [ConfigView]: ./.github/readme_assets/nadekohub_config.png
 [BotConfigeView]: ./.github/readme_assets/nadekohub_botconfig.png
 [GithubWiki]: ../../wiki
+[NadekoHubReleases]: ../../releases/latest
 [CodeFactor-Url]: https://www.codefactor.io/repository/github/kaoticz/nadekohub/overview/main
 [CodeFactor-Badge]: https://www.codefactor.io/repository/github/kaoticz/nadekohub/badge/main
 [.NET-Url]: ../../actions/workflows/dotnet.yml

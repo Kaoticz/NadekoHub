@@ -2,13 +2,13 @@
   <PropertyGroup>
 	<!--Project Settings-->
     <OutputType>WinExe</OutputType>
-    <TargetFramework>net7.0</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
     <AnalysisLevel>latest</AnalysisLevel>
     <LangVersion>latest</LangVersion>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <WarningsAsErrors>Nullable</WarningsAsErrors>
-	<TreatWarningsAsErrors>True</TreatWarningsAsErrors>
+	  <TreatWarningsAsErrors>True</TreatWarningsAsErrors>
     <EnforceCodeStyleInBuild>True</EnforceCodeStyleInBuild>
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
     <BuiltInComInteropSupport>True</BuiltInComInteropSupport>
@@ -16,14 +16,15 @@
       
     <!--Publishing-->
     <PublishSingleFile>true</PublishSingleFile>
+    <SelfContained>true</SelfContained>
     <DebugType>embedded</DebugType>
 
     <!--Version-->
-    <VersionPrefix>1.0.0.0</VersionPrefix>
+    <VersionPrefix>1.0.1.0</VersionPrefix>
 	  
-	<!--Avalonia Settings-->
+	  <!--Avalonia Settings-->
     <ApplicationManifest>app.manifest</ApplicationManifest>
-	<AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
+	  <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
     
     <!--Generate app host, so the final MacOS .app binary works-->
     <UseAppHost>true</UseAppHost>

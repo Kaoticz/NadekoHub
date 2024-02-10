@@ -78,7 +78,7 @@ public sealed partial class NadekoResolver : IBotResolver
 
         var now = DateTimeOffset.Now;
         var date = new DateOnly(now.Year, now.Month, now.Day).ToShortDateString().Replace('/', '-');
-        var backupZipName = $"{botInstance.Name}_{date}-{now.ToUnixTimeMilliseconds()}.zip";
+        var backupZipName = $"{botInstance.Name}_v{botInstance.Version}_{date}-{now.ToUnixTimeMilliseconds()}.zip";
         var destinationUri = Path.Combine(_appConfigManager.AppConfig.BotsBackupDirectoryUri, backupZipName);
 
         // ZipFile does not provide asynchronous implementations, so we have to schedule its

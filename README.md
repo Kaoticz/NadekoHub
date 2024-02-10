@@ -30,7 +30,8 @@ For more information about this project, please visit our [wiki][GithubWiki].
 
 ## License
 
-NadekoHub, a desktop application for managing instances of the NadekoBot Discord bot. 
+NadekoHub, a desktop application for managing instances of the NadekoBot Discord bot.
+
 Copyright (C) 2023  Kotz
 
 This program is free software: you can redistribute it and/or modify

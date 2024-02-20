@@ -61,7 +61,7 @@ public static class IServiceCollectionExt
         // Web requests
         serviceCollection.AddHttpClient();
         serviceCollection.AddHttpClient(AppConstants.NoRedirectClient)  // Client that doesn't allow automatic reditections
-            .ConfigureHttpMessageHandlerBuilder(builder => builder.PrimaryHandler = new HttpClientHandler() { AllowAutoRedirect = false });
+            .ConfigurePrimaryHttpMessageHandler(() => new HttpClientHandler() { AllowAutoRedirect = false });
 
         // App settings
         serviceCollection.AddSingleton<IAppConfigManager, AppConfigManager>();

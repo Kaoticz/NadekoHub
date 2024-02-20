@@ -39,8 +39,6 @@ public class BotConfigViewModel : ViewModelBase<BotConfigView>, IDisposable
     /// </summary>
     public event AsyncEventHandler<BotConfigViewModel, AvatarChangedEventArgs>? AvatarChanged;
 
-
-
     /// <summary>
     /// The name of the bot as defined in the settings file.
     /// </summary>

@@ -1,9 +1,11 @@
 using NadekoHub.Features.AppConfig.Services.Abstractions;
+using NadekoHub.Features.BotConfig.Models.Api.Gitlab;
 using NadekoHub.Features.BotConfig.Services.Abstractions;
 using System.Formats.Tar;
 using System.IO.Compression;
 using System.Reflection;
 using System.Runtime.InteropServices;
+using System.Text.Json;
 using System.Text.RegularExpressions;
 
 namespace NadekoHub.Services;
@@ -116,14 +118,14 @@ public sealed partial class NadekoResolver : IBotResolver
     /// <inheritdoc/>
     public async ValueTask<string> GetLatestVersionAsync(CancellationToken cToken = default)
     {
-        var http = _httpClientFactory.CreateClient(AppConstants.NoRedirectClient);
-
-        var response = await http.GetAsync("https://gitlab.com/Kwoth/nadekobot/-/releases/permalink/latest", cToken);
-
-        var lastSlashIndex = response.Headers.Location?.OriginalString.LastIndexOf('/')
-            ?? throw new InvalidOperationException("Failed to get the latest NadekoBot version.");
-
-        return response.Headers.Location.OriginalString[(lastSlashIndex + 1)..];
+        try
+        {
+            return (await GetLatestVersionFromApiAsync(cToken)).Tag;
+        }
+        catch (InvalidOperationException)
+        {
+            return await GetLatestVersionFromUrlAsync(cToken);
+        }
     }
 
     /// <inheritdoc/>
@@ -160,7 +162,7 @@ public sealed partial class NadekoResolver : IBotResolver
         try
         {
             using var downloadStream = await http.GetStreamAsync(
-                $"https://gitlab.com/api/v4/projects/9321079/packages/generic/NadekoBot-build/{latestVersion}/{downloadFileName}",
+                await GetDownloadUrlAsync(latestVersion, cToken),
                 cToken
             );
 
@@ -299,6 +301,65 @@ public sealed partial class NadekoResolver : IBotResolver
             Architecture.Arm64 when OperatingSystem.IsMacOS() => "-osx-arm64-build.tar",
             _ => throw new NotSupportedException($"Architecture of type {RuntimeInformation.OSArchitecture} is not supported by NadekoBot on this OS.")
         };
+    }
+
+    /// <summary>
+    /// Gets the download url to the latest bot release.
+    /// </summary>
+    /// <param name="latestVersion">The latest version of the bot.</param>
+    /// <param name="cToken">The cancellation token.</param>
+    /// <returns>The url to the latest bot release.</returns>
+    private async ValueTask<string> GetDownloadUrlAsync(string latestVersion, CancellationToken cToken = default)
+    {
+        var downloadFileName = GetDownloadFileName(latestVersion);
+
+        try
+        {
+            // The first release is the most recent one.
+            return (await GetLatestVersionFromApiAsync(cToken)).Assets.Links.First(x => x.Name.Equals(downloadFileName, StringComparison.Ordinal)).Url;
+        }
+        catch (InvalidOperationException)
+        {
+            return $"https://gitlab.com/api/v4/projects/9321079/packages/generic/NadekoBot-build/{latestVersion}/{downloadFileName}";
+        }
+    }
+
+    /// <summary>
+    /// Gets the latest bot version from the Gitlab latest release URL.
+    /// </summary>
+    /// <param name="cToken">The cancellation token.</param>
+    /// <returns>The latest version of the bot.</returns>
+    /// <exception cref="InvalidOperationException">Occurs when parsing of the response fails.</exception>
+    private async ValueTask<string> GetLatestVersionFromUrlAsync(CancellationToken cToken = default)
+    {
+        var http = _httpClientFactory.CreateClient(AppConstants.NoRedirectClient);
+        var response = await http.GetAsync("https://gitlab.com/Kwoth/nadekobot/-/releases/permalink/latest", cToken);
+
+        var lastSlashIndex = response.Headers.Location?.OriginalString.LastIndexOf('/')
+            ?? throw new InvalidOperationException("Failed to get the latest NadekoBot version.");
+
+        return response.Headers.Location.OriginalString[(lastSlashIndex + 1)..];
+    }
+
+    /// <summary>
+    /// Gets the latest bot version from the Gitlab API.
+    /// </summary>
+    /// <param name="cToken">The cancellation token.</param>
+    /// <returns>The latest version of the bot.</returns>
+    /// <exception cref="InvalidOperationException">Occurs when the API call fails.</exception>
+    private async ValueTask<GitlabRelease> GetLatestVersionFromApiAsync(CancellationToken cToken = default)
+    {
+        var http = _httpClientFactory.CreateClient();
+        var httpResponse = await http.GetAsync("https://gitlab.com/api/v4/projects/9321079/releases", cToken);
+
+        if (!httpResponse.IsSuccessStatusCode)
+            throw new InvalidOperationException("The call to the Gitlab API failed.");
+
+        var response = JsonSerializer.Deserialize<GitlabRelease[]>(await httpResponse.Content.ReadAsStringAsync(cToken))
+            ?? throw new InvalidOperationException("Failed deserializing Gitlab's response.");
+
+        // Only return the first release, as this is the most recent one.
+        return response[0];
     }
 
     [GeneratedRegex(@"^(?:\S+\-)(\S+\-\S+)\-", RegexOptions.Compiled)]

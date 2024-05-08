@@ -320,7 +320,7 @@ public class BotConfigViewModel : ViewModelBase<BotConfigView>, IDisposable
         {
             ButtonDefinitions = ButtonEnum.OkCancel,
             ContentTitle = "Are you sure?",
-            ContentMessage = $"Are you sure you want to delete {ActualBotName}?{Environment.NewLine}This action cannot be undone.",
+            ContentMessage = $"Are you sure you want to delete {ActualBotName}?{Environment.NewLine}This action cannot be reversed.",
             MaxWidth = int.Parse(WindowConstants.DefaultWindowWidth) / 2.0,
             SizeToContent = SizeToContent.WidthAndHeight,
             ShowInCenter = true,

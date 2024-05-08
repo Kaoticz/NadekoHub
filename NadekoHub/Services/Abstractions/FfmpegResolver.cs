@@ -13,7 +13,7 @@ public abstract class FfmpegResolver : IFfmpegResolver
     protected const string FfmpegProcessName = "ffmpeg";
 
     /// <inheritdoc/>
-    public string DependencyName { get; } = "FFMPEG";
+    public string DependencyName { get; } = "Ffmpeg";
 
     /// <inheritdoc/>
     public abstract string FileName { get; }

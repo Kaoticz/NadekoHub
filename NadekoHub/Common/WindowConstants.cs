@@ -8,12 +8,12 @@ public static class WindowConstants
     /// <summary>
     /// Defines the default width of the window.
     /// </summary>
-    public const string DefaultWindowWidth = "885";
+    public const string DefaultWindowWidth = "900";
 
     /// <summary>
     /// Defines the default height of the window.
     /// </summary>
-    public const string DefaultWindowHeight = "570";
+    public const string DefaultWindowHeight = "575";
 
     /// <summary>
     /// Defines the minimum height of the window.

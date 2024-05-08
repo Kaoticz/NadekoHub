@@ -5,8 +5,8 @@
         xmlns:vm="using:NadekoHub.ViewModels.Windows"
         xmlns:const="using:NadekoHub.Common"
         xmlns:dd="using:NadekoHub.DesignData.Windows"
-        mc:Ignorable="d" d:DesignWidth="400" d:DesignHeight="325"
-        Width="400" Height="325"
+        mc:Ignorable="d" d:DesignWidth="400" d:DesignHeight="305"
+        Width="400" Height="305"
         x:Class="NadekoHub.Views.Windows.AboutMeView"
         x:DataType="vm:AboutMeViewModel"
         Title="About NadekoHub"
@@ -55,7 +55,8 @@
         <Separator Margin="20"
                    HorizontalAlignment="Stretch" />
 
-        <TextBlock Text="This tool was made by Kotz. If it has been useful to you, consider showing your support by buying me a coffee."
+        <TextBlock Text="This tool was made by Kotz. If it has been useful to you, consider showing your support on Ko-fi."
+                   TextAlignment="Center"
                    Margin="0 0 0 10" />
 
         <Button HorizontalAlignment="Center"

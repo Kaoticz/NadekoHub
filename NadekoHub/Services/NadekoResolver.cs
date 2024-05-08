@@ -13,7 +13,7 @@ namespace NadekoHub.Services;
 /// <remarks>Source: https://gitlab.com/Kwoth/nadekobot/-/releases/permalink/latest</remarks>
 public sealed partial class NadekoResolver : IBotResolver
 {
-    private static readonly HashSet<Guid> _updateIdOngoing = new();
+    private static readonly HashSet<Guid> _updateIdOngoing = [];
     private static readonly string _tempDirectory = Path.GetTempPath();
     private static readonly Regex _unzipedDirRegex = GenerateUnzipedDirRegex();
     private readonly IHttpClientFactory _httpClientFactory;
@@ -55,7 +55,7 @@ public sealed partial class NadekoResolver : IBotResolver
 
         var latestVersion = await GetLatestVersionAsync(cToken);
 
-        if (latestVersion.Equals(currentVersion, StringComparison.Ordinal))
+        if (Version.Parse(latestVersion) <= Version.Parse(currentVersion))
             return false;
 
         var http = _httpClientFactory.CreateClient();
@@ -100,6 +100,7 @@ public sealed partial class NadekoResolver : IBotResolver
 
         if (!File.Exists(assemblyUri))
             return null;
+
         var nadekoAssembly = Assembly.LoadFile(assemblyUri);
         var version = nadekoAssembly.GetName().Version
             ?? throw new InvalidOperationException($"Could not find version of the assembly at {assemblyUri}.");
@@ -136,7 +137,7 @@ public sealed partial class NadekoResolver : IBotResolver
         var latestVersion = await GetLatestVersionAsync(cToken);
 
         // Update
-        if (latestVersion == currentVersion)
+        if (currentVersion is not null && Version.Parse(latestVersion) <= Version.Parse(currentVersion))
         {
             _updateIdOngoing.Remove(Id);
             return (currentVersion, null);

@@ -18,7 +18,7 @@ public sealed class YtdlpResolver : IYtdlpResolver
     private readonly IMemoryCache _memoryCache;
 
     /// <inheritdoc />
-    public string DependencyName { get; } = "Youtube-dlp";
+    public string DependencyName { get; } = "Yt-dlp";
 
     /// <inheritdoc />
     public string FileName { get; } = (OperatingSystem.IsWindows()) ? "yt-dlp.exe" : "yt-dlp";

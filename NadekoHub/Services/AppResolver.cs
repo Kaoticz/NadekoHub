@@ -64,7 +64,7 @@ public sealed class AppResolver : IAppResolver
 
         var latestVersion = await GetLatestVersionAsync(cToken);
 
-        if (latestVersion.Equals(currentVersion, StringComparison.Ordinal))
+        if (Version.Parse(latestVersion) <= Version.Parse(currentVersion))
             return false;
 
         var http = _httpClientFactory.CreateClient();
@@ -102,7 +102,7 @@ public sealed class AppResolver : IAppResolver
         var currentVersion = await GetCurrentVersionAsync(cToken);
         var latestVersion = await GetLatestVersionAsync(cToken);
 
-        if (latestVersion.Equals(currentVersion, StringComparison.Ordinal))
+        if (currentVersion is not null && Version.Parse(latestVersion) <= Version.Parse(currentVersion))
             return (currentVersion, null);
 
         var http = _httpClientFactory.CreateClient();

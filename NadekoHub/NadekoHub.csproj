@@ -56,7 +56,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Update="Views\Windows\AppView.axaml.cs">
+    <Compile Update="Features\AppWindow\Views\Windows\AppView.axaml.cs">
       <DependentUpon>AppView.axaml</DependentUpon>
     </Compile>
   </ItemGroup>

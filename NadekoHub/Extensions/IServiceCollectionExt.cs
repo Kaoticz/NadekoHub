@@ -1,10 +1,16 @@
 using Avalonia.Controls;
 using Microsoft.Extensions.DependencyInjection;
-using NadekoHub.Models.Config;
+using NadekoHub.Features.AppConfig.Models;
+using NadekoHub.Features.AppConfig.Services;
+using NadekoHub.Features.AppConfig.Services.Abstractions;
+using NadekoHub.Features.AppConfig.Services.Mocks;
+using NadekoHub.Features.AppWindow.Views.Windows;
+using NadekoHub.Features.BotConfig.Services;
+using NadekoHub.Features.BotConfig.Services.Abstractions;
+using NadekoHub.Features.BotConfig.Services.Mocks;
+using NadekoHub.Features.Home.Services;
+using NadekoHub.Features.Home.Services.Abstractions;
 using NadekoHub.Services;
-using NadekoHub.Services.Abstractions;
-using NadekoHub.Services.Mocks;
-using NadekoHub.Views.Windows;
 using ReactiveUI;
 using System.Reflection;
 using System.Text.Json;
@@ -65,10 +71,10 @@ public static class IServiceCollectionExt
 
         // App settings
         serviceCollection.AddSingleton<IAppConfigManager, AppConfigManager>();
-        serviceCollection.AddSingleton<ReadOnlyAppConfig>();
+        serviceCollection.AddSingleton<ReadOnlyAppSettings>();
         serviceCollection.AddSingleton(_ =>
             (File.Exists(AppStatics.AppConfigUri))
-                ? JsonSerializer.Deserialize<AppConfig>(File.ReadAllText(AppStatics.AppConfigUri)) ?? new()
+                ? JsonSerializer.Deserialize<AppSettings>(File.ReadAllText(AppStatics.AppConfigUri)) ?? new()
                 : new()
         );
 

@@ -3,7 +3,7 @@ using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
 using Microsoft.Extensions.DependencyInjection;
-using NadekoHub.Views.Windows;
+using NadekoHub.Features.AppWindow.Views.Windows;
 using System.Reflection;
 
 namespace NadekoHub;

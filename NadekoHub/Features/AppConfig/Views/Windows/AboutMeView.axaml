@@ -1,0 +1,88 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:vm="using:NadekoHub.Features.AppConfig.ViewModels"
+        xmlns:const="using:NadekoHub.Common"
+        xmlns:dd="using:NadekoHub.DesignData.Windows"
+        mc:Ignorable="d" d:DesignWidth="400" d:DesignHeight="305"
+        Width="400" Height="305"
+        x:Class="NadekoHub.Features.AppConfig.Views.Windows.AboutMeView"
+        x:DataType="vm:AboutMeViewModel"
+        Title="About NadekoHub"
+        Icon="{DynamicResource NadekoHubIcon}"
+        WindowStartupLocation="CenterOwner"
+        CanResize="False">
+    <Design.DataContext>
+        <dd:DesignAboutMeViewModel/>
+    </Design.DataContext>
+
+    <StackPanel Margin="10 20 10 20">
+        <TextBlock Text="NadekoBot is a general purpose open-source Discord bot created by Kwoth. Support the project!"
+                   TextAlignment="Center"
+                   Margin="0 0 0 10"/>
+
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+            <Button CommandParameter="https://www.paypal.com/paypalme/kwoth"
+                    Command="{Binding OpenUrl}">
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Text="Paypal " />
+                    <Image Classes="icon-url"
+                           Source="{DynamicResource UrlIcon}" />
+                </StackPanel>
+            </Button>
+
+            <Button Margin="10 0 10 0"
+                    CommandParameter="https://nadeko.bot"
+                    Command="{Binding OpenUrl}">
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Text="Official Website " />
+                    <Image Classes="icon-url"
+                           Source="{DynamicResource UrlIcon}" />
+                </StackPanel>
+            </Button>
+
+            <Button CommandParameter="https://www.patreon.com/nadekobot"
+                    Command="{Binding OpenUrl}">
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Text="Patreon " />
+                    <Image Classes="icon-url"
+                           Source="{DynamicResource UrlIcon}" />
+                </StackPanel>
+            </Button>
+        </StackPanel>
+        
+        <Separator Margin="20"
+                   HorizontalAlignment="Stretch" />
+
+        <TextBlock Text="This tool was made by Kotz. If it has been useful to you, consider showing your support on Ko-fi."
+                   TextAlignment="Center"
+                   Margin="0 0 0 10" />
+
+        <Button HorizontalAlignment="Center"
+                CommandParameter="https://ko-fi.com/kaoticz"
+                Command="{Binding OpenUrl}">
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="Buy me a Ko-fi " />
+                <Image Classes="icon-url"
+                       Source="{DynamicResource UrlIcon}" />
+            </StackPanel>
+        </Button>
+        
+        <TextBlock Text="© 2023 Kotz"
+                   FontSize="11"
+                   HorizontalAlignment="Center"
+                   Margin="0 30 0 0"/>
+        
+        <StackPanel Orientation="Horizontal"
+                    HorizontalAlignment="Center">
+            <TextBlock Text="License: "
+                       FontSize="11" />
+            <Button Classes="link-11"
+                    FontSize="11"
+                    Content="GNU General Public License Version 3"
+                    CommandParameter="https://github.com/Kaoticz/NadekoHub/blob/main/LICENSE"
+                    Command="{Binding OpenUrl}" />
+        </StackPanel>
+    </StackPanel>
+</Window>

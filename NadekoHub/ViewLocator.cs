@@ -2,7 +2,7 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.Templates;
 using Avalonia.Media;
-using NadekoHub.ViewModels.Abstractions;
+using NadekoHub.Features.Abstractions;
 
 namespace NadekoHub;
 

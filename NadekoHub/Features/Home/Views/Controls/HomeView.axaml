@@ -1,0 +1,198 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="using:NadekoHub.Features.Home.ViewModels"
+             xmlns:const="using:NadekoHub.Common"
+             xmlns:dd="using:NadekoHub.DesignData.Controls"
+             mc:Ignorable="d"
+             d:DesignWidth="{x:Static const:WindowConstants.MinWindowWidth}"
+             d:DesignHeight="{x:Static const:WindowConstants.MinWindowHeight}"
+             x:Class="NadekoHub.Features.Home.Views.Controls.HomeView"
+             x:DataType="vm:HomeViewModel">
+    <Design.DataContext>
+        <dd:DesignHomeViewModel/>
+    </Design.DataContext>
+
+    <Grid RowDefinitions="Auto,Auto,*,*,Auto" ColumnDefinitions="*,*,*,*,*" ShowGridLines="False">
+        <!--Background Colors-->
+        <Rectangle Grid.Row="0"
+                   Grid.Column="0"
+                   Grid.RowSpan="2"
+                   Grid.ColumnSpan="5"
+                   Fill="{DynamicResource MediumBackground}"/>
+        
+        <Rectangle Grid.Row="2"
+                   Grid.Column="0"
+                   Grid.RowSpan="3"
+                   Grid.ColumnSpan="5"
+                   Fill="{DynamicResource HeavyBackground}"/>
+        
+        <Rectangle Grid.Row="5"
+                   Grid.Column="0"
+                   Fill="#008DDA"/>
+        
+        <Rectangle Grid.Row="5"
+                   Grid.Column="1"
+                   Fill="#F86752"/>
+        
+        <Rectangle Grid.Row="5"
+                   Grid.Column="2"
+                   Grid.ColumnSpan="3"
+                   Fill="#B90060"/>
+        
+        <!--Top Banner-->
+        <Border Classes="circular"
+                Grid.Row="0"
+                Grid.Column="0"
+                Margin="10">
+            <Image Stretch="UniformToFill"
+                   Source="{DynamicResource NadekoAvatar}"/>
+        </Border>
+        <TextBlock Grid.Row="0"
+                   Grid.Column="1"
+                   Grid.ColumnSpan="3"
+                   Text="Welcome to NadekoHub"
+                   FontSize="30"
+                   FontWeight="Bold"
+                   HorizontalAlignment="Center"
+                   VerticalAlignment="Center"/>
+
+        <!--Top Buttons-->
+        <Button Grid.Row="1"
+                Grid.Column="0"
+                Classes="transparent"
+                HorizontalAlignment="Stretch"
+                VerticalAlignment="Center"
+                CommandParameter="https://nadeko.bot/commands"
+                Command="{Binding OpenUrl}">
+            <StackPanel Orientation="Horizontal">
+                <Image Classes="icon"
+                       Source="{DynamicResource CommandsIcon}"/>
+                <TextBlock Text="Commands"/>
+            </StackPanel>
+        </Button>
+
+        <Button Grid.Row="1"
+                Grid.Column="1"
+                Classes="transparent"
+                HorizontalAlignment="Stretch"
+                VerticalAlignment="Center"
+                CommandParameter="https://suggest.nadeko.bot/"
+                Command="{Binding OpenUrl}">
+            <StackPanel Orientation="Horizontal">
+                <Image Classes="icon"
+                       Source="{DynamicResource SuggestionIcon}" />
+                <TextBlock Text="Suggest" />
+            </StackPanel>
+        </Button>
+        
+        <Button Grid.Row="1"
+                Grid.Column="2"
+                Classes="transparent"
+                HorizontalAlignment="Stretch"
+                VerticalAlignment="Center"
+                CommandParameter="https://nadekobot.readthedocs.io/en/v4/"
+                Command="{Binding OpenUrl}">
+            <StackPanel Orientation="Horizontal">
+                <Image Classes="icon"
+                       Source="{DynamicResource DocumentationIcon}" />
+                <TextBlock Text="Docs" />
+            </StackPanel>
+        </Button>
+        
+        <Button Grid.Row="1"
+                Grid.Column="3"
+                Classes="transparent"
+                HorizontalAlignment="Stretch"
+                VerticalAlignment="Center"
+                CommandParameter="https://discord.nadeko.bot/"
+                Command="{Binding OpenUrl}">
+            <StackPanel Orientation="Horizontal">
+                <Image Classes="icon"
+                       Source="{DynamicResource DiscordIcon}" />
+                <TextBlock Text="Support" />
+            </StackPanel>
+        </Button>
+        
+        <Button Grid.Row="1"
+                Grid.Column="4"
+                Classes="transparent"
+                HorizontalAlignment="Stretch"
+                VerticalAlignment="Center"
+                CommandParameter="https://eb.nadeko.bot/"
+                Command="{Binding OpenUrl}">
+            <StackPanel Orientation="Horizontal">
+                <Image Classes="icon"
+                       Source="{DynamicResource EmbedsIcon}" />
+                <TextBlock Text="Embeds" />
+            </StackPanel>
+        </Button>
+
+        <!--Center Instructions-->
+        <TextBlock Grid.Row="2"
+                   Grid.Column="0"
+                   Grid.ColumnSpan="5"
+                   Text="Pick a bot on the left to get started."
+                   FontSize="22"
+                   FontWeight="Bold"
+                   HorizontalAlignment="Center"
+                   VerticalAlignment="Bottom"/>
+        
+        <TextBlock Grid.Row="3"
+                   Grid.Column="0"
+                   Grid.ColumnSpan="5"
+                   Text="Don't see any bot? Click on the plus button to add a new one."
+                   HorizontalAlignment="Center"
+                   VerticalAlignment="Top"/>
+
+        <!--Bottom Buttons-->
+        <Button Grid.Row="5"
+                Grid.Column="0"
+                Classes="transparent"
+                Content="Buy me a Ko-fi"
+                Foreground="White"
+                FontSize="12"
+                Cursor="Hand"
+                HorizontalAlignment="Stretch"
+                CommandParameter="https://ko-fi.com/kaoticz"
+                Command="{Binding OpenUrl}"/>
+        
+        <Image Grid.Row="5"
+               Grid.Column="0"
+               Classes="icon"
+               MaxHeight="30"
+               IsHitTestVisible="False"
+               HorizontalAlignment="Right"
+               Margin="0 0 3 0"
+               Source="{DynamicResource KofiIcon}"/>
+        
+        <Button Grid.Row="5"
+                Grid.Column="1"
+                Classes="transparent"
+                Content="Support NadekoBot"
+                Foreground="White"
+                FontSize="12"
+                Cursor="Hand"
+                HorizontalAlignment="Stretch"
+                CommandParameter="https://patreon.com/nadekobot"
+                Command="{Binding OpenUrl}"/>
+
+        <Image Grid.Row="5"
+               Grid.Column="1"
+               Classes="icon"
+               MaxHeight="30"
+               IsHitTestVisible="False"
+               HorizontalAlignment="Right"
+               Margin="0 0 3 0"
+               Source="{DynamicResource PatreonIcon}"/>
+        
+        <TextBlock Grid.Row="5"
+                   Grid.Column="2"
+                   Grid.ColumnSpan="3"
+                   Text="Thank You ♡"
+                   Foreground="White"
+                   HorizontalAlignment="Center"
+                   VerticalAlignment="Center"/>
+    </Grid>
+</UserControl>

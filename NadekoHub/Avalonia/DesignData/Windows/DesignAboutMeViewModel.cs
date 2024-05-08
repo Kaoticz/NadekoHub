@@ -1,6 +1,6 @@
 using NadekoHub.Features.AppConfig.ViewModels;
 
-namespace NadekoHub.DesignData.Windows;
+namespace NadekoHub.Avalonia.DesignData.Windows;
 
 /// <summary>
 /// Mock view-model for <see cref="AboutMeViewModel"/>.

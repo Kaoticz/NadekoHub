@@ -3,7 +3,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:vm="using:NadekoHub.Features.Home.ViewModels"
-        xmlns:dd="using:NadekoHub.DesignData.Windows"
+        xmlns:dd="using:NadekoHub.Avalonia.DesignData.Windows"
         mc:Ignorable="d" d:DesignWidth="420" d:DesignHeight="100"
         x:Class="NadekoHub.Features.Home.Views.Windows.UpdateView"
         x:DataType="vm:UpdateViewModel"

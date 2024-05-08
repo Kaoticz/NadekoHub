@@ -5,7 +5,7 @@
         xmlns:vm="using:NadekoHub.Features.AppConfig.ViewModels"
         xmlns:views="using:NadekoHub.Features.Shared.Views.Controls"
         xmlns:const="using:NadekoHub.Common"
-        xmlns:dd="using:NadekoHub.DesignData.Controls"
+        xmlns:dd="using:NadekoHub.Avalonia.DesignData.Controls"
         mc:Ignorable="d"
         d:DesignWidth="{x:Static const:WindowConstants.MinWindowWidth}"
         d:DesignHeight="{x:Static const:WindowConstants.DefaultWindowHeight}"

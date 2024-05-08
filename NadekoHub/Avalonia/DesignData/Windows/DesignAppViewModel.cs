@@ -1,9 +1,9 @@
 using Microsoft.Extensions.DependencyInjection;
-using NadekoHub.DesignData.Common;
+using NadekoHub.Avalonia.DesignData.Common;
 using NadekoHub.Features.AppWindow.ViewModels;
 using NadekoHub.Features.Home.ViewModels;
 
-namespace NadekoHub.DesignData.Windows;
+namespace NadekoHub.Avalonia.DesignData.Windows;
 
 /// <summary>
 /// Mock view-model for <see cref="AppViewModel"/>.

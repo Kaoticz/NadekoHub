@@ -5,7 +5,7 @@ using Avalonia.Interactivity;
 using Avalonia.Media.Immutable;
 using Avalonia.ReactiveUI;
 using Microsoft.Extensions.DependencyInjection;
-using NadekoHub.DesignData.Common;
+using NadekoHub.Avalonia.DesignData.Common;
 using NadekoHub.Features.AppConfig.Models;
 using NadekoHub.Features.AppConfig.Services.Mocks;
 using NadekoHub.Features.AppWindow.ViewModels;

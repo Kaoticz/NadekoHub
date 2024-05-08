@@ -3,7 +3,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="using:NadekoHub.Features.Shared.ViewModels"
-             xmlns:dd="using:NadekoHub.DesignData.Controls"
+             xmlns:dd="using:NadekoHub.Avalonia.DesignData.Controls"
              mc:Ignorable="d" d:DesignWidth="600" d:DesignHeight="50"
              x:Class="NadekoHub.Features.Shared.Views.Controls.DependencyButton"
              x:DataType="vm:DependencyButtonViewModel">

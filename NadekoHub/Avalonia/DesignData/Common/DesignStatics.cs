@@ -1,7 +1,7 @@
 using Avalonia;
 using Avalonia.Controls;
 
-namespace NadekoHub.DesignData.Common;
+namespace NadekoHub.Avalonia.DesignData.Common;
 
 /// <summary>
 /// Defines objects useful at design-time.

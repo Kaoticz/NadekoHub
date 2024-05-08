@@ -1,9 +1,9 @@
 using Avalonia.Platform.Storage;
 using Microsoft.Extensions.DependencyInjection;
-using NadekoHub.DesignData.Common;
+using NadekoHub.Avalonia.DesignData.Common;
 using NadekoHub.Features.Shared.ViewModels;
 
-namespace NadekoHub.DesignData.Controls;
+namespace NadekoHub.Avalonia.DesignData.Controls;
 
 /// <summary>
 /// Mock view-model for <see cref="UriInputBarViewModel"/>.

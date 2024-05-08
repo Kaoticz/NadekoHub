@@ -4,7 +4,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:vm="using:NadekoHub.Features.AppWindow.ViewModels"
         xmlns:const="using:NadekoHub.Common"
-        xmlns:dd="using:NadekoHub.DesignData.Windows"
+        xmlns:dd="using:NadekoHub.Avalonia.DesignData.Windows"
         mc:Ignorable="d"
         d:DesignWidth="{x:Static const:WindowConstants.MinWindowWidth}"
         d:DesignHeight="{x:Static const:WindowConstants.MinWindowHeight}"

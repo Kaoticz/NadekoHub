@@ -2,7 +2,7 @@ using Avalonia.Controls;
 using Avalonia.ReactiveUI;
 using Avalonia.Styling;
 using Microsoft.Extensions.DependencyInjection;
-using NadekoHub.DesignData.Common;
+using NadekoHub.Avalonia.DesignData.Common;
 using NadekoHub.Enums;
 using NadekoHub.Features.Abstractions;
 using NadekoHub.Features.AppConfig.Services.Abstractions;

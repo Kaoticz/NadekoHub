@@ -4,7 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:siv="https://github.com/kekyo/SkiaImageView"
              xmlns:vm="using:NadekoHub.Features.AppWindow.ViewModels"
-             xmlns:dd="using:NadekoHub.DesignData.Controls"
+             xmlns:dd="using:NadekoHub.Avalonia.DesignData.Controls"
              xmlns:const="using:NadekoHub.Common"
              mc:Ignorable="d" d:DesignWidth="70" d:DesignHeight="450"
              x:Class="NadekoHub.Features.AppWindow.Views.Controls.LateralBarView"

@@ -162,6 +162,7 @@ public class BotConfigViewModel : ViewModelBase<BotConfigView>, IDisposable
 
         var botEntry = _appConfigManager.AppConfig.BotEntries[botResolver.Id];
 
+        _ = LoadUpdateBarAsync(botResolver, updateBotBar);
         _logWriter.TryRead(botResolver.Id, out var logContent);
         FakeConsole.Content = logContent ?? string.Empty;
         FakeConsole.Watermark = "Waiting for the bot to start...";
@@ -170,15 +171,12 @@ public class BotConfigViewModel : ViewModelBase<BotConfigView>, IDisposable
         _botAvatar = Utilities.LoadLocalImage(botEntry.AvatarUri);
         BotName = botResolver.BotName;
         Id = botResolver.Id;
-        UpdateBar.DependencyName = "Checking...";
         IsBotRunning = botOrchestrator.IsBotRunning(botResolver.Id);
 
         if (IsBotRunning)
             EnableButtons(true, false);
         else
-            EnableButtons(!Directory.Exists(botEntry.InstanceDirectoryUri), true);
-
-        _ = LoadUpdateBarAsync(botResolver, updateBotBar);
+            EnableButtons(!File.Exists(Path.Combine(botEntry.InstanceDirectoryUri, Resolver.FileName)), true);
 
         // Dispose when the view is deactivated
         this.WhenActivated(disposables => Disposable.Create(() => Dispose()).DisposeWith(disposables));
@@ -422,6 +420,9 @@ public class BotConfigViewModel : ViewModelBase<BotConfigView>, IDisposable
     /// <param name="updateBotBar">The update bar.</param>
     private async static Task LoadUpdateBarAsync(IBotResolver botResolver, DependencyButtonViewModel updateBotBar)
     {
+        updateBotBar.DependencyName = "Checking...";
+        updateBotBar.Status = DependencyStatus.Checking;
+
         var currentVersion = await botResolver.GetCurrentVersionAsync();
         updateBotBar.DependencyName = string.IsNullOrWhiteSpace(currentVersion)
             ? "Not Installed"

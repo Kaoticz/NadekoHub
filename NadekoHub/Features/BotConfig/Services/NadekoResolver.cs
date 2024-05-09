@@ -102,14 +102,16 @@ public sealed partial class NadekoResolver : IBotResolver
     public async ValueTask<string?> GetCurrentVersionAsync(CancellationToken cToken = default)
     {
         var botEntry = _appConfigManager.AppConfig.BotEntries[Id];
-
-        if (!string.IsNullOrWhiteSpace(botEntry.Version))
-            return botEntry.Version;
-
         var assemblyUri = Path.Combine(botEntry.InstanceDirectoryUri, "NadekoBot.dll");
 
         if (!File.Exists(assemblyUri))
+        {
+            await _appConfigManager.UpdateBotEntryAsync(Id, x => x with { Version = null }, cToken);
             return null;
+        }
+        
+        if (!string.IsNullOrWhiteSpace(botEntry.Version))
+            return botEntry.Version;
 
         var nadekoAssembly = Assembly.LoadFile(assemblyUri);
         var version = nadekoAssembly.GetName().Version

@@ -243,7 +243,12 @@ public class BotConfigViewModel : ViewModelBase<BotConfigView>, IDisposable
         }
         finally
         {
-            EnableButtons(!wereButtonsUnlocked, true);
+            _ = LoadUpdateBarAsync(Resolver, UpdateBar);
+
+            if (!wereButtonsUnlocked && File.Exists(Path.Combine(BotDirectoryUriBar.CurrentUri, Resolver.FileName)))
+                EnableButtons(false, true);
+            else
+                EnableButtons(!wereButtonsUnlocked, true);
         }
     }
 
@@ -433,7 +438,7 @@ public class BotConfigViewModel : ViewModelBase<BotConfigView>, IDisposable
     /// <summary>
     /// Locks or unlocks the settings buttons of this view-model.
     /// </summary>
-    /// <param name="lockButtons">Whether the settings buttons should be locked.</param>
+    /// <param name="lockButtons">Whether the setting buttons should be locked.</param>
     /// <param name="isIdle">Whether this view-model is currently undergoing an operation.</param>
     private void EnableButtons(bool lockButtons, bool isIdle)
     {

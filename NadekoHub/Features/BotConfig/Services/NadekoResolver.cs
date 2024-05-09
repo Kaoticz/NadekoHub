@@ -2,6 +2,7 @@ using Microsoft.Extensions.Caching.Memory;
 using NadekoHub.Features.AppConfig.Services.Abstractions;
 using NadekoHub.Features.BotConfig.Models.Api.Gitlab;
 using NadekoHub.Features.BotConfig.Services.Abstractions;
+using SingleFileExtractor.Core;
 using System.Formats.Tar;
 using System.IO.Compression;
 using System.Reflection;
@@ -18,7 +19,7 @@ namespace NadekoHub.Services;
 public sealed partial class NadekoResolver : IBotResolver
 {
     private const string _cachedCurrentVersionKey = "currentVersion:NadekoBot";
-    private const string _gitlabReleasesEndpointUrl = "https://gitlab.com/api/v4/projects/9321079/releases/permalink/latest";
+    private const string _gitlabReleasesEndpointUrl = "https://gitlab.com/api/v4/projects/57687445/releases/permalink/latest";
     private const string _gitlabReleasesRepoUrl = "https://gitlab.com/Kwoth/nadekobot/-/releases/permalink/latest";
     private static readonly HashSet<Guid> _updateIdOngoing = [];
     private static readonly string _tempDirectory = Path.GetTempPath();
@@ -102,9 +103,9 @@ public sealed partial class NadekoResolver : IBotResolver
     public async ValueTask<string?> GetCurrentVersionAsync(CancellationToken cToken = default)
     {
         var botEntry = _appConfigManager.AppConfig.BotEntries[Id];
-        var assemblyUri = Path.Combine(botEntry.InstanceDirectoryUri, "NadekoBot.dll");
+        var executableUri = Path.Combine(botEntry.InstanceDirectoryUri, FileName);
 
-        if (!File.Exists(assemblyUri))
+        if (!File.Exists(executableUri))
         {
             await _appConfigManager.UpdateBotEntryAsync(Id, x => x with { Version = null }, cToken);
             return null;
@@ -113,15 +114,30 @@ public sealed partial class NadekoResolver : IBotResolver
         if (!string.IsNullOrWhiteSpace(botEntry.Version))
             return botEntry.Version;
 
-        var nadekoAssembly = Assembly.LoadFile(assemblyUri);
-        var version = nadekoAssembly.GetName().Version
-            ?? throw new InvalidOperationException($"Could not find version of the assembly at {assemblyUri}.");
+        // Nadeko is published as a single-file binary, so we have to extract
+        // its contents first in order to read the assembly for its version.
+        using var executableReader = new ExecutableReader(executableUri);
+        var extractDirectoryUri = Path.Combine(_tempDirectory, "NadekoBotExtract");
+        var extractAssemblyUri = Path.Combine(extractDirectoryUri, "NadekoBot.dll");
 
-        var currentVersion = $"{version.Major}.{version.Minor}.{version.Build}";
+        try
+        {
+            await executableReader.ExtractToDirectoryAsync(extractDirectoryUri, cToken);
 
-        await _appConfigManager.UpdateBotEntryAsync(Id, x => x with { Version = currentVersion }, cToken);
+            var nadekoAssembly = Assembly.LoadFile(extractAssemblyUri);
+            var version = nadekoAssembly.GetName().Version
+                ?? throw new InvalidOperationException($"Could not find version of the assembly at {extractAssemblyUri}.");
 
-        return currentVersion;
+            var currentVersion = $"{version.Major}.{version.Minor}.{version.Build}";
+
+            await _appConfigManager.UpdateBotEntryAsync(Id, x => x with { Version = currentVersion }, cToken);
+
+            return currentVersion;
+        }
+        finally
+        {
+            Utilities.TryDeleteDirectory(extractDirectoryUri);
+        }
     }
 
     /// <inheritdoc/>
@@ -148,7 +164,7 @@ public sealed partial class NadekoResolver : IBotResolver
         var currentVersion = await GetCurrentVersionAsync(cToken);
         var latestVersion = await GetLatestVersionAsync(cToken);
 
-        // Update
+        // Already up-to-date, quit
         if (currentVersion is not null && Version.Parse(latestVersion) <= Version.Parse(currentVersion))
         {
             _updateIdOngoing.Remove(Id);

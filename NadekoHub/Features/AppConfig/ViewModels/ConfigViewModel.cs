@@ -198,11 +198,12 @@ public class ConfigViewModel : ViewModelBase<ConfigView>
         dependencyButton.Click += async (buttonViewModel, _) => await HandleDependencyAsync(buttonViewModel, dependencyResolver);
 
         var canUpdate = await dependencyResolver.CanUpdateAsync();
-        dependencyButton.Status = canUpdate is null
-            ? DependencyStatus.Install
-            : canUpdate is true
-                ? DependencyStatus.Update
-                : DependencyStatus.Installed;
+        dependencyButton.Status = canUpdate switch
+        {
+            true => DependencyStatus.Update,
+            false => DependencyStatus.Installed,
+            null => DependencyStatus.Install
+        };
     }
 
     /// <summary>

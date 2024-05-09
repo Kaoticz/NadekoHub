@@ -13,6 +13,11 @@ public interface IBotResolver : IDependencyResolver
     string BotName { get; }
 
     /// <summary>
+    /// Defines whether there is an ongoing update.
+    /// </summary>
+    bool IsUpdateInProgress { get; }
+
+    /// <summary>
     /// The Id of the bot.
     /// </summary>
     Guid Id { get; }

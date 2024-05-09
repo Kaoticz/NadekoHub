@@ -429,11 +429,13 @@ public class BotConfigViewModel : ViewModelBase<BotConfigView>, IDisposable
             : "NadekoBot v" + currentVersion;
 
         var canUpdate = await botResolver.CanUpdateAsync();
-        updateBotBar.Status = canUpdate is true
-            ? DependencyStatus.Update
-            : canUpdate is null
-                ? DependencyStatus.Install
-                : DependencyStatus.Installed;
+        updateBotBar.Status = canUpdate switch
+        {
+            true => DependencyStatus.Update,
+            false => DependencyStatus.Installed,
+            null when botResolver.IsUpdateInProgress => DependencyStatus.Updating,
+            null => DependencyStatus.Install
+        };
     }
 
     /// <summary>

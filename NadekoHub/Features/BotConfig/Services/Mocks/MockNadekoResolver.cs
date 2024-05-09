@@ -20,6 +20,9 @@ internal sealed class MockNadekoResolver : IBotResolver
     public string FileName { get; } = "NadekoBot";
 
     /// <inheritdoc/>
+    public bool IsUpdateInProgress { get; } = false;
+
+    /// <inheritdoc/>
     public ValueTask<bool?> CanUpdateAsync(CancellationToken cToken = default)
         => ValueTask.FromResult<bool?>(false);
 

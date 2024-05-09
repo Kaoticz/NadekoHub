@@ -20,7 +20,7 @@ public sealed partial class NadekoResolver : IBotResolver
 {
     private const string _cachedCurrentVersionKey = "currentVersion:NadekoBot";
     private const string _gitlabReleasesEndpointUrl = "https://gitlab.com/api/v4/projects/57687445/releases/permalink/latest";
-    private const string _gitlabReleasesRepoUrl = "https://gitlab.com/Kwoth/nadekobot/-/releases/permalink/latest";
+    private const string _gitlabReleasesRepoUrl = "https://gitlab.com/nadeko/nadekobot/-/releases/permalink/latest";
     private static readonly HashSet<Guid> _updateIdOngoing = [];
     private static readonly string _tempDirectory = Path.GetTempPath();
     private static readonly Regex _unzipedDirRegex = GenerateUnzipedDirRegex();
@@ -33,6 +33,10 @@ public sealed partial class NadekoResolver : IBotResolver
 
     /// <inheritdoc/>
     public string FileName { get; } = (OperatingSystem.IsWindows()) ? "NadekoBot.exe" : "NadekoBot";
+
+    /// <inheritdoc/>
+    public bool IsUpdateInProgress
+        => _updateIdOngoing.Contains(Id);
 
     /// <inheritdoc/>
     public Guid Id { get; }
@@ -156,7 +160,7 @@ public sealed partial class NadekoResolver : IBotResolver
     /// <inheritdoc/>
     public async ValueTask<(string? OldVersion, string? NewVersion)> InstallOrUpdateAsync(string installationUri, CancellationToken cToken = default)
     {
-        if (_updateIdOngoing.Contains(Id))
+        if (IsUpdateInProgress)
             return (null, null);
 
         _updateIdOngoing.Add(Id);

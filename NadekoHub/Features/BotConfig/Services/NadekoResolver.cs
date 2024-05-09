@@ -1,3 +1,4 @@
+using Microsoft.Extensions.Caching.Memory;
 using NadekoHub.Features.AppConfig.Services.Abstractions;
 using NadekoHub.Features.BotConfig.Models.Api.Gitlab;
 using NadekoHub.Features.BotConfig.Services.Abstractions;
@@ -16,10 +17,14 @@ namespace NadekoHub.Services;
 /// <remarks>Source: https://gitlab.com/Kwoth/nadekobot/-/releases/permalink/latest</remarks>
 public sealed partial class NadekoResolver : IBotResolver
 {
+    private const string _cachedCurrentVersionKey = "currentVersion:NadekoBot";
+    private const string _gitlabReleasesEndpointUrl = "https://gitlab.com/api/v4/projects/9321079/releases/permalink/latest";
+    private const string _gitlabReleasesRepoUrl = "https://gitlab.com/Kwoth/nadekobot/-/releases/permalink/latest";
     private static readonly HashSet<Guid> _updateIdOngoing = [];
     private static readonly string _tempDirectory = Path.GetTempPath();
     private static readonly Regex _unzipedDirRegex = GenerateUnzipedDirRegex();
     private readonly IHttpClientFactory _httpClientFactory;
+    private readonly IMemoryCache _memoryCache;
     private readonly IAppConfigManager _appConfigManager;
 
     /// <inheritdoc/>
@@ -38,11 +43,13 @@ public sealed partial class NadekoResolver : IBotResolver
     /// Creates a service that checks, downloads, installs, and updates a NadekoBot instance.
     /// </summary>
     /// <param name="httpClientFactory">The HTTP client factory.</param>
+    /// <param name="memoryCache">The memory cache.</param>
     /// <param name="appConfigManager">The application's settings.</param>
     /// <param name="botId">The Id of the bot.</param>
-    public NadekoResolver(IHttpClientFactory httpClientFactory, IAppConfigManager appConfigManager, Guid botId)
+    public NadekoResolver(IHttpClientFactory httpClientFactory, IMemoryCache memoryCache, IAppConfigManager appConfigManager, Guid botId)
     {
         _httpClientFactory = httpClientFactory;
+        _memoryCache = memoryCache;
         _appConfigManager = appConfigManager;
         Id = botId;
         BotName = _appConfigManager.AppConfig.BotEntries[Id].Name;
@@ -64,7 +71,7 @@ public sealed partial class NadekoResolver : IBotResolver
         var http = _httpClientFactory.CreateClient();
 
         return await http.IsUrlValidAsync(
-            $"https://gitlab.com/api/v4/projects/9321079/packages/generic/NadekoBot-build/{latestVersion}/{GetDownloadFileName(latestVersion)}",
+            await GetDownloadUrlAsync(latestVersion, cToken),
             cToken
         );
     }
@@ -316,7 +323,9 @@ public sealed partial class NadekoResolver : IBotResolver
         try
         {
             // The first release is the most recent one.
-            return (await GetLatestVersionFromApiAsync(cToken)).Assets.Links.First(x => x.Name.Equals(downloadFileName, StringComparison.Ordinal)).Url;
+            return (await GetLatestVersionFromApiAsync(cToken)).Assets.Links
+                .First(x => x.Name.Equals(downloadFileName, StringComparison.Ordinal))
+                .Url;
         }
         catch (InvalidOperationException)
         {
@@ -333,7 +342,7 @@ public sealed partial class NadekoResolver : IBotResolver
     private async ValueTask<string> GetLatestVersionFromUrlAsync(CancellationToken cToken = default)
     {
         var http = _httpClientFactory.CreateClient(AppConstants.NoRedirectClient);
-        var response = await http.GetAsync("https://gitlab.com/Kwoth/nadekobot/-/releases/permalink/latest", cToken);
+        var response = await http.GetAsync(_gitlabReleasesRepoUrl, cToken);
 
         var lastSlashIndex = response.Headers.Location?.OriginalString.LastIndexOf('/')
             ?? throw new InvalidOperationException("Failed to get the latest NadekoBot version.");
@@ -349,17 +358,21 @@ public sealed partial class NadekoResolver : IBotResolver
     /// <exception cref="InvalidOperationException">Occurs when the API call fails.</exception>
     private async ValueTask<GitlabRelease> GetLatestVersionFromApiAsync(CancellationToken cToken = default)
     {
+        if (_memoryCache.TryGetValue(_cachedCurrentVersionKey, out var cachedObject) && cachedObject is GitlabRelease cachedResponse)
+            return cachedResponse;
+
         var http = _httpClientFactory.CreateClient();
-        var httpResponse = await http.GetAsync("https://gitlab.com/api/v4/projects/9321079/releases", cToken);
+        var httpResponse = await http.GetAsync(_gitlabReleasesEndpointUrl, cToken);
 
         if (!httpResponse.IsSuccessStatusCode)
             throw new InvalidOperationException("The call to the Gitlab API failed.");
 
-        var response = JsonSerializer.Deserialize<GitlabRelease[]>(await httpResponse.Content.ReadAsStringAsync(cToken))
+        var response = JsonSerializer.Deserialize<GitlabRelease>(await httpResponse.Content.ReadAsStringAsync(cToken))
             ?? throw new InvalidOperationException("Failed deserializing Gitlab's response.");
 
-        // Only return the first release, as this is the most recent one.
-        return response[0];
+        _memoryCache.Set(_cachedCurrentVersionKey, response, TimeSpan.FromMinutes(1));
+
+        return response;
     }
 
     [GeneratedRegex(@"^(?:\S+\-)(\S+\-\S+)\-", RegexOptions.Compiled)]

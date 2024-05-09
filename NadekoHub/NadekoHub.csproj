@@ -11,6 +11,7 @@
     <TreatWarningsAsErrors>True</TreatWarningsAsErrors>
     <EnforceCodeStyleInBuild>True</EnforceCodeStyleInBuild>
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
+    <EnableCompressionInSingleFile>true</EnableCompressionInSingleFile>
     <BuiltInComInteropSupport>True</BuiltInComInteropSupport>
     <ApplicationIcon>Assets/Light/nadekoupdatericon.ico</ApplicationIcon>
     <!--Publishing-->

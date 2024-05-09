@@ -1,6 +1,7 @@
 using Avalonia.Media;
 using Avalonia.Media.Immutable;
 using Avalonia.Platform.Storage;
+using System.Reflection;
 using System.Text.RegularExpressions;
 
 namespace NadekoHub.Common;
@@ -61,6 +62,12 @@ public static partial class AppStatics
             new("All") { Patterns = new[] { "*.*" } }
         }
     };
+
+    /// <summary>
+    /// The version of this application.
+    /// </summary>
+    public static string AppVersion { get; } = Assembly.GetExecutingAssembly().GetName().Version?.ToString()
+        ?? throw new InvalidOperationException("Version is missing from application assembly.");
 
     /// <summary>
     /// Matches the version of Ffmpeg from its CLI output.

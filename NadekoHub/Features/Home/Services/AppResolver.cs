@@ -1,7 +1,9 @@
+using Microsoft.Extensions.Caching.Memory;
+using NadekoHub.Features.Home.Models.Api.Github;
 using NadekoHub.Features.Home.Services.Abstractions;
 using System.IO.Compression;
-using System.Reflection;
 using System.Runtime.InteropServices;
+using System.Text.Json;
 
 namespace NadekoHub.Features.Home.Services;
 
@@ -10,10 +12,13 @@ namespace NadekoHub.Features.Home.Services;
 /// </summary>
 public sealed class AppResolver : IAppResolver
 {
+    private const string _cachedCurrentVersionKey = "currentVersion:NadekoHub";
+    private const string _githubReleasesEndpointUrl = "https://api.github.com/repos/Kaoticz/NadekoHub/releases/latest";
+    private const string _githubReleasesRepoUrl = "https://github.com/Kaoticz/NadekoHub/releases/latest";
     private static readonly string _tempDirectory = Path.GetTempPath();
     private static readonly string _downloadedFileName = GetDownloadFileName();
-    private static readonly string? _currentUpdaterVersion = Assembly.GetEntryAssembly()?.GetName().Version?.ToString();
     private readonly IHttpClientFactory _httpClientFactory;
+    private readonly IMemoryCache _memoryCache;
 
     /// <inheritdoc/>
     public string DependencyName { get; } = "NadekoHub";
@@ -31,16 +36,18 @@ public sealed class AppResolver : IAppResolver
     /// Creates a service that updates this application.
     /// </summary>
     /// <param name="httpClientFactory">The Http client factory.</param>
-    public AppResolver(IHttpClientFactory httpClientFactory)
+    /// <param name="memoryCache">The memory cache.</param>
+    public AppResolver(IHttpClientFactory httpClientFactory, IMemoryCache memoryCache)
     {
         _httpClientFactory = httpClientFactory;
+        _memoryCache = memoryCache;
         FileName = OperatingSystem.IsWindows() ? "NadekoHub.exe" : "NadekoHub";
         BinaryUri = Path.Combine(AppContext.BaseDirectory, FileName);
     }
 
     /// <inheritdoc/>
     public ValueTask<string?> GetCurrentVersionAsync(CancellationToken cToken = default)
-        => ValueTask.FromResult(_currentUpdaterVersion);
+        => ValueTask.FromResult<string?>(AppStatics.AppVersion);
 
     /// <inheritdoc/>
     public void LaunchNewVersion()
@@ -69,7 +76,10 @@ public sealed class AppResolver : IAppResolver
 
         var http = _httpClientFactory.CreateClient();
 
-        return await http.IsUrlValidAsync($"https://github.com/Kaoticz/NadekoHub/releases/download/{latestVersion}/{_downloadedFileName}", cToken);
+        return await http.IsUrlValidAsync(
+            await GetDownloadUrlAsync(latestVersion, cToken),
+            cToken
+        );
     }
 
     /// <inheritdoc/>
@@ -86,14 +96,14 @@ public sealed class AppResolver : IAppResolver
     /// <inheritdoc/>
     public async ValueTask<string> GetLatestVersionAsync(CancellationToken cToken = default)
     {
-        var http = _httpClientFactory.CreateClient(AppConstants.NoRedirectClient);
-
-        var response = await http.GetAsync("https://github.com/Kaoticz/NadekoHub/releases/latest", cToken);
-
-        var lastSlashIndex = response.Headers.Location?.OriginalString.LastIndexOf('/')
-            ?? throw new InvalidOperationException("Failed to get the latest NadekoBotUpdater version.");
-
-        return response.Headers.Location.OriginalString[(lastSlashIndex + 1)..];
+        try
+        {
+            return (await GetLatestVersionFromApiAsync(cToken)).Tag;
+        }
+        catch (InvalidOperationException)
+        {
+            return await GetLatestVersionFromUrlAsync(cToken);
+        }
     }
 
     /// <inheritdoc/>
@@ -105,13 +115,16 @@ public sealed class AppResolver : IAppResolver
         if (currentVersion is not null && Version.Parse(latestVersion) <= Version.Parse(currentVersion))
             return (currentVersion, null);
 
-        var http = _httpClientFactory.CreateClient();
+        var http = _httpClientFactory.CreateClient();   // Do not initialize a GithubClient here, it returns 302 with no data
         var appTempLocation = Path.Combine(_tempDirectory, _downloadedFileName[.._downloadedFileName.LastIndexOf('.')]);
         var zipTempLocation = Path.Combine(_tempDirectory, _downloadedFileName);
 
         try
         {
-            using var downloadStream = await http.GetStreamAsync($"https://github.com/Kaoticz/NadekoHub/releases/download/{latestVersion}/{_downloadedFileName}", cToken);
+            using var downloadStream = await http.GetStreamAsync(
+                await GetDownloadUrlAsync(latestVersion, cToken),
+                cToken
+            );
 
             // Save the zip file
             using (var fileStream = new FileStream(zipTempLocation, FileMode.Create))
@@ -181,5 +194,68 @@ public sealed class AppResolver : IAppResolver
             Architecture.Arm64 when OperatingSystem.IsMacOS() => "NadekoHub_osx-arm64.zip",
             _ => throw new NotSupportedException($"Architecture of type {RuntimeInformation.OSArchitecture} is not supported by NadekoHub on this OS.")
         };
+    }
+
+    /// <summary>
+    /// Gets the download url to the latest bot release.
+    /// </summary>
+    /// <param name="latestVersion">The latest version of the bot.</param>
+    /// <param name="cToken">The cancellation token.</param>
+    /// <returns>The url to the latest bot release.</returns>
+    private async ValueTask<string> GetDownloadUrlAsync(string latestVersion, CancellationToken cToken = default)
+    {
+        try
+        {
+            // The first release is the most recent one.
+            return (await GetLatestVersionFromApiAsync(cToken)).Assets
+                .First(x => x.Name.Equals(_downloadedFileName, StringComparison.Ordinal))
+                .Url;
+        }
+        catch (InvalidOperationException)
+        {
+            return $"https://github.com/Kaoticz/NadekoHub/releases/download/{latestVersion}/{_downloadedFileName}";
+        }
+    }
+
+    /// <summary>
+    /// Gets the latest bot version from the Gitlab latest release URL.
+    /// </summary>
+    /// <param name="cToken">The cancellation token.</param>
+    /// <returns>The latest version of the bot.</returns>
+    /// <exception cref="InvalidOperationException">Occurs when parsing of the response fails.</exception>
+    private async ValueTask<string> GetLatestVersionFromUrlAsync(CancellationToken cToken = default)
+    {
+        var http = _httpClientFactory.CreateClient(AppConstants.NoRedirectClient);
+        var response = await http.GetAsync(_githubReleasesRepoUrl, cToken);
+
+        var lastSlashIndex = response.Headers.Location?.OriginalString.LastIndexOf('/')
+            ?? throw new InvalidOperationException("Failed to get the latest NadekoBot version.");
+
+        return response.Headers.Location.OriginalString[(lastSlashIndex + 1)..];
+    }
+
+    /// <summary>
+    /// Gets the latest bot version from the Gitlab API.
+    /// </summary>
+    /// <param name="cToken">The cancellation token.</param>
+    /// <returns>The latest version of the bot.</returns>
+    /// <exception cref="InvalidOperationException">Occurs when the API call fails.</exception>
+    private async ValueTask<GithubRelease> GetLatestVersionFromApiAsync(CancellationToken cToken = default)
+    {
+        if (_memoryCache.TryGetValue(_cachedCurrentVersionKey, out var cachedObject) && cachedObject is GithubRelease cachedResponse)
+            return cachedResponse;
+
+        var http = _httpClientFactory.CreateClient(AppConstants.GithubClient);
+        var httpResponse = await http.GetAsync(_githubReleasesEndpointUrl, cToken);
+
+        if (!httpResponse.IsSuccessStatusCode)
+            throw new InvalidOperationException("The call to the Gitlab API failed.");
+
+        var response = JsonSerializer.Deserialize<GithubRelease>(await httpResponse.Content.ReadAsStringAsync(cToken))
+            ?? throw new InvalidOperationException("Failed deserializing Gitlab's response.");
+
+        _memoryCache.Set(_cachedCurrentVersionKey, response, TimeSpan.FromMinutes(1));
+
+        return response;
     }
 }

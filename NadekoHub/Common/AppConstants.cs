@@ -14,4 +14,9 @@ public static class AppConstants
     /// The name for an <see cref="HttpClient"/> that does not automatically follow redirect responses.
     /// </summary>
     public const string NoRedirectClient = "NoRedirect";
+
+    /// <summary>
+    /// The name for an <see cref="HttpClient"/> that makes calls to the Github API.
+    /// </summary>
+    public const string GithubClient = "NoRedirect";
 }

@@ -68,6 +68,17 @@ public static class IServiceCollectionExt
         serviceCollection.AddHttpClient();
         serviceCollection.AddHttpClient(AppConstants.NoRedirectClient)  // Client that doesn't allow automatic reditections
             .ConfigurePrimaryHttpMessageHandler(() => new HttpClientHandler() { AllowAutoRedirect = false });
+        serviceCollection.AddHttpClient(AppConstants.GithubClient)
+            .ConfigureHttpClient(x =>
+            {
+                x.DefaultRequestHeaders.Add("Accept", "application/vnd.github+json");
+                x.DefaultRequestHeaders.Add("X-GitHub-Api-Version", "2022-11-28");
+            #if DEBUG
+                x.DefaultRequestHeaders.UserAgent.TryParseAdd($"NadekoHub / {AppStatics.AppVersion}-Debug");
+            #else
+                x.DefaultRequestHeaders.UserAgent.TryParseAdd($"NadekoHub / {AppStatics.AppVersion}");
+            #endif
+            });
 
         // App settings
         serviceCollection.AddSingleton<IAppConfigManager, AppConfigManager>();

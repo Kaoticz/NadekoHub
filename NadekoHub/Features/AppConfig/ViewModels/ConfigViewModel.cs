@@ -6,6 +6,7 @@ using NadekoHub.Features.Abstractions;
 using NadekoHub.Features.AppConfig.Services.Abstractions;
 using NadekoHub.Features.AppConfig.Views.Controls;
 using NadekoHub.Features.AppConfig.Views.Windows;
+using NadekoHub.Features.AppWindow.ViewModels;
 using NadekoHub.Features.AppWindow.Views.Windows;
 using NadekoHub.Features.Shared.Services.Abstractions;
 using NadekoHub.Features.Shared.ViewModels;
@@ -27,6 +28,7 @@ public class ConfigViewModel : ViewModelBase<ConfigView>
     private readonly IAppConfigManager _appConfigManager;
     private readonly AboutMeViewModel _aboutMeViewModel;
     private readonly AppView _mainWindow;
+    private readonly LateralBarViewModel _lateralBarViewModel;
     private double _maxLogSize;
     private int _selectedThemeIndex;
 
@@ -97,6 +99,7 @@ public class ConfigViewModel : ViewModelBase<ConfigView>
         _maxLogSize = _appConfigManager.AppConfig.LogMaxSizeMb;
         _selectedThemeIndex = (int)_appConfigManager.AppConfig.Theme;
         _aboutMeViewModel = aboutMeViewModel;
+        _lateralBarViewModel = mainWindow.ViewModel!.LateralBarInstance;
 
         BotsUriBar = botsUriBar;
         BotsUriBar.CurrentUri = appConfigManager.AppConfig.BotsDirectoryUri;
@@ -216,6 +219,7 @@ public class ConfigViewModel : ViewModelBase<ConfigView>
     /// </exception>
     private async ValueTask HandleDependencyAsync(DependencyButtonViewModel buttonViewModel, IDependencyResolver dependencyResolver)
     {
+        _lateralBarViewModel.ToggleEnable(false);
         var originalStatus = buttonViewModel.Status;
         buttonViewModel.Status = DependencyStatus.Updating;
 
@@ -236,6 +240,10 @@ public class ConfigViewModel : ViewModelBase<ConfigView>
         {
             await _mainWindow.ShowDialogWindowAsync($"An error occurred while updating {dependencyResolver.DependencyName}:\n{ex.Message}", DialogType.Error, Icon.Error);
             buttonViewModel.Status = originalStatus;
+        }
+        finally
+        {
+            _lateralBarViewModel.ToggleEnable(true);
         }
     }
 }

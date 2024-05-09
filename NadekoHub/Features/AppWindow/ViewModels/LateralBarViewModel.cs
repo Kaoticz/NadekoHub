@@ -14,12 +14,22 @@ namespace NadekoHub.Features.AppWindow.ViewModels;
 /// </summary>
 public class LateralBarViewModel : ViewModelBase<LateralBarView>
 {
+    private bool _isLateralBarEnabled = true;
+    private readonly IAppConfigManager _appConfigManager;
+
     /// <summary>
     /// Collection of buttons for bot instances.
     /// </summary>
-    public ObservableCollection<Button> BotButtonList { get; } = new();
+    public ObservableCollection<Button> BotButtonList { get; } = [];
 
-    private readonly IAppConfigManager _appConfigManager;
+    /// <summary>
+    /// Determines whether the buttons on the lateral bar are enabled or not.
+    /// </summary>
+    public bool IsLateralBarEnabled
+    {
+        get => _isLateralBarEnabled;
+        private set => this.RaiseAndSetIfChanged(ref _isLateralBarEnabled, value);
+    }
 
     /// <summary>
     /// Creates the view-model for the <see cref="LateralBarView"/>.
@@ -65,6 +75,18 @@ public class LateralBarViewModel : ViewModelBase<LateralBarView>
         BotButtonList.Remove(toRemove);
 
         this.RaisePropertyChanged(nameof(BotButtonList));
+    }
+
+    /// <summary>
+    /// Enables or disables the buttons on the lateral bar.
+    /// </summary>
+    /// <param name="enable"><see langword="true"/> to enable the buttons, <see langword="false"/> otherwise.</param>
+    public void ToggleEnable(bool enable)
+    {
+        IsLateralBarEnabled = enable;
+
+        foreach (var button in BotButtonList)
+            button.IsEnabled = enable;
     }
 
     /// <summary>

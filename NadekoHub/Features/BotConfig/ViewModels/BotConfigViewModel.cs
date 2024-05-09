@@ -3,6 +3,8 @@ using MsBox.Avalonia.Enums;
 using NadekoHub.Enums;
 using NadekoHub.Features.Abstractions;
 using NadekoHub.Features.AppConfig.Services.Abstractions;
+using NadekoHub.Features.AppWindow.ViewModels;
+using NadekoHub.Features.AppWindow.Views.Controls;
 using NadekoHub.Features.AppWindow.Views.Windows;
 using NadekoHub.Features.BotConfig.Models;
 using NadekoHub.Features.BotConfig.Services.Abstractions;
@@ -30,6 +32,7 @@ public class BotConfigViewModel : ViewModelBase<BotConfigView>, IDisposable
     private readonly AppView _mainWindow;
     private readonly IBotOrchestrator _botOrchestrator;
     private readonly ILogWriter _logWriter;
+    private readonly LateralBarViewModel _lateralBarViewModel;
 
     /// <summary>
     /// Raised when the user deletes the bot instance associated with this view-model.
@@ -150,6 +153,7 @@ public class BotConfigViewModel : ViewModelBase<BotConfigView>, IDisposable
         _mainWindow = mainWindow;
         _botOrchestrator = botOrchestrator;
         _logWriter = logWriter;
+        _lateralBarViewModel = mainWindow.ViewModel!.LateralBarInstance;
         BotDirectoryUriBar = botDirectoryUriBar;
         UpdateBar = updateBotBar;
         FakeConsole = fakeConsole;
@@ -369,6 +373,7 @@ public class BotConfigViewModel : ViewModelBase<BotConfigView>, IDisposable
         }
 
         EnableButtons(true, false);
+        _lateralBarViewModel.ToggleEnable(false);
 
         var originalStatus = UpdateBar.Status;
         UpdateBar.Status = DependencyStatus.Updating;
@@ -388,6 +393,7 @@ public class BotConfigViewModel : ViewModelBase<BotConfigView>, IDisposable
 
             BotDirectoryUriBar.RecheckCurrentUri();
             EnableButtons(false, true);
+            _lateralBarViewModel.ToggleEnable(true);
         }
         catch (Exception ex)
         {

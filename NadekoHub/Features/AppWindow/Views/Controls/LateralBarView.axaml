@@ -20,7 +20,8 @@
             <Button Classes="transparent"
                     Name="HomeButton"
                     HorizontalAlignment="Stretch"
-                    HorizontalContentAlignment="Center">
+                    HorizontalContentAlignment="Center"
+                    IsEnabled="{Binding IsLateralBarEnabled}">
                 <Image Classes="icon"
                        Source="{DynamicResource HomeIcon}"/>
             </Button>
@@ -34,7 +35,8 @@
                 <Button Classes="accent"
                         Content="+"
                         Cursor="Hand"
-                        Command="{Binding AddBotButtonAsync}"/>
+                        Command="{Binding AddBotButtonAsync}"
+                        IsEnabled="{Binding IsLateralBarEnabled}"/>
             </Border>
         </StackPanel>
 
@@ -77,7 +79,8 @@
                 Classes="transparent"
                 Name="ConfigButton"
                 HorizontalAlignment="Stretch"
-                VerticalAlignment="Center">
+                VerticalAlignment="Center"
+                IsEnabled="{Binding IsLateralBarEnabled}">
             <Image MaxHeight="17"
                    Source="{DynamicResource ConfigIcon}"/>
         </Button>

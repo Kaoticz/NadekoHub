@@ -1,6 +1,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using NadekoHub.Avalonia.DesignData.Common;
 using NadekoHub.Features.AppConfig.Services.Mocks;
+using NadekoHub.Features.AppWindow.ViewModels;
 using NadekoHub.Features.AppWindow.Views.Windows;
 using NadekoHub.Features.BotConfig.Services.Abstractions;
 using NadekoHub.Features.BotConfig.Services.Mocks;

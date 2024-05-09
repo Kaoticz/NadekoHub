@@ -93,7 +93,11 @@ public partial class LateralBarView : ReactiveUserControl<LateralBarViewModel>
     /// <param name="sender">The bot button that was clicked.</param>
     /// <param name="eventArgs">The event arguments.</param>
     private void LoadBotViewModel(object sender, RoutedEventArgs eventArgs)
-        => BotButtonClick?.Invoke((Button)sender, eventArgs);
+    {
+        // "sender", for some reason, is not one of the buttons stored in the lateral bar's view-model.
+        if (Utilities.TryCastTo<Button>(sender, out var button) && this.ViewModel!.BotButtonList.First(x => x.Content == button.Content).IsEnabled)
+            BotButtonClick?.Invoke(button, eventArgs);
+    }
 
     /// <summary>
     /// Loads the bot avatar when the buttons on the lateral bar are rendered.

@@ -471,7 +471,7 @@ public class BotConfigViewModel : ViewModelBase<BotConfigView>, IDisposable
         _logWriter.TryAdd(eventArgs.Id, eventArgs.Output);
 
         FakeConsole.Content = FakeConsole.Content.Length > 100_000
-            ? FakeConsole.Content[FakeConsole.Content.IndexOf(Environment.NewLine, 60_000)..] + eventArgs.Output + Environment.NewLine
+            ? FakeConsole.Content[FakeConsole.Content.IndexOf(Environment.NewLine, 60_000, StringComparison.Ordinal)..] + eventArgs.Output + Environment.NewLine
             : FakeConsole.Content + eventArgs.Output + Environment.NewLine;
     }
 

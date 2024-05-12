@@ -87,7 +87,7 @@ public sealed class AppResolver : IAppResolver
     {
         var result = false;
 
-        foreach (var file in Directory.GetFiles(AppContext.BaseDirectory).Where(x => x.EndsWith(OldFileSuffix)))
+        foreach (var file in Directory.GetFiles(AppContext.BaseDirectory).Where(x => x.EndsWith(OldFileSuffix, StringComparison.Ordinal)))
             result |= Utilities.TryDeleteFile(file);
 
         return result;

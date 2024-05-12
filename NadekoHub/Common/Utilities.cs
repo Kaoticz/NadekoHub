@@ -26,7 +26,7 @@ internal static class Utilities
     /// <exception cref="FileNotFoundException">Occurs when the embeded resource does not exist.</exception>
     public static SKBitmap LoadEmbededImage(string? uri = default)
     {
-        return (string.IsNullOrWhiteSpace(uri) || !uri.StartsWith("avares://"))
+        return (string.IsNullOrWhiteSpace(uri) || !uri.StartsWith("avares://", StringComparison.Ordinal))
             ? SKBitmap.Decode(AssetLoader.Open(new Uri(AppConstants.BotAvatarUri)))
             : SKBitmap.Decode(AssetLoader.Open(new Uri(uri)));
     }

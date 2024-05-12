@@ -44,7 +44,7 @@ public sealed class LogWriter : ILogWriter
             return false;
 
         Directory.CreateDirectory(_appConfig.LogsDirectoryUri);
-        var logByteSize = logStringBuilder.Length * 2 + 1;
+        var logByteSize = (logStringBuilder.Length * 2) + 1;
         var botEntry = _appConfig.BotEntries[botId];
         var now = DateTimeOffset.Now;
         var date = new DateOnly(now.Year, now.Month, now.Day).ToShortDateString().Replace('/', '-');

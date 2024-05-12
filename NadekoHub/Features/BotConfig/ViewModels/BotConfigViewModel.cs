@@ -393,12 +393,15 @@ public class BotConfigViewModel : ViewModelBase<BotConfigView>, IDisposable
 
             BotDirectoryUriBar.RecheckCurrentUri();
             EnableButtons(false, true);
-            _lateralBarViewModel.ToggleEnable(true);
         }
         catch (Exception ex)
         {
             await _mainWindow.ShowDialogWindowAsync($"An error occurred while updating {Resolver.DependencyName}:\n{ex.Message}", DialogType.Error, Icon.Error);
             UpdateBar.Status = originalStatus;
+        }
+        finally
+        {
+            _lateralBarViewModel.ToggleEnable(true);
         }
     }
 

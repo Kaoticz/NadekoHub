@@ -19,8 +19,8 @@ namespace NadekoHub.Services;
 public sealed partial class NadekoResolver : IBotResolver
 {
     private const string _cachedCurrentVersionKey = "currentVersion:NadekoBot";
-    private const string _gitlabReleasesEndpointUrl = "https://gitlab.com/api/v4/projects/57687445/releases/permalink/latest";
-    private const string _gitlabReleasesRepoUrl = "https://gitlab.com/nadeko/nadekobot/-/releases/permalink/latest";
+    private const string _gitlabReleasesEndpointUrl = "https://gitlab.com/api/v4/projects/9321079/releases/permalink/latest";
+    private const string _gitlabReleasesRepoUrl = "https://gitlab.com/Kwoth/nadekobot/-/releases/permalink/latest";
     private static readonly HashSet<Guid> _updateIdOngoing = [];
     private static readonly string _tempDirectory = Path.GetTempPath();
     private static readonly Regex _unzipedDirRegex = GenerateUnzipedDirRegex();

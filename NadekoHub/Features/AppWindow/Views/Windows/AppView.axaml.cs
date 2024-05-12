@@ -7,6 +7,7 @@ using NadekoHub.Enums;
 using NadekoHub.Features.Abstractions;
 using NadekoHub.Features.AppConfig.Services.Abstractions;
 using NadekoHub.Features.AppConfig.ViewModels;
+using NadekoHub.Features.AppWindow.Models;
 using NadekoHub.Features.AppWindow.ViewModels;
 using NadekoHub.Features.AppWindow.Views.Controls;
 using NadekoHub.Features.BotConfig.Services.Abstractions;
@@ -17,6 +18,8 @@ using NadekoHub.Features.Home.Views.Windows;
 using NadekoHub.Services;
 using ReactiveUI;
 using System.Diagnostics;
+using System.Runtime.Versioning;
+using System.Text.Json;
 
 namespace NadekoHub.Features.AppWindow.Views.Windows;
 
@@ -108,7 +111,7 @@ public partial class AppView : ReactiveWindow<AppViewModel>
         base.OnResized(eventArgs);
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     /// <exception cref="UnreachableException">Occurs when <see cref="ThemeType"/> has an unimplemented value.</exception>
     protected override void OnOpened(EventArgs eventArgs)
     {
@@ -131,6 +134,10 @@ public partial class AppView : ReactiveWindow<AppViewModel>
 
         // Update the application, if one is available
         _ = UpdateAndCloseAsync();
+
+        // Import bots from the old updater, if available
+        if (OperatingSystem.IsWindows())
+            _ = MigrateOldBotsAsync();
 
         base.OnOpened(eventArgs);
     }
@@ -251,6 +258,27 @@ public partial class AppView : ReactiveWindow<AppViewModel>
         _appResolver.LaunchNewVersion();
 
         base.Close();
+    }
+
+    /// <summary>
+    /// Migrates bots created by the NadekoUpdater when NadekoHub is run for the first time.
+    /// </summary>
+    [SupportedOSPlatform("windows")]
+    private async Task MigrateOldBotsAsync()
+    {
+        var configFileUri = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "NadekoBotUpdater", "bots.json");
+
+        if (File.Exists(AppStatics.AppConfigUri) || !File.Exists(configFileUri))
+            return;
+
+        var bots = (JsonSerializer.Deserialize<OldUpdaterBotEntry[]>(await File.ReadAllTextAsync(configFileUri)) ?? [])
+            .Where(x => !string.IsNullOrWhiteSpace(x.PathUri) && File.Exists(Path.Combine(x.PathUri, "NadekoBot.exe")))
+            .Select((x, y) => new BotEntry(x.Guid, new(x.Name, x.PathUri!, (uint)y, x.Version, x.IconUri)));
+
+        foreach (var botEntry in bots)
+            await _appConfigManager.UpdateConfigAsync(x => x.BotEntries.TryAdd(botEntry.Id, botEntry.BotInfo));
+
+        _lateralBarView.ViewModel?.ReloadBotButtons(_appConfigManager.AppConfig.BotEntries);
     }
 
     /// <summary>

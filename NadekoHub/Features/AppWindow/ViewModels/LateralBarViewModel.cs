@@ -93,7 +93,7 @@ public class LateralBarViewModel : ViewModelBase<LateralBarView>
     /// Loads the bot buttons to the lateral bar.
     /// </summary>
     /// <param name="botEntires">The bot entries.</param>
-    private void ReloadBotButtons(IReadOnlyDictionary<Guid, BotInstanceInfo> botEntires)
+    public void ReloadBotButtons(IReadOnlyDictionary<Guid, BotInstanceInfo> botEntires)
     {
         BotButtonList.Clear();
 

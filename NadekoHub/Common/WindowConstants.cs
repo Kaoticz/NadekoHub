@@ -33,5 +33,5 @@ public static class WindowConstants
     /// <summary>
     /// Defines the message that should be shown when a view's parameterless constructor should not be used.
     /// </summary>
-    public const string DesignerCtorWarning = "This constructor exists to satisfy Avalonia's designer. Please, use the parameterized constructor instead.";
+    public const string DesignerCtorWarning = "This constructor exists to satisfy Avalonia's previewer. Please, use the parameterized constructor instead.";
 }

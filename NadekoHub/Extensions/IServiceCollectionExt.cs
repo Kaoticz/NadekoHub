@@ -74,9 +74,9 @@ public static class IServiceCollectionExt
                 x.DefaultRequestHeaders.Add("Accept", "application/vnd.github+json");
                 x.DefaultRequestHeaders.Add("X-GitHub-Api-Version", "2022-11-28");
             #if DEBUG
-                x.DefaultRequestHeaders.UserAgent.TryParseAdd($"NadekoHub / {AppStatics.AppVersion}-Debug");
+                x.DefaultRequestHeaders.UserAgent.TryParseAdd($"NadekoHub v{AppStatics.AppVersion}-Debug");
             #else
-                x.DefaultRequestHeaders.UserAgent.TryParseAdd($"NadekoHub / {AppStatics.AppVersion}");
+                x.DefaultRequestHeaders.UserAgent.TryParseAdd($"NadekoHub v{AppStatics.AppVersion}");
             #endif
             });
 

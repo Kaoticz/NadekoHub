@@ -16,10 +16,10 @@ jobs:
 
     steps:
       - name: "Checkout"
-        uses: "actions/checkout@v3"
+        uses: "actions/checkout@v4"
 
       - name: "Setup .NET"
-        uses: "actions/setup-dotnet@v3"
+        uses: "actions/setup-dotnet@v4"
         with:
           dotnet-version: 8.x
 
@@ -43,7 +43,7 @@ jobs:
           Compress-Archive -Path "$env:WORK_DIR_PATH\build\NadekoHub_win-arm64" -DestinationPath "$env:WORK_DIR_PATH\zips\NadekoHub_win-arm64.zip"
 
       - name: "Upload Packages To Github Release"
-        uses: "ncipollo/release-action@v1.13.0"
+        uses: "ncipollo/release-action@v1.14.0"
         with:
           allowUpdates: true
           artifactErrorsFailBuild: true
@@ -63,10 +63,10 @@ jobs:
 
     steps:
       - name: "Checkout"
-        uses: "actions/checkout@v3"
+        uses: "actions/checkout@v4"
 
       - name: "Setup .NET"
-        uses: "actions/setup-dotnet@v3"
+        uses: "actions/setup-dotnet@v4"
         with:
           dotnet-version: 8.x
 
@@ -91,7 +91,7 @@ jobs:
           zip -r9 ~/zips/NadekoHub_linux-arm64.zip ./NadekoHub_linux-arm64
 
       - name: "Upload Packages To Github Release"
-        uses: "ncipollo/release-action@v1.13.0"
+        uses: "ncipollo/release-action@v1.14.0"
         with:
           allowUpdates: true
           artifactErrorsFailBuild: true
@@ -111,10 +111,10 @@ jobs:
 
     steps:
       - name: "Checkout"
-        uses: "actions/checkout@v3"
+        uses: "actions/checkout@v4"
 
       - name: "Setup .NET"
-        uses: "actions/setup-dotnet@v3"
+        uses: "actions/setup-dotnet@v4"
         with:
           dotnet-version: 8.x
 
@@ -139,7 +139,7 @@ jobs:
           zip -r9 ~/zips/NadekoHub_osx-arm64.zip ./NadekoHub_osx-arm64
 
       - name: "Upload Packages To Github Release"
-        uses: "ncipollo/release-action@v1.13.0"
+        uses: "ncipollo/release-action@v1.14.0"
         with:
           allowUpdates: true
           artifactErrorsFailBuild: true

@@ -45,25 +45,6 @@ internal static class Utilities
     }
 
     /// <summary>
-    /// Safely casts an <see cref="object"/> to a <typeparamref name="T"/>.
-    /// </summary>
-    /// <typeparam name="T">The type to cast to.</typeparam>
-    /// <param name="obj">The object to be cast.</param>
-    /// <param name="castObject">The cast object, or <see langword="null"/> is casting failed.</param>
-    /// <returns><see langword="true"/> if the object was successfully cast, <see langword="false"/> otherwise.</returns>
-    public static bool TryCastTo<T>(object? obj, [MaybeNullWhen(false)] out T castObject)
-    {
-        if (obj is T result)
-        {
-            castObject = result;
-            return true;
-        }
-
-        castObject = default;
-        return false;
-    }
-
-    /// <summary>
     /// Starts the specified program in the background.
     /// </summary>
     /// <param name="program">

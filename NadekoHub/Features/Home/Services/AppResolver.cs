@@ -142,7 +142,7 @@ public sealed class AppResolver : IAppResolver
 
                 // Rename the original file from "file" to "file_old".
                 if (File.Exists(destinationUri))
-                    File.Move(destinationUri, destinationUri + OldFileSuffix);
+                    File.Move(destinationUri, destinationUri + OldFileSuffix, true);
 
                 // Move the new file to the application's directory.
                 if (Environment.OSVersion.Platform is not PlatformID.Unix)

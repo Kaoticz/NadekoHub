@@ -293,7 +293,7 @@ public partial class AppView : ReactiveWindow<AppViewModel>
     private static BotConfigViewModel GetBotConfigViewModel(Button button, IServiceScopeFactory scopeFactory)
     {
         using var scope = scopeFactory.CreateScope();
-        var botId = (Guid)(button.Content ?? throw new InvalidOperationException("Bot button has no valid Id."));
+        var botId = button.Content ?? throw new InvalidOperationException("Bot button has no valid Id.");
         var botResolver = scope.ServiceProvider.GetParameterizedService<NadekoResolver>(botId);
 
         return scope.ServiceProvider.GetParameterizedService<BotConfigViewModel>(botResolver);

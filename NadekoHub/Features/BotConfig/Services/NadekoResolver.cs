@@ -114,34 +114,10 @@ public sealed partial class NadekoResolver : IBotResolver
             await _appConfigManager.UpdateBotEntryAsync(Id, x => x with { Version = null }, cToken);
             return null;
         }
-        
-        if (!string.IsNullOrWhiteSpace(botEntry.Version))
-            return botEntry.Version;
 
-        // Nadeko is published as a single-file binary, so we have to extract
-        // its contents first in order to read the assembly for its version.
-        using var executableReader = new ExecutableReader(executableUri);
-        var extractDirectoryUri = Path.Combine(_tempDirectory, "NadekoBotExtract");
-        var extractAssemblyUri = Path.Combine(extractDirectoryUri, "NadekoBot.dll");
-
-        try
-        {
-            await executableReader.ExtractToDirectoryAsync(extractDirectoryUri, cToken);
-
-            var nadekoAssembly = Assembly.LoadFile(extractAssemblyUri);
-            var version = nadekoAssembly.GetName().Version
-                ?? throw new InvalidOperationException($"Could not find version of the assembly at {extractAssemblyUri}.");
-
-            var currentVersion = $"{version.Major}.{version.Minor}.{version.Build}";
-
-            await _appConfigManager.UpdateBotEntryAsync(Id, x => x with { Version = currentVersion }, cToken);
-
-            return currentVersion;
-        }
-        finally
-        {
-            Utilities.TryDeleteDirectory(extractDirectoryUri);
-        }
+        return (string.IsNullOrWhiteSpace(botEntry.Version))
+            ? await GetBotVersionFromAssemblyAsync(executableUri, cToken)
+            : botEntry.Version;
     }
 
     /// <inheritdoc/>
@@ -395,6 +371,51 @@ public sealed partial class NadekoResolver : IBotResolver
         _memoryCache.Set(_cachedCurrentVersionKey, response, TimeSpan.FromMinutes(1));
 
         return response;
+    }
+
+    /// <summary>
+    /// Gets the bot version from the bot's assembly.
+    /// </summary>
+    /// <param name="executableUri">The path to the bot's executable file.</param>
+    /// <param name="cToken">The cancellation token.</param>
+    /// <returns>The version of the bot or <see langword="null"/> if the executable file is not found.</returns>
+    /// <exception cref="InvalidOperationException">Occurs when the assembly file is not found.</exception>
+    private async ValueTask<string?> GetBotVersionFromAssemblyAsync(string executableUri, CancellationToken cToken)
+    {
+        if (!File.Exists(executableUri))
+            return null;
+
+        var directoryUri = Directory.GetParent(executableUri)?.FullName ?? Path.GetPathRoot(executableUri)!;
+        var assemblyUri = Path.Join(directoryUri, "NadekoBot.dll");
+        var isSingleFile = !File.Exists(assemblyUri);
+
+        // If Nadeko is published as a single-file binary, we have to extract
+        // its contents first in order to read the assembly for its version.
+        if (isSingleFile)
+        {
+            directoryUri = Path.Join(_tempDirectory, "NadekoBotExtract_" + DateTimeOffset.Now.Ticks);
+            assemblyUri = Path.Join(directoryUri, "NadekoBot.dll");
+            using var executableReader = new ExecutableReader(executableUri);
+            await executableReader.ExtractToDirectoryAsync(directoryUri, cToken);
+        }
+
+        try
+        {
+            var nadekoAssembly = Assembly.LoadFile(assemblyUri);
+            var version = nadekoAssembly.GetName().Version
+                ?? throw new InvalidOperationException($"Could not find version for the assembly at {assemblyUri}.");
+
+            var currentVersion = $"{version.Major}.{version.Minor}.{version.Build}";
+
+            await _appConfigManager.UpdateBotEntryAsync(Id, x => x with { Version = currentVersion }, cToken);
+
+            return currentVersion;
+        }
+        finally
+        {
+            if (isSingleFile)
+                Utilities.TryDeleteDirectory(directoryUri);
+        }
     }
 
     [GeneratedRegex(@"^(?:\S+\-)(\S+\-\S+)\-", RegexOptions.Compiled)]

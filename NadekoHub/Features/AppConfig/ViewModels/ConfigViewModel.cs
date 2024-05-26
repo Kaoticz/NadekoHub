@@ -20,7 +20,7 @@ namespace NadekoHub.Features.AppConfig.ViewModels;
 /// </summary>
 public class ConfigViewModel : ViewModelBase<ConfigView>
 {
-    private static readonly string _unixNotice = Environment.OSVersion.Platform is not PlatformID.Unix
+    private static readonly string _unixNotice = (Environment.OSVersion.Platform is not PlatformID.Unix)
         ? string.Empty
         : Environment.NewLine + "To make the dependencies accessible to your bot instances without this updater, consider installing " +
         $"them through your package manager or adding the directory \"{AppStatics.AppDepsUri}\" to your PATH environment variable.";

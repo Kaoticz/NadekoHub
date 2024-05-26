@@ -69,10 +69,10 @@ public partial class LateralBarView : ReactiveUserControl<LateralBarViewModel>
     /// <exception cref="InvalidOperationException">Occurs when the visual tree has an unexpected structure.</exception>
     public void ApplyBotButtonBorder(Button button)
     {
-        if (!Utilities.TryCastTo<Border>(button.Parent?.Parent, out var border))
+        if (button.Parent?.Parent is not Border border)
             throw new InvalidOperationException("Visual tree has an unexpected structure.");
 
-        if (!Utilities.TryCastTo<ImmutableSolidColorBrush>(this.FindResource(base.ActualThemeVariant, "BotSelectionColor"), out var resourceColor))
+        if (this.FindResource(base.ActualThemeVariant, "BotSelectionColor") is not ImmutableSolidColorBrush resourceColor)
             return;
 
         border.BorderBrush = resourceColor;
@@ -95,7 +95,7 @@ public partial class LateralBarView : ReactiveUserControl<LateralBarViewModel>
     private void LoadBotViewModel(object sender, RoutedEventArgs eventArgs)
     {
         // "sender", for some reason, is not one of the buttons stored in the lateral bar's view-model.
-        if (Utilities.TryCastTo<Button>(sender, out var button) && this.ViewModel!.BotButtonList.First(x => x.Content == button.Content).IsEnabled)
+        if (sender is Button button && this.ViewModel!.BotButtonList.First(x => x.Content == button.Content).IsEnabled)
             BotButtonClick?.Invoke(button, eventArgs);
     }
 
@@ -108,10 +108,11 @@ public partial class LateralBarView : ReactiveUserControl<LateralBarViewModel>
     /// <exception cref="InvalidOperationException">Occurs when the visual tree has an unexpected structure.</exception>
     private void OnBotButtonLoad(object? sender, VisualTreeAttachmentEventArgs eventArgs)
     {
-        if (!Utilities.TryCastTo<Panel>(sender, out var panel)
-            || !Utilities.TryCastTo<SKImageView>(((Border)panel.Children[0]).Child, out var botAvatar)
-            || !Utilities.TryCastTo<Button>(panel.Children[1], out var button)
-            || !Utilities.TryCastTo<Guid>(button.Content, out var botId))
+        if (sender is not Panel panel
+            || panel.Children[0] is not Border border
+            || border.Child is not SKImageView botAvatar
+            || panel.Children[1] is not Button button
+            || button.Content is not Guid botId)
             throw new InvalidOperationException("Visual tree has an unexpected structure.");
 
         // Set the avatar
@@ -132,7 +133,7 @@ public partial class LateralBarView : ReactiveUserControl<LateralBarViewModel>
     /// <exception cref="InvalidOperationException">Occurs when <paramref name="sender"/> is not a <see cref="Button"/>.</exception>
     private void DownsizeBotAvatar(object? sender, PointerPressedEventArgs eventArgs)
     {
-        if (!Utilities.TryCastTo<Button>(sender, out var button))
+        if (sender is not Button button)
             throw new InvalidOperationException($"Sender is not a {nameof(Button)}.");
 
         var botAvatar = FindAvatarComponent(button);
@@ -149,7 +150,7 @@ public partial class LateralBarView : ReactiveUserControl<LateralBarViewModel>
     /// <exception cref="InvalidOperationException">Occurs when <paramref name="sender"/> is not a <see cref="Button"/>.</exception>
     private void UpsizeBotAvatar(object? sender, PointerReleasedEventArgs eventArgs)
     {
-        if (!Utilities.TryCastTo<Button>(sender, out var button))
+        if (sender is not Button button)
             throw new InvalidOperationException($"Sender is not a {nameof(Button)}.");
 
         var botAvatar = FindAvatarComponent(button);
@@ -167,7 +168,7 @@ public partial class LateralBarView : ReactiveUserControl<LateralBarViewModel>
     /// <exception cref="InvalidOperationException">Occurs when the component's content is not a Guid.</exception>
     private SKImageView FindAvatarComponent<T>(T component) where T : ContentControl
     {
-        return (!Utilities.TryCastTo<Guid>(component.Content, out var botId))
+        return (component.Content is not Guid botId)
             ? throw new InvalidOperationException($"{nameof(T)} does not contain a bot Id.")
             : FindAvatarComponent(botId);
     }

@@ -83,8 +83,8 @@ public static class WindowExt
     {
         return (!activeView.TryFindResource(resourceName, theme, out var resource))
             ? throw new InvalidOperationException($"Resource '{resourceName}' was not found.")
-            : (!Utilities.TryCastTo<T>(resource, out var result))
-                ? throw new InvalidCastException($"Could not convert resource of type '{resource?.GetType()?.FullName}' to '{nameof(T)}'.")
-                : result;
+            : (resource is T castResource)
+                ? castResource
+                : throw new InvalidCastException($"Could not convert resource of type '{resource?.GetType()?.FullName}' to '{nameof(T)}'.");
     }
 }

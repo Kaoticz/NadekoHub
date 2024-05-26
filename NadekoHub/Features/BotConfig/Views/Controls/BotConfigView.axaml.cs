@@ -26,7 +26,7 @@ public partial class BotConfigView : ReactiveUserControl<BotConfigViewModel>
     /// <param name="eventArgs">The event arguments.</param>
     private void AvatarButtonHover(object? sender, PointerEventArgs eventArgs)
     {
-        if (!Utilities.TryCastTo<Button>(sender, out var button))
+        if (sender is not Button button)
             return;
 
         button.Opacity = 3.0;
@@ -40,7 +40,7 @@ public partial class BotConfigView : ReactiveUserControl<BotConfigViewModel>
     /// <param name="eventArgs">The event arguments.</param>
     private void AvatarButtonUnhover(object? sender, PointerEventArgs eventArgs)
     {
-        if (!Utilities.TryCastTo<Button>(sender, out var button))
+        if (sender is not Button button)
             return;
 
         button.Opacity = 0.0;

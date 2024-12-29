@@ -10,7 +10,6 @@ using NadekoHub.Features.BotConfig.Services.Abstractions;
 using NadekoHub.Features.BotConfig.Services.Mocks;
 using NadekoHub.Features.Home.Services;
 using NadekoHub.Features.Home.Services.Abstractions;
-using NadekoHub.Services;
 using ReactiveUI;
 using System.Reflection;
 using System.Text.Json;
@@ -73,11 +72,11 @@ public static class IServiceCollectionExt
             {
                 x.DefaultRequestHeaders.Add("Accept", "application/vnd.github+json");
                 x.DefaultRequestHeaders.Add("X-GitHub-Api-Version", "2022-11-28");
-            #if DEBUG
+#if DEBUG
                 x.DefaultRequestHeaders.UserAgent.TryParseAdd($"NadekoHub v{AppStatics.AppVersion}-Debug");
-            #else
+#else
                 x.DefaultRequestHeaders.UserAgent.TryParseAdd($"NadekoHub v{AppStatics.AppVersion}");
-            #endif
+#endif
             });
 
         // App settings

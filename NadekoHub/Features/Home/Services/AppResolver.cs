@@ -121,13 +121,13 @@ public sealed class AppResolver : IAppResolver
 
         try
         {
-            using var downloadStream = await http.GetStreamAsync(
+            await using var downloadStream = await http.GetStreamAsync(
                 await GetDownloadUrlAsync(latestVersion, cToken),
                 cToken
             );
 
             // Save the zip file
-            using (var fileStream = new FileStream(zipTempLocation, FileMode.Create))
+            await using (var fileStream = new FileStream(zipTempLocation, FileMode.Create))
                 await downloadStream.CopyToAsync(fileStream, cToken);
 
             // Extract the zip file

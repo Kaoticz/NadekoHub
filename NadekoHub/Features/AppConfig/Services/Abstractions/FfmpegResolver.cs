@@ -53,7 +53,7 @@ public abstract class FfmpegResolver : IFfmpegResolver
 
             // Else, add the dependencies directory to the PATH envar,
             // then try again.
-            Utilities.AddPathToPATHEnvar(AppStatics.AppDepsUri);
+            Utilities.AddPathToPathEnvar(AppStatics.AppDepsUri);
             return await GetCurrentVersionAsync(cToken);
         }
 

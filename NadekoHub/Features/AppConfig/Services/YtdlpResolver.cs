@@ -65,7 +65,7 @@ public sealed class YtdlpResolver : IYtdlpResolver
 
             // Else, add the dependencies directory to the PATH envar,
             // then try again.
-            Utilities.AddPathToPATHEnvar(AppStatics.AppDepsUri);
+            Utilities.AddPathToPathEnvar(AppStatics.AppDepsUri);
             return await GetCurrentVersionAsync(cToken);
         }
 
@@ -133,7 +133,7 @@ public sealed class YtdlpResolver : IYtdlpResolver
             await downloadStream.CopyToAsync(fileStream, cToken);
 
         // Update environment variable
-        Utilities.AddPathToPATHEnvar(dependenciesUri);
+        Utilities.AddPathToPathEnvar(dependenciesUri);
 
         // On Linux and MacOS, we need to mark the file as executable.
         if (Environment.OSVersion.Platform is PlatformID.Unix)

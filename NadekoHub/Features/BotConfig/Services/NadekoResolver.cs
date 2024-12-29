@@ -10,7 +10,7 @@ using System.Runtime.InteropServices;
 using System.Text.Json;
 using System.Text.RegularExpressions;
 
-namespace NadekoHub.Services;
+namespace NadekoHub.Features.BotConfig.Services;
 
 /// <summary>
 /// Service that checks, downloads, installs, and updates a NadekoBot instance.
@@ -23,7 +23,7 @@ public sealed partial class NadekoResolver : IBotResolver
     private const string _gitlabReleasesRepoUrl = "https://gitlab.com/Kwoth/nadekobot/-/releases/permalink/latest";
     private static readonly HashSet<Guid> _updateIdOngoing = [];
     private static readonly string _tempDirectory = Path.GetTempPath();
-    private static readonly Regex _unzipedDirRegex = GenerateUnzipedDirRegex();
+    private static readonly Regex _unzippedDirRegex = GenerateUnzipedDirRegex();
     private readonly IHttpClientFactory _httpClientFactory;
     private readonly IMemoryCache _memoryCache;
     private readonly IAppConfigManager _appConfigManager;
@@ -161,7 +161,7 @@ public sealed partial class NadekoResolver : IBotResolver
 
         var http = _httpClientFactory.CreateClient();
         var downloadFileName = GetDownloadFileName(latestVersion);
-        var botTempLocation = Path.Combine(_tempDirectory, "nadekobot-" + _unzipedDirRegex.Match(downloadFileName).Groups[1].Value);
+        var botTempLocation = Path.Combine(_tempDirectory, "nadekobot-" + _unzippedDirRegex.Match(downloadFileName).Groups[1].Value);
         var zipTempLocation = Path.Combine(_tempDirectory, downloadFileName);
 
         try
@@ -231,10 +231,10 @@ public sealed partial class NadekoResolver : IBotResolver
     /// <param name="zipTempLocation">The absolute path to the zip file the bot is initially on.</param>
     /// <param name="botTempLocation">The absolute path to the temporary directory the bot is extracted to.</param>
     /// <param name="cToken">The cancellation token.</param>
-    private async static ValueTask InstallToWindowsAsync(Stream downloadStream, string installationUri, string zipTempLocation, string botTempLocation, CancellationToken cToken = default)
+    private static async ValueTask InstallToWindowsAsync(Stream downloadStream, string installationUri, string zipTempLocation, string botTempLocation, CancellationToken cToken = default)
     {
         // Save the zip file
-        using (var fileStream = new FileStream(zipTempLocation, FileMode.Create))
+        await using (var fileStream = new FileStream(zipTempLocation, FileMode.Create))
             await downloadStream.CopyToAsync(fileStream, cToken);
 
         // Extract the zip file
@@ -250,7 +250,7 @@ public sealed partial class NadekoResolver : IBotResolver
     /// <param name="installationUri">The absolute path to the directory the bot got installed to.</param>
     /// <param name="backupFileUri">The absolute path to the backup zip file.</param>
     /// <param name="cToken">The cancellation token.</param>
-    private async static ValueTask ReaplyBotSettingsAsync(string installationUri, string backupFileUri, CancellationToken cToken = default)
+    private static async ValueTask ReaplyBotSettingsAsync(string installationUri, string backupFileUri, CancellationToken cToken = default)
     {
         using var zipFile = ZipFile.OpenRead(backupFileUri);
         var zippedFiles = zipFile.Entries
@@ -275,10 +275,10 @@ public sealed partial class NadekoResolver : IBotResolver
     /// <param name="zippedFile">The file to be extracted.</param>
     /// <param name="destinationPath">The final location of the extracted file.</param>
     /// <param name="cToken">The cancellation token.</param>
-    private async static ValueTask RestoreFileAsync(ZipArchiveEntry zippedFile, string destinationPath, CancellationToken cToken = default)
+    private static async ValueTask RestoreFileAsync(ZipArchiveEntry zippedFile, string destinationPath, CancellationToken cToken = default)
     {
-        using var zipStream = zippedFile.Open();
-        using var fileStream = new FileStream(destinationPath, FileMode.Create);
+        await using var zipStream = zippedFile.Open();
+        await using var fileStream = new FileStream(destinationPath, FileMode.Create);
 
         await zipStream.CopyToAsync(fileStream, cToken);
     }

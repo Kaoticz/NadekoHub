@@ -2,7 +2,6 @@ using Avalonia.Platform;
 using SkiaSharp;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 
 namespace NadekoHub.Common;
 
@@ -169,7 +168,7 @@ internal static class Utilities
     /// <returns><see langword="true"/> if <paramref name="directoryUri"/> got successfully added to the PATH envar, <see langword="false"/> otherwise.</returns>
     /// <exception cref="ArgumentException" />
     /// <exception cref="ArgumentNullException" />
-    public static bool AddPathToPATHEnvar(string directoryUri)
+    public static bool AddPathToPathEnvar(string directoryUri)
     {
         ArgumentException.ThrowIfNullOrEmpty(directoryUri, nameof(directoryUri));
 

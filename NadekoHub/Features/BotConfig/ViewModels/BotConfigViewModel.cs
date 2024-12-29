@@ -4,7 +4,6 @@ using NadekoHub.Enums;
 using NadekoHub.Features.Abstractions;
 using NadekoHub.Features.AppConfig.Services.Abstractions;
 using NadekoHub.Features.AppWindow.ViewModels;
-using NadekoHub.Features.AppWindow.Views.Controls;
 using NadekoHub.Features.AppWindow.Views.Windows;
 using NadekoHub.Features.BotConfig.Models;
 using NadekoHub.Features.BotConfig.Services.Abstractions;
@@ -330,7 +329,7 @@ public class BotConfigViewModel : ViewModelBase<BotConfigView>, IDisposable
             ButtonDefinitions = ButtonEnum.OkCancel,
             ContentTitle = "Are you sure?",
             ContentMessage = $"Are you sure you want to delete {ActualBotName}?{Environment.NewLine}This action cannot be reversed.",
-            MaxWidth = int.Parse(WindowConstants.DefaultWindowWidth) / 2.0,
+            MaxWidth = WindowConstants.DefaultWindowWidth / 2.0,
             SizeToContent = SizeToContent.WidthAndHeight,
             ShowInCenter = true,
             WindowIcon = _mainWindow.GetResource<WindowIcon>(AppResources.NadekoHubIcon),

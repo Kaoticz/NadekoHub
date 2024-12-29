@@ -74,7 +74,7 @@ public sealed class FfmpegMacResolver : FfmpegResolver
         );
 
         // Update environment variable
-        Utilities.AddPathToPATHEnvar(dependenciesUri);
+        Utilities.AddPathToPathEnvar(dependenciesUri);
 
         _isUpdating = false;
         return (currentVersion, newVersion);

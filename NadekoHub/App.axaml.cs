@@ -11,9 +11,9 @@ namespace NadekoHub;
 /// <summary>
 /// Defines the Avalonia application.
 /// </summary>
-public partial class App : Application
+public sealed class App : Application
 {
-    private DateTimeOffset _trayClickTime = DateTimeOffset.UnixEpoch;
+    private DateTimeOffset _trayClickTime = DateTimeOffset.Now;
 
     /// <summary>
     /// IoC container with all services required by the application.
@@ -61,7 +61,7 @@ public partial class App : Application
     private void TrayDoubleClick(object sender, EventArgs eventArgs)
     {
         // If this is the first click or if the second click took longer than 0.3 seconds, exit.
-        if (_trayClickTime == DateTimeOffset.UnixEpoch || DateTimeOffset.Now.Subtract(_trayClickTime) > TimeSpan.FromSeconds(0.3))
+        if (DateTimeOffset.Now.Subtract(_trayClickTime) > TimeSpan.FromSeconds(0.3))
         {
             _trayClickTime = DateTimeOffset.Now;
             return;

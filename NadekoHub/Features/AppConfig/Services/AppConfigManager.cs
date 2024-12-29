@@ -31,7 +31,7 @@ public sealed class AppConfigManager : IAppConfigManager
     public async ValueTask<BotEntry> CreateBotEntryAsync(CancellationToken cToken = default)
     {
         var newId = CreateNewId();
-        var newPosition = _appConfig.BotEntries.Count is 0 ? 0 : _appConfig.BotEntries.Values.Max(x => x.Position) + 1;
+        var newPosition = (_appConfig.BotEntries.IsEmpty) ? 0 : _appConfig.BotEntries.Values.Max(x => x.Position) + 1;
         var newBotName = "NewBot_" + newPosition;
         var newEntry = new BotInstanceInfo(newBotName, Path.Combine(_appConfig.BotsDirectoryUri, newBotName), newPosition);
 

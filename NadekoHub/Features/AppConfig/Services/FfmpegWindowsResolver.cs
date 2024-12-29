@@ -104,7 +104,7 @@ public sealed class FfmpegWindowsResolver : FfmpegResolver
         }, cToken);
 
         // Update environment variable
-        Utilities.AddPathToPATHEnvar(dependenciesUri);
+        Utilities.AddPathToPathEnvar(dependenciesUri);
 
         _isUpdating = false;
         return (currentVersion, newVersion);

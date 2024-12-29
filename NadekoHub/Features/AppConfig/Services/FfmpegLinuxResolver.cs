@@ -3,7 +3,7 @@ using System.Runtime.InteropServices;
 using System.Runtime.Versioning;
 using System.Text.RegularExpressions;
 
-namespace NadekoHub.Services;
+namespace NadekoHub.Features.AppConfig.Services;
 
 /// <summary>
 /// Service that checks, downloads, installs, and updates ffmpeg on Linux.
@@ -74,12 +74,12 @@ public sealed partial class FfmpegLinuxResolver : FfmpegResolver
         var architecture = (RuntimeInformation.OSArchitecture is Architecture.X64) ? "amd" : "arm";
         var tarFileName = $"ffmpeg-release-{architecture}64-static.tar.xz";
         var http = _httpClientFactory.CreateClient();
-        using var downloadStream = await http.GetStreamAsync($"https://johnvansickle.com/ffmpeg/releases/{tarFileName}", cToken);
+        await using var downloadStream = await http.GetStreamAsync($"https://johnvansickle.com/ffmpeg/releases/{tarFileName}", cToken);
 
         // Save tar file to the temporary directory.
         var tarFilePath = Path.Combine(_tempDirectory, tarFileName);
         var tarExtractDir = Path.Combine(_tempDirectory, $"ffmpeg-{newVersion}-{architecture}64-static");
-        using (var fileStream = new FileStream(tarFilePath, FileMode.Create))
+        await using (var fileStream = new FileStream(tarFilePath, FileMode.Create))
             await downloadStream.CopyToAsync(fileStream, cToken);
 
         // Extract the tar file.
@@ -99,7 +99,7 @@ public sealed partial class FfmpegLinuxResolver : FfmpegResolver
         Directory.Delete(tarExtractDir, true);
 
         // Update environment variable
-        Utilities.AddPathToPATHEnvar(dependenciesUri);
+        Utilities.AddPathToPathEnvar(dependenciesUri);
 
         _isUpdating = false;
         return (currentVersion, newVersion);

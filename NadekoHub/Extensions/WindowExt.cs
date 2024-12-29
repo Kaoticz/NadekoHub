@@ -39,7 +39,7 @@ public static class WindowExt
             ContentTitle = title,
             Icon = iconType,
             WindowIcon = activeView.GetResource<WindowIcon>(AppResources.NadekoHubIcon),
-            MaxWidth = int.Parse(WindowConstants.DefaultWindowWidth) / 1.7,
+            MaxWidth = WindowConstants.DefaultWindowWidth / 1.7,
             SizeToContent = SizeToContent.WidthAndHeight,
             ShowInCenter = true,
             WindowStartupLocation = WindowStartupLocation.CenterOwner

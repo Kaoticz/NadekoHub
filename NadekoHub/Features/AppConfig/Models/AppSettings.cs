@@ -48,7 +48,7 @@ public sealed class AppSettings
     /// <summary>
     /// Determines the size the application window should be set on startup.
     /// </summary>
-    public WindowSize WindowSize { get; set; } = new(double.Parse(WindowConstants.DefaultWindowWidth), double.Parse(WindowConstants.DefaultWindowHeight));
+    public WindowSize WindowSize { get; set; } = new(WindowConstants.DefaultWindowWidth, WindowConstants.DefaultWindowHeight);
 
     /// <summary>
     /// A collection of metadata about the bot instances.

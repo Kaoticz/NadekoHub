@@ -8,27 +8,27 @@ public static class WindowConstants
     /// <summary>
     /// Defines the default width of the window.
     /// </summary>
-    public const string DefaultWindowWidth = "900";
+    public const double DefaultWindowWidth = 900;
 
     /// <summary>
     /// Defines the default height of the window.
     /// </summary>
-    public const string DefaultWindowHeight = "575";
+    public const double DefaultWindowHeight = 575;
 
     /// <summary>
     /// Defines the minimum height of the window.
     /// </summary>
-    public const string MinWindowWidth = "550";
+    public const double MinWindowWidth = 550;
 
     /// <summary>
     /// Defines the minimum height of the window.
     /// </summary>
-    public const string MinWindowHeight = "500";
+    public const double MinWindowHeight = 500;
 
     /// <summary>
     /// Defines the default window title.
     /// </summary>
-    public const string WindowTitle = "Nadeko Hub";
+    public const string WindowTitle = "NadekoHub";
 
     /// <summary>
     /// Defines the message that should be shown when a view's parameterless constructor should not be used.

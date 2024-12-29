@@ -15,7 +15,7 @@ using NadekoHub.Features.BotConfig.ViewModels;
 using NadekoHub.Features.Home.Services.Abstractions;
 using NadekoHub.Features.Home.ViewModels;
 using NadekoHub.Features.Home.Views.Windows;
-using NadekoHub.Services;
+using NadekoHub.Features.BotConfig.Services;
 using ReactiveUI;
 using System.Diagnostics;
 using System.Runtime.Versioning;

@@ -117,7 +117,7 @@ public partial class AppView : ReactiveWindow<AppViewModel>
     {
         // Ensure that bots on Unix system have access to the dependencies.
         if (Environment.OSVersion.Platform is PlatformID.Unix)
-            Utilities.AddPathToPATHEnvar(AppStatics.AppDepsUri);
+            Utilities.AddPathToPathEnvar(AppStatics.AppDepsUri);
 
         // Set the window size from the last session
         base.Height = _appConfigManager.AppConfig.WindowSize.Height;

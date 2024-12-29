@@ -36,7 +36,7 @@
 
     <TrayIcon.Icons>
       <TrayIcons>
-        <TrayIcon Clicked="TrayDoubleClick" ToolTipText="Nadeko Updater" Icon="{DynamicResource NadekoHubIcon}">
+        <TrayIcon Clicked="TrayDoubleClick" ToolTipText="NadekoHub" Icon="{DynamicResource NadekoHubIcon}">
           <TrayIcon.Menu>
             <NativeMenu>
               <NativeMenuItem Header="Open" Click="ShowApp" />

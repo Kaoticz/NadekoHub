@@ -3,7 +3,6 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:vm="using:NadekoHub.Features.AppConfig.ViewModels"
-        xmlns:const="using:NadekoHub.Common"
         xmlns:dd="using:NadekoHub.Avalonia.DesignData.Windows"
         mc:Ignorable="d" d:DesignWidth="400" d:DesignHeight="305"
         Width="400" Height="305"

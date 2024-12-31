@@ -28,15 +28,15 @@
                    Grid.ColumnSpan="5"
                    Fill="{DynamicResource HeavyBackground}"/>
         
-        <Rectangle Grid.Row="5"
+        <Rectangle Grid.Row="4"
                    Grid.Column="0"
                    Fill="#008DDA"/>
         
-        <Rectangle Grid.Row="5"
+        <Rectangle Grid.Row="4"
                    Grid.Column="1"
                    Fill="#F86752"/>
         
-        <Rectangle Grid.Row="5"
+        <Rectangle Grid.Row="4"
                    Grid.Column="2"
                    Grid.ColumnSpan="3"
                    Fill="#B90060"/>
@@ -147,7 +147,7 @@
                    VerticalAlignment="Top"/>
 
         <!--Bottom Buttons-->
-        <Button Grid.Row="5"
+        <Button Grid.Row="4"
                 Grid.Column="0"
                 Classes="transparent"
                 Content="Buy me a Ko-fi"
@@ -158,7 +158,7 @@
                 CommandParameter="https://ko-fi.com/kaoticz"
                 Command="{Binding OpenUrl}"/>
         
-        <Image Grid.Row="5"
+        <Image Grid.Row="4"
                Grid.Column="0"
                Classes="icon"
                MaxHeight="30"
@@ -167,7 +167,7 @@
                Margin="0 0 3 0"
                Source="{DynamicResource KofiIcon}"/>
         
-        <Button Grid.Row="5"
+        <Button Grid.Row="4"
                 Grid.Column="1"
                 Classes="transparent"
                 Content="Support NadekoBot"
@@ -178,7 +178,7 @@
                 CommandParameter="https://patreon.com/nadekobot"
                 Command="{Binding OpenUrl}"/>
 
-        <Image Grid.Row="5"
+        <Image Grid.Row="4"
                Grid.Column="1"
                Classes="icon"
                MaxHeight="30"
@@ -187,7 +187,7 @@
                Margin="0 0 3 0"
                Source="{DynamicResource PatreonIcon}"/>
         
-        <TextBlock Grid.Row="5"
+        <TextBlock Grid.Row="4"
                    Grid.Column="2"
                    Grid.ColumnSpan="3"
                    Text="Thank You ♡"

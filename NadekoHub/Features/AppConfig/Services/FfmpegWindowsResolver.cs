@@ -49,7 +49,7 @@ public sealed class FfmpegWindowsResolver : FfmpegResolver
     }
 
     /// <inheritdoc />
-    public override async ValueTask<(string? OldVersion, string? NewVersion)> InstallOrUpdateAsync(string dependenciesUri, CancellationToken cToken = default)
+    public override async ValueTask<(string? OldVersion, string? NewVersion)> InstallOrUpdateAsync(string installationUri, CancellationToken cToken = default)
     {
         if (_isUpdating)
             return (null, null);
@@ -68,13 +68,13 @@ public sealed class FfmpegWindowsResolver : FfmpegResolver
                 return (currentVersion, null);
             }
 
-            Utilities.TryDeleteFile(Path.Combine(dependenciesUri, FileName));
-            Utilities.TryDeleteFile(Path.Combine(dependenciesUri, "ffprobe.exe"));
+            Utilities.TryDeleteFile(Path.Combine(installationUri, FileName));
+            Utilities.TryDeleteFile(Path.Combine(installationUri, "ffprobe.exe"));
             //Utilities.TryDeleteFile(Path.Combine(dependenciesUri, "ffplay.exe"));
         }
 
         // Install
-        Directory.CreateDirectory(dependenciesUri);
+        Directory.CreateDirectory(installationUri);
 
         var zipFileName = $"ffmpeg-{newVersion}-full_build.zip";
         var http = _httpClientFactory.CreateClient();
@@ -94,8 +94,8 @@ public sealed class FfmpegWindowsResolver : FfmpegResolver
             ZipFile.ExtractToDirectory(zipFilePath, _tempDirectory);
 
             // Move ffmpeg to the dependencies directory.
-            File.Move(Path.Combine(zipExtractDir, "bin", FileName), Path.Combine(dependenciesUri, FileName), true);
-            File.Move(Path.Combine(zipExtractDir, "bin", "ffprobe.exe"), Path.Combine(dependenciesUri, "ffprobe.exe"), true);
+            File.Move(Path.Combine(zipExtractDir, "bin", FileName), Path.Combine(installationUri, FileName), true);
+            File.Move(Path.Combine(zipExtractDir, "bin", "ffprobe.exe"), Path.Combine(installationUri, "ffprobe.exe"), true);
             //File.Move(Path.Combine(zipExtractDir, "bin", "ffplay.exe"), Path.Combine(dependenciesUri, "ffplay.exe"));
 
             // Cleanup
@@ -104,7 +104,7 @@ public sealed class FfmpegWindowsResolver : FfmpegResolver
         }, cToken);
 
         // Update environment variable
-        Utilities.AddPathToPathEnvar(dependenciesUri);
+        Utilities.AddPathToPathEnvar(installationUri);
 
         _isUpdating = false;
         return (currentVersion, newVersion);

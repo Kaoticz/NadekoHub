@@ -38,7 +38,7 @@ public sealed class FfmpegMacResolver : FfmpegResolver
     }
 
     /// <inheritdoc/>
-    public override async ValueTask<(string? OldVersion, string? NewVersion)> InstallOrUpdateAsync(string dependenciesUri, CancellationToken cToken = default)
+    public override async ValueTask<(string? OldVersion, string? NewVersion)> InstallOrUpdateAsync(string installationUri, CancellationToken cToken = default)
     {
         if (_isUpdating)
             return (null, null);
@@ -57,24 +57,24 @@ public sealed class FfmpegMacResolver : FfmpegResolver
                 return (currentVersion, null);
             }
 
-            Utilities.TryDeleteFile(Path.Combine(dependenciesUri, FileName));
-            Utilities.TryDeleteFile(Path.Combine(dependenciesUri, "ffprobe"));
+            Utilities.TryDeleteFile(Path.Combine(installationUri, FileName));
+            Utilities.TryDeleteFile(Path.Combine(installationUri, "ffprobe"));
         }
 
         // Install
-        Directory.CreateDirectory(dependenciesUri);
+        Directory.CreateDirectory(installationUri);
 
         var http = _httpClientFactory.CreateClient();
         var ffmpegResponse = await http.CallApiAsync<EvermeetInfo>(_apiFfmpegInfoEndpoint, cToken);
         var ffprobeResponse = await http.CallApiAsync<EvermeetInfo>(_apiFfprobeInfoEndpoint, cToken);
 
         await Task.WhenAll(
-            InstallDependencyAsync(ffmpegResponse, dependenciesUri, cToken),
-            InstallDependencyAsync(ffprobeResponse, dependenciesUri, cToken)
+            InstallDependencyAsync(ffmpegResponse, installationUri, cToken),
+            InstallDependencyAsync(ffprobeResponse, installationUri, cToken)
         );
 
         // Update environment variable
-        Utilities.AddPathToPathEnvar(dependenciesUri);
+        Utilities.AddPathToPathEnvar(installationUri);
 
         _isUpdating = false;
         return (currentVersion, newVersion);

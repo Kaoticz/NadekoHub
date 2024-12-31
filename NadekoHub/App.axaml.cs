@@ -20,7 +20,7 @@ public sealed class App : Application
     /// </summary>
     public IServiceProvider Services { get; } = new ServiceCollection()
         .RegisterViewsAndViewModels(Assembly.GetExecutingAssembly())
-        .RegisterServices()
+        .RegisterAppServices()
         .BuildServiceProvider(true);
 
     /// <inheritdoc />

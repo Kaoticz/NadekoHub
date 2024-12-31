@@ -8,8 +8,8 @@ using NadekoHub.Features.AppConfig.Views.Controls;
 using NadekoHub.Features.AppConfig.Views.Windows;
 using NadekoHub.Features.AppWindow.ViewModels;
 using NadekoHub.Features.AppWindow.Views.Windows;
-using NadekoHub.Features.Shared.Services.Abstractions;
-using NadekoHub.Features.Shared.ViewModels;
+using NadekoHub.Features.Common.Services.Abstractions;
+using NadekoHub.Features.Common.ViewModels;
 using ReactiveUI;
 using System.Diagnostics;
 

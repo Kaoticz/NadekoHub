@@ -22,7 +22,7 @@
                    Fill="{DynamicResource HeavyBackground}"/>
         
         <Rectangle Grid.Row="1"
-                   Grid.RowSpan="3"
+                   Grid.RowSpan="2"
                    Fill="{DynamicResource MediumBackground}"/>
 
         <!--Bot Settings Title-->

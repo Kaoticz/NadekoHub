@@ -1,6 +1,8 @@
 using Avalonia.Controls;
 using Avalonia.ReactiveUI;
 using Avalonia.Styling;
+using Kotz.DependencyInjection.Extensions;
+using Kotz.Utilities;
 using Microsoft.Extensions.DependencyInjection;
 using NadekoHub.Avalonia.DesignData.Common;
 using NadekoHub.Enums;
@@ -117,7 +119,7 @@ public partial class AppView : ReactiveWindow<AppViewModel>
     {
         // Ensure that bots on Unix system have access to the dependencies.
         if (Environment.OSVersion.Platform is PlatformID.Unix)
-            Utilities.AddPathToPathEnvar(AppStatics.AppDepsUri);
+            KotzUtilities.AddPathToPATHEnvar(AppStatics.AppDepsUri);
 
         // Set the window size from the last session
         base.Height = _appConfigManager.AppConfig.WindowSize.Height;
@@ -156,11 +158,11 @@ public partial class AppView : ReactiveWindow<AppViewModel>
     }
 
     /// <inheritdoc/>
-    protected override async void OnClosed(EventArgs eventArgs)
+    protected override void OnClosed(EventArgs eventArgs)
     {
         // When the updater is closed, kill all bots and write their logs.
-        _botOrchestrator.StopAll();
-        await _logWriter.FlushAllAsync(true);
+        _botOrchestrator.StopAllBots();
+        _logWriter.FlushAllAsync(true).Wait();
 
         base.OnClosed(eventArgs);
     }

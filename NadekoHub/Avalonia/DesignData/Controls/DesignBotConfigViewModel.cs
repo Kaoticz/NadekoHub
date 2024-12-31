@@ -5,7 +5,7 @@ using NadekoHub.Features.AppWindow.Views.Windows;
 using NadekoHub.Features.BotConfig.Services.Abstractions;
 using NadekoHub.Features.BotConfig.Services.Mocks;
 using NadekoHub.Features.BotConfig.ViewModels;
-using NadekoHub.Features.Shared.ViewModels;
+using NadekoHub.Features.Common.ViewModels;
 
 namespace NadekoHub.Avalonia.DesignData.Controls;
 

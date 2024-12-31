@@ -1,3 +1,4 @@
+using Kotz.Utilities;
 using Microsoft.Extensions.Caching.Memory;
 using NadekoHub.Features.AppConfig.Services.Abstractions;
 using NadekoHub.Features.BotConfig.Models.Api.Gitlab;
@@ -94,7 +95,7 @@ public sealed partial class NadekoResolver : IBotResolver
         var now = DateTimeOffset.Now;
         var date = new DateOnly(now.Year, now.Month, now.Day).ToShortDateString().Replace('/', '-');
         var backupZipName = $"{botInstance.Name}_v{botInstance.Version}_{date}-{now.ToUnixTimeMilliseconds()}.zip";
-        var destinationUri = Path.Combine(_appConfigManager.AppConfig.BotsBackupDirectoryUri, backupZipName);
+        var destinationUri = Path.Join(_appConfigManager.AppConfig.BotsBackupDirectoryUri, backupZipName);
 
         // ZipFile does not provide asynchronous implementations, so we have to schedule its
         // execution to be run in the thread-pool due to how long it takes to finish execution.
@@ -107,7 +108,7 @@ public sealed partial class NadekoResolver : IBotResolver
     public async ValueTask<string?> GetCurrentVersionAsync(CancellationToken cToken = default)
     {
         var botEntry = _appConfigManager.AppConfig.BotEntries[Id];
-        var executableUri = Path.Combine(botEntry.InstanceDirectoryUri, FileName);
+        var executableUri = Path.Join(botEntry.InstanceDirectoryUri, FileName);
 
         if (!File.Exists(executableUri))
         {
@@ -161,8 +162,8 @@ public sealed partial class NadekoResolver : IBotResolver
 
         var http = _httpClientFactory.CreateClient();
         var downloadFileName = GetDownloadFileName(latestVersion);
-        var botTempLocation = Path.Combine(_tempDirectory, "nadekobot-" + _unzippedDirRegex.Match(downloadFileName).Groups[1].Value);
-        var zipTempLocation = Path.Combine(_tempDirectory, downloadFileName);
+        var botTempLocation = Path.Join(_tempDirectory, "nadekobot-" + _unzippedDirRegex.Match(downloadFileName).Groups[1].Value);
+        var zipTempLocation = Path.Join(_tempDirectory, downloadFileName);
 
         try
         {
@@ -185,10 +186,10 @@ public sealed partial class NadekoResolver : IBotResolver
             await _appConfigManager.UpdateBotEntryAsync(Id, x => x with { Version = latestVersion }, cToken);
 
             // Create creds.yml
-            var credsUri = Path.Combine(installationUri, "creds.yml");
+            var credsUri = Path.Join(installationUri, "creds.yml");
 
             if (!File.Exists(credsUri))
-                File.Copy(Path.Combine(installationUri, "creds_example.yml"), credsUri);
+                File.Copy(Path.Join(installationUri, "creds_example.yml"), credsUri);
 
             return (currentVersion, latestVersion);
         }
@@ -197,8 +198,8 @@ public sealed partial class NadekoResolver : IBotResolver
             _updateIdOngoing.Remove(Id);
 
             // Cleanup
-            Utilities.TryDeleteFile(zipTempLocation);
-            Utilities.TryDeleteDirectory(botTempLocation);
+            KotzUtilities.TryDeleteFile(zipTempLocation);
+            KotzUtilities.TryDeleteDirectory(botTempLocation);
         }
     }
 
@@ -214,12 +215,10 @@ public sealed partial class NadekoResolver : IBotResolver
         // Extract the tar ball
         await TarFile.ExtractToDirectoryAsync(downloadStream, _tempDirectory, true, cToken);
 
-        // Move the bot root directory with "mv" to circumvent this issue on Unix systems: https://github.com/dotnet/runtime/issues/31149
-        using var moveProcess = Utilities.StartProcess("mv", $"\"{botTempLocation}\" \"{installationUri}\"");
-        await moveProcess.WaitForExitAsync(cToken);
+        KotzUtilities.TryMoveDirectory(botTempLocation, installationUri);
 
         // Set executable permission
-        using var chmod = Utilities.StartProcess("chmod", $"+x \"{Path.Combine(installationUri, FileName)}\"");
+        using var chmod = KotzUtilities.StartProcess("chmod", ["+x", Path.Join(installationUri, FileName)]);
         await chmod.WaitForExitAsync(cToken);
     }
 
@@ -265,7 +264,7 @@ public sealed partial class NadekoResolver : IBotResolver
                 .Prepend(Directory.GetParent(installationUri)?.FullName ?? string.Empty)
                 .ToArray();
 
-            await RestoreFileAsync(zippedFile, Path.Combine(fileDestinationPath), cToken);
+            await RestoreFileAsync(zippedFile, Path.Join(fileDestinationPath), cToken);
         }
     }
 
@@ -414,7 +413,7 @@ public sealed partial class NadekoResolver : IBotResolver
         finally
         {
             if (isSingleFile)
-                Utilities.TryDeleteDirectory(directoryUri);
+                KotzUtilities.TryDeleteDirectory(directoryUri);
         }
     }
 

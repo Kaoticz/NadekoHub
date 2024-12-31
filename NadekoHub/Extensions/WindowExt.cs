@@ -85,6 +85,6 @@ public static class WindowExt
             ? throw new InvalidOperationException($"Resource '{resourceName}' was not found.")
             : (resource is T castResource)
                 ? castResource
-                : throw new InvalidCastException($"Could not convert resource of type '{resource?.GetType()?.FullName}' to '{nameof(T)}'.");
+                : throw new InvalidCastException($"Could not convert resource of type '{resource?.GetType().FullName}' to '{nameof(T)}'.");
     }
 }

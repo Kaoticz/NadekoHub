@@ -34,18 +34,18 @@ public interface IBotOrchestrator
     /// </summary>
     /// <param name="botId">The bot's Id.</param>
     /// <returns><see langword="true"/> if the bot successfully started, <see langword="false"/> otherwise.</returns>
-    bool Start(Guid botId);
+    bool StartBot(Guid botId);
 
     /// <summary>
     /// Stops the bot with the specified <paramref name="botId"/>.
     /// </summary>
     /// <param name="botId">The bot's Id.</param>
     /// <returns><see langword="true"/> if the bot successfully stopped, <see langword="false"/> otherwise.</returns>
-    bool Stop(Guid botId);
+    bool StopBot(Guid botId);
 
     /// <summary>
     /// Stops all bot instances.
     /// </summary>
     /// <returns><see langword="true"/> if at least one bot instance was stopped, <see langword="false"/> otherwise.</returns>
-    bool StopAll();
+    bool StopAllBots();
 }

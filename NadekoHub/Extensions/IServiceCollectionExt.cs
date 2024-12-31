@@ -47,7 +47,7 @@ public static class IServiceCollectionExt
     /// </summary>
     /// <param name="serviceCollection">This service collection.</param>
     /// <returns>This service collection with the services added.</returns>
-    public static IServiceCollection RegisterServices(this IServiceCollection serviceCollection)
+    public static IServiceCollection RegisterAppServices(this IServiceCollection serviceCollection)
     {
         // Design-time
         if (Design.IsDesignMode)
@@ -65,7 +65,7 @@ public static class IServiceCollectionExt
 
         // Web requests
         serviceCollection.AddHttpClient();
-        serviceCollection.AddHttpClient(AppConstants.NoRedirectClient)  // Client that doesn't allow automatic reditections
+        serviceCollection.AddHttpClient(AppConstants.NoRedirectClient)  // Client that doesn't allow automatic redirections
             .ConfigurePrimaryHttpMessageHandler(() => new HttpClientHandler() { AllowAutoRedirect = false });
         serviceCollection.AddHttpClient(AppConstants.GithubClient)
             .ConfigureHttpClient(x =>

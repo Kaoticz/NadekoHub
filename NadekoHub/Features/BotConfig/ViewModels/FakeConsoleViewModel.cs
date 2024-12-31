@@ -1,5 +1,5 @@
 using NadekoHub.Features.Abstractions;
-using NadekoHub.Features.AppConfig.Views.Controls;
+using NadekoHub.Features.BotConfig.Views.Controls;
 using ReactiveUI;
 
 namespace NadekoHub.Features.BotConfig.ViewModels;

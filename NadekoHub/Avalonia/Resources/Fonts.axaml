@@ -1,5 +1,9 @@
 <ResourceDictionary xmlns="https://github.com/avaloniaui"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    
+    <FontFamily x:Key="NotoSansFont">avares://NadekoHub/Assets/Fonts/NotoSans-Regular.ttf</FontFamily>
+    <FontFamily x:Key="NotoSansBoldFont">avares://NadekoHub/Assets/Fonts/NotoSans-Bold.ttf</FontFamily>
+    
     <!--Preview-->
     <Design.PreviewWith>
         <Border Padding="20">
@@ -13,7 +17,4 @@
             </StackPanel>
         </Border>
     </Design.PreviewWith>
-
-    <FontFamily x:Key="NotoSansFont">avares://NadekoHub/Assets/Fonts/NotoSans-Regular.ttf</FontFamily>
-    <FontFamily x:Key="NotoSansBoldFont">avares://NadekoHub/Assets/Fonts/NotoSans-Bold.ttf</FontFamily>
 </ResourceDictionary>

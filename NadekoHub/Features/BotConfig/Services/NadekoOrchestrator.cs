@@ -35,7 +35,7 @@ public sealed class NadekoOrchestrator : IBotOrchestrator
         => _runningBots.ContainsKey(botId);
 
     /// <inheritdoc/>
-    public bool Start(Guid botId)
+    public bool StartBot(Guid botId)
     {
         if (_runningBots.ContainsKey(botId)
             || !_appConfig.BotEntries.TryGetValue(botId, out var botEntry)
@@ -66,7 +66,7 @@ public sealed class NadekoOrchestrator : IBotOrchestrator
     }
 
     /// <inheritdoc/>
-    public bool Stop(Guid botId)
+    public bool StopBot(Guid botId)
     {
         if (!_runningBots.TryGetValue(botId, out var botProcess))
             return false;
@@ -76,10 +76,11 @@ public sealed class NadekoOrchestrator : IBotOrchestrator
     }
 
     /// <inheritdoc/>
-    public bool StopAll()
+    public bool StopAllBots()
     {
         var amount = _runningBots.Count;
 
+        // ReSharper disable once EmptyGeneralCatchClause
         foreach (var process in _runningBots.Values)
             try { process.Kill(true); } catch { }
 

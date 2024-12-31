@@ -95,7 +95,7 @@ public sealed class YtdlpResolver : IYtdlpResolver
     }
 
     /// <inheritdoc />
-    public async ValueTask<(string? OldVersion, string? NewVersion)> InstallOrUpdateAsync(string dependenciesUri, CancellationToken cToken = default)
+    public async ValueTask<(string? OldVersion, string? NewVersion)> InstallOrUpdateAsync(string installationUri, CancellationToken cToken = default)
     {
         if (_isUpdating)
             return (null, null);
@@ -124,16 +124,16 @@ public sealed class YtdlpResolver : IYtdlpResolver
         }
 
         // Install
-        Directory.CreateDirectory(dependenciesUri);
+        Directory.CreateDirectory(installationUri);
 
-        var finalFilePath = Path.Combine(dependenciesUri, FileName);
+        var finalFilePath = Path.Combine(installationUri, FileName);
         var http = _httpClientFactory.CreateClient();
         using var downloadStream = await http.GetStreamAsync($"https://github.com/yt-dlp/yt-dlp/releases/download/{newVersion}/{_downloadedFileName}", cToken);
         using (var fileStream = new FileStream(finalFilePath, FileMode.Create))
             await downloadStream.CopyToAsync(fileStream, cToken);
 
         // Update environment variable
-        Utilities.AddPathToPathEnvar(dependenciesUri);
+        Utilities.AddPathToPathEnvar(installationUri);
 
         // On Linux and MacOS, we need to mark the file as executable.
         if (Environment.OSVersion.Platform is PlatformID.Unix)

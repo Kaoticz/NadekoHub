@@ -1,7 +1,7 @@
 using Avalonia.ReactiveUI;
 using NadekoHub.Features.BotConfig.ViewModels;
 
-namespace NadekoHub.Features.AppConfig.Views.Controls;
+namespace NadekoHub.Features.BotConfig.Views.Controls;
 
 /// <summary>
 /// Represents a control that mimics the appearance of a terminal emulator.

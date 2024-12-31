@@ -21,7 +21,7 @@ public sealed class ViewLocator : IDataTemplate
     {
         return (data is ViewModelBase viewModel && viewModel.GetType().BaseType?.GenericTypeArguments[0] is Type controlType)
             ? (Application.Current as App)?.Services.GetService(controlType) as Control
-                ?? new TextBlock { Text = $"View-model of type \"{data?.GetType().FullName ?? "null"}\" is not registered in the IoC container.", TextWrapping = TextWrapping.WrapWithOverflow }
+                ?? new TextBlock { Text = $"View-model of type \"{data.GetType().FullName ?? "null"}\" is not registered in the IoC container.", TextWrapping = TextWrapping.WrapWithOverflow }
             : new TextBlock { Text = $"Component of type \"{data?.GetType().FullName ?? "null"}\" is not a valid view-model.", TextWrapping = TextWrapping.WrapWithOverflow };
     }
 }

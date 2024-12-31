@@ -1,3 +1,4 @@
+using Kotz.Utilities;
 using Microsoft.Extensions.Caching.Memory;
 using NadekoHub.Features.Home.Models.Api.Github;
 using NadekoHub.Features.Home.Services.Abstractions;
@@ -51,7 +52,7 @@ public sealed class AppResolver : IAppResolver
 
     /// <inheritdoc/>
     public void LaunchNewVersion()
-        => Utilities.StartProcess(BinaryUri);
+        => KotzUtilities.StartProcess(BinaryUri);
 
     /// <returns>
     /// <see langword="true"/> if the updater can be updated,
@@ -61,7 +62,7 @@ public sealed class AppResolver : IAppResolver
     /// <inheritdoc/>
     public async ValueTask<bool?> CanUpdateAsync(CancellationToken cToken = default)
     {
-        if (!Utilities.CanWriteTo(AppContext.BaseDirectory))
+        if (!KotzUtilities.HasWritePermissionAt(AppContext.BaseDirectory))
             return null;
 
         var currentVersion = await GetCurrentVersionAsync(cToken);
@@ -88,7 +89,7 @@ public sealed class AppResolver : IAppResolver
         var result = false;
 
         foreach (var file in Directory.GetFiles(AppContext.BaseDirectory).Where(x => x.EndsWith(OldFileSuffix, StringComparison.Ordinal)))
-            result |= Utilities.TryDeleteFile(file);
+            result |= KotzUtilities.TryDeleteFile(file);
 
         return result;
     }
@@ -144,21 +145,13 @@ public sealed class AppResolver : IAppResolver
                 if (File.Exists(destinationUri))
                     File.Move(destinationUri, destinationUri + OldFileSuffix, true);
 
-                // Move the new file to the application's directory.
-                if (Environment.OSVersion.Platform is not PlatformID.Unix)
-                    File.Move(newFileUri, destinationUri, true);
-                else
-                {
-                    // Circumvent this issue on Unix systems: https://github.com/dotnet/runtime/issues/31149
-                    using var moveProcess = Utilities.StartProcess("mv", $"\"{newFileUri}\" \"{destinationUri}\"");
-                    await moveProcess.WaitForExitAsync(cToken);
-                }
+                KotzUtilities.TryMoveFile(newFileUri, destinationUri, true);
             }
 
             // Mark the new binary file as executable.
             if (Environment.OSVersion.Platform is PlatformID.Unix)
             {
-                using var chmod = Utilities.StartProcess("chmod", $"+x \"{BinaryUri}\"");
+                using var chmod = KotzUtilities.StartProcess("chmod", ["+x", BinaryUri]);
                 await chmod.WaitForExitAsync(cToken);
             }
 
@@ -167,8 +160,8 @@ public sealed class AppResolver : IAppResolver
         finally
         {
             // Cleanup
-            Utilities.TryDeleteFile(zipTempLocation);
-            Utilities.TryDeleteDirectory(appTempLocation);
+            KotzUtilities.TryDeleteFile(zipTempLocation);
+            KotzUtilities.TryDeleteDirectory(appTempLocation);
         }
     }
 

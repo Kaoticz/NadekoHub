@@ -1,4 +1,5 @@
 using Avalonia.Controls;
+using Kotz.Utilities;
 using MsBox.Avalonia.Enums;
 using NadekoHub.Enums;
 using NadekoHub.Features.Abstractions;
@@ -8,7 +9,7 @@ using NadekoHub.Features.AppWindow.Views.Windows;
 using NadekoHub.Features.BotConfig.Models;
 using NadekoHub.Features.BotConfig.Services.Abstractions;
 using NadekoHub.Features.BotConfig.Views.Controls;
-using NadekoHub.Features.Shared.ViewModels;
+using NadekoHub.Features.Common.ViewModels;
 using ReactiveUI;
 using SkiaSharp;
 using System.Diagnostics;
@@ -215,14 +216,12 @@ public class BotConfigViewModel : ViewModelBase<BotConfigView>, IDisposable
                         Directory.Delete(BotDirectoryUriBar.CurrentUri);
                 }
 
-                if (Environment.OSVersion.Platform is not PlatformID.Unix)
-                    Directory.Move(oldUri, BotDirectoryUriBar.CurrentUri);
-                else
-                {
-                    // Move the bot root directory with "mv" to circumvent this issue on Unix systems: https://github.com/dotnet/runtime/issues/31149
-                    using var moveProcess = Utilities.StartProcess("mv", $"\"{oldUri}\" \"{BotDirectoryUriBar.CurrentUri}\"");
-                    await moveProcess.WaitForExitAsync();
-                }
+                if (!KotzUtilities.TryMoveDirectory(oldUri, BotDirectoryUriBar.CurrentUri))
+                    throw new InvalidOperationException(
+                        $"Could not move \"{oldUri}\" to \"{BotDirectoryUriBar.CurrentUri}\"." +
+                        Environment.NewLine + Environment.NewLine +
+                        "Make sure you have permission to write to the target directory."
+                    );
 
                 BotDirectoryUriBar.RecheckCurrentUri();
             }
@@ -342,7 +341,7 @@ public class BotConfigViewModel : ViewModelBase<BotConfigView>, IDisposable
         EnableButtons(true, false);
 
         // Stop the bot instance
-        _botOrchestrator.Stop(Resolver.Id);
+        _botOrchestrator.StopBot(Resolver.Id);
 
         // Cleanup
         FakeConsole.Content = string.Empty;
@@ -409,7 +408,7 @@ public class BotConfigViewModel : ViewModelBase<BotConfigView>, IDisposable
     /// </summary>
     public void StartBot()
     {
-        IsBotRunning = _botOrchestrator.Start(Id);
+        IsBotRunning = _botOrchestrator.StartBot(Id);
 
         if (IsBotRunning)
             EnableButtons(true, false);
@@ -419,7 +418,7 @@ public class BotConfigViewModel : ViewModelBase<BotConfigView>, IDisposable
     /// Stops the bot instance associated with this view-model.
     /// </summary>
     public void StopBot()
-        => _botOrchestrator.Stop(Id);
+        => _botOrchestrator.StopBot(Id);
 
     /// <summary>
     /// Loads the bot update bar.
@@ -507,7 +506,7 @@ public class BotConfigViewModel : ViewModelBase<BotConfigView>, IDisposable
     /// <inheritdoc/>
     public void Dispose()
     {
-        BotAvatar?.Dispose();
+        BotAvatar.Dispose();
         GC.SuppressFinalize(this);
     }
 }

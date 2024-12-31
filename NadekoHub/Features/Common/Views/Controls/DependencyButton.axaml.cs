@@ -1,7 +1,7 @@
 using Avalonia.ReactiveUI;
-using NadekoHub.Features.Shared.ViewModels;
+using NadekoHub.Features.Common.ViewModels;
 
-namespace NadekoHub.Features.Shared.Views.Controls;
+namespace NadekoHub.Features.Common.Views.Controls;
 
 /// <summary>
 /// Represents a button that installs a dependency for Nadeko.

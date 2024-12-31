@@ -2,11 +2,11 @@ using Avalonia.Media.Immutable;
 using NadekoHub.Enums;
 using NadekoHub.Features.Abstractions;
 using NadekoHub.Features.AppWindow.Views.Windows;
-using NadekoHub.Features.Shared.Views.Controls;
+using NadekoHub.Features.Common.Views.Controls;
 using ReactiveUI;
 using System.Diagnostics;
 
-namespace NadekoHub.Features.Shared.ViewModels;
+namespace NadekoHub.Features.Common.ViewModels;
 
 /// <summary>
 /// Defines the view-model for a button that installs a dependency for Nadeko.

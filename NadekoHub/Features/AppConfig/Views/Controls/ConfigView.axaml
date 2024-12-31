@@ -3,7 +3,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:vm="using:NadekoHub.Features.AppConfig.ViewModels"
-        xmlns:views="using:NadekoHub.Features.Shared.Views.Controls"
+        xmlns:views="using:NadekoHub.Features.Common.Views.Controls"
         xmlns:const="using:NadekoHub.Common"
         xmlns:dd="using:NadekoHub.Avalonia.DesignData.Controls"
         mc:Ignorable="d"
@@ -23,7 +23,6 @@
                        Fill="{DynamicResource HeavyBackground}" />
 
             <Rectangle Grid.Row="1"
-                       Grid.RowSpan="2"
                        Fill="{DynamicResource MediumBackground}"/>
 
             <!--Settings Title-->
@@ -87,9 +86,10 @@
 
                     <!--Backup Directory Bar-->
                     <TextBlock Grid.Row="2"
+                               Grid.Column="0"
                                Margin="0 8 0 0"
                                Text="Backup Directory:"
-                               ToolTip.Tip="Defines the directory the updater is going to store the backup of the bot instances."/>
+                               ToolTip.Tip="Defines the directory the updater is going to store the backups of the bot instances."/>
 
                     <TextBox Grid.Row="3"
                              Grid.Column="0"
@@ -113,6 +113,7 @@
 
                     <!--Logs directory Bar-->
                     <TextBlock Grid.Row="4"
+                               Grid.Column="0"
                                Margin="0 8 0 0"
                                Text="Logs Directory:"
                                ToolTip.Tip="Defines the directory the updater is going to store the logs of the bot instances."/>

@@ -20,8 +20,6 @@ namespace NadekoHub.Features.AppWindow.Views.Controls;
 /// </summary>
 public partial class LateralBarView : ReactiveUserControl<LateralBarViewModel>
 {
-    private static readonly Cursor _pointingHandCursor = new(StandardCursorType.Hand);
-    private static readonly Cursor _arrow = new(StandardCursorType.Arrow);
     private readonly ReadOnlyAppSettings _appConfig;
 
     /// <summary>

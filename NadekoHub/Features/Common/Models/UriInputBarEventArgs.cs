@@ -1,6 +1,6 @@
-using NadekoHub.Features.Shared.ViewModels;
+using NadekoHub.Features.Common.ViewModels;
 
-namespace NadekoHub.Features.Shared.Models;
+namespace NadekoHub.Features.Common.Models;
 
 /// <summary>
 /// Defines the event arguments for when a valid uri is set to a <see cref="UriInputBarViewModel"/>.

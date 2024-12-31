@@ -50,7 +50,7 @@
             <Bitmap x:Key="UrlIcon">avares://NadekoHub/Assets/Light/icon-link.png</Bitmap>
             <Bitmap x:Key="SuggestionIcon">avares://NadekoHub/Assets/Light/icon-suggest.png</Bitmap>
             <Bitmap x:Key="DiscordIcon">avares://NadekoHub/Assets/Light/icon-support.png</Bitmap>
-            <WindowIcon x:Key="NadekoHubIcon">avares://NadekoHub/Assets/Light/nadekoupdatericon.ico</WindowIcon>
+            <WindowIcon x:Key="NadekoHubIcon"><![CDATA[avares://NadekoHub/Assets/Light/nadekoupdatericon.ico]]></WindowIcon>
             <Bitmap x:Key="NadekoHubImage">avares://NadekoHub/Assets/Light/nadekoupdatericon.ico</Bitmap>
             <Bitmap x:Key="TerminalIcon">avares://NadekoHub/Assets/Light/terminal.png</Bitmap>
         </ResourceDictionary>
@@ -65,7 +65,7 @@
             <Bitmap x:Key="UrlIcon">avares://NadekoHub/Assets/Dark/icon-link.png</Bitmap>
             <Bitmap x:Key="SuggestionIcon">avares://NadekoHub/Assets/Dark/icon-suggest.png</Bitmap>
             <Bitmap x:Key="DiscordIcon">avares://NadekoHub/Assets/Dark/icon-support.png</Bitmap>
-            <WindowIcon x:Key="NadekoHubIcon">avares://NadekoHub/Assets/Dark/nadekoupdatericon.ico</WindowIcon>
+            <WindowIcon x:Key="NadekoHubIcon"><![CDATA[avares://NadekoHub/Assets/Dark/nadekoupdatericon.ico]]></WindowIcon>
             <Bitmap x:Key="NadekoHubImage">avares://NadekoHub/Assets/Dark/nadekoupdatericon.ico</Bitmap>
             <Bitmap x:Key="TerminalIcon">avares://NadekoHub/Assets/Dark/terminal.png</Bitmap>
         </ResourceDictionary>

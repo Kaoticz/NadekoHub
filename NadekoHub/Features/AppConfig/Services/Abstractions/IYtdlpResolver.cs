@@ -1,4 +1,4 @@
-using NadekoHub.Features.Shared.Services.Abstractions;
+using NadekoHub.Features.Common.Services.Abstractions;
 
 namespace NadekoHub.Features.AppConfig.Services.Abstractions;
 

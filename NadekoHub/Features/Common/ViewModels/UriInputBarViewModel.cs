@@ -1,11 +1,11 @@
 using Avalonia.Platform.Storage;
 using NadekoHub.Features.Abstractions;
-using NadekoHub.Features.Shared.Models;
-using NadekoHub.Features.Shared.Views.Controls;
+using NadekoHub.Features.Common.Models;
+using NadekoHub.Features.Common.Views.Controls;
 using ReactiveUI;
 using System.Diagnostics;
 
-namespace NadekoHub.Features.Shared.ViewModels;
+namespace NadekoHub.Features.Common.ViewModels;
 
 /// <summary>
 /// Represents a text box for inputting the absolute path of a directory.

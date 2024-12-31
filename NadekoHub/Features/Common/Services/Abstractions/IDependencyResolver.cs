@@ -1,4 +1,4 @@
-namespace NadekoHub.Features.Shared.Services.Abstractions;
+namespace NadekoHub.Features.Common.Services.Abstractions;
 
 /// <summary>
 /// Represents a service that checks, downloads, installs, and updates a dependency.

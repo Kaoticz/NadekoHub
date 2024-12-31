@@ -10,6 +10,6 @@ public sealed class DesignFakeConsoleViewModel : FakeConsoleViewModel
     /// <summary>
     /// Creates a mock <see cref="FakeConsoleViewModel"/> to be used at design-time.
     /// </summary>
-    public DesignFakeConsoleViewModel() : base()
+    public DesignFakeConsoleViewModel()
         => Watermark = "Sample watermark.";
 }

@@ -67,5 +67,5 @@ public abstract class FfmpegResolver : IFfmpegResolver
     public abstract ValueTask<string> GetLatestVersionAsync(CancellationToken cToken = default);
 
     /// <inheritdoc/>
-    public abstract ValueTask<(string? OldVersion, string? NewVersion)> InstallOrUpdateAsync(string dependenciesUri, CancellationToken cToken = default);
+    public abstract ValueTask<(string? OldVersion, string? NewVersion)> InstallOrUpdateAsync(string installationUri, CancellationToken cToken = default);
 }

@@ -14,7 +14,7 @@ public sealed partial class FfmpegLinuxResolver : FfmpegResolver
 {
     private readonly Regex _ffmpegLatestVersionRegex = FfmpegLatestVersionRegexGenerator();
     private readonly string _tempDirectory = Path.GetTempPath();
-    private bool _isUpdating = false;
+    private bool _isUpdating;
     private readonly IHttpClientFactory _httpClientFactory;
 
     /// <inheritdoc/>
@@ -48,7 +48,7 @@ public sealed partial class FfmpegLinuxResolver : FfmpegResolver
     }
 
     /// <inheritdoc/>
-    public override async ValueTask<(string? OldVersion, string? NewVersion)> InstallOrUpdateAsync(string dependenciesUri, CancellationToken cToken = default)
+    public override async ValueTask<(string? OldVersion, string? NewVersion)> InstallOrUpdateAsync(string installationUri, CancellationToken cToken = default)
     {
         if (_isUpdating)
             return (null, null);
@@ -64,12 +64,12 @@ public sealed partial class FfmpegLinuxResolver : FfmpegResolver
             if (currentVersion == newVersion)
                 return (currentVersion, null);
 
-            Utilities.TryDeleteFile(Path.Combine(dependenciesUri, FileName));
-            Utilities.TryDeleteFile(Path.Combine(dependenciesUri, "ffprobe"));
+            Utilities.TryDeleteFile(Path.Combine(installationUri, FileName));
+            Utilities.TryDeleteFile(Path.Combine(installationUri, "ffprobe"));
         }
 
         // Install
-        Directory.CreateDirectory(dependenciesUri);
+        Directory.CreateDirectory(installationUri);
 
         var architecture = (RuntimeInformation.OSArchitecture is Architecture.X64) ? "amd" : "arm";
         var tarFileName = $"ffmpeg-release-{architecture}64-static.tar.xz";
@@ -87,11 +87,11 @@ public sealed partial class FfmpegLinuxResolver : FfmpegResolver
         await extractProcess.WaitForExitAsync(cToken);
 
         // Move ffmpeg to the dependencies directory.
-        File.Move(Path.Combine(tarExtractDir, FileName), Path.Combine(dependenciesUri, FileName), true);
-        File.Move(Path.Combine(tarExtractDir, "ffprobe"), Path.Combine(dependenciesUri, "ffprobe"), true);
+        File.Move(Path.Combine(tarExtractDir, FileName), Path.Combine(installationUri, FileName), true);
+        File.Move(Path.Combine(tarExtractDir, "ffprobe"), Path.Combine(installationUri, "ffprobe"), true);
 
         // Mark the files as executable.
-        using var chmod = Utilities.StartProcess("chmod", $"+x \"{Path.Combine(dependenciesUri, FileName)}\" \"{Path.Combine(dependenciesUri, "ffprobe")}\"");
+        using var chmod = Utilities.StartProcess("chmod", $"+x \"{Path.Combine(installationUri, FileName)}\" \"{Path.Combine(installationUri, "ffprobe")}\"");
         await chmod.WaitForExitAsync(cToken);
 
         // Cleanup
@@ -99,7 +99,7 @@ public sealed partial class FfmpegLinuxResolver : FfmpegResolver
         Directory.Delete(tarExtractDir, true);
 
         // Update environment variable
-        Utilities.AddPathToPathEnvar(dependenciesUri);
+        Utilities.AddPathToPathEnvar(installationUri);
 
         _isUpdating = false;
         return (currentVersion, newVersion);

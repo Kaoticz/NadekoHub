@@ -11,7 +11,7 @@ namespace NadekoHub.Features.BotConfig.Services;
 /// </summary>
 public sealed class LogWriter : ILogWriter
 {
-    private readonly Dictionary<Guid, StringBuilder> _botLogs = new();
+    private readonly Dictionary<Guid, StringBuilder> _botLogs = [];
     private readonly ReadOnlyAppSettings _appConfig;
 
     /// <inheritdoc/>
@@ -48,7 +48,7 @@ public sealed class LogWriter : ILogWriter
         var botEntry = _appConfig.BotEntries[botId];
         var now = DateTimeOffset.Now;
         var date = new DateOnly(now.Year, now.Month, now.Day).ToShortDateString().Replace('/', '-');
-        var fileUri = Path.Combine(_appConfig.LogsDirectoryUri, $"{botEntry.Name}_v{botEntry.Version}_{date}-{now.ToUnixTimeSeconds()}.txt");
+        var fileUri = Path.Join(_appConfig.LogsDirectoryUri, $"{botEntry.Name}_v{botEntry.Version}_{date}-{now.ToUnixTimeSeconds()}.txt");
 
         await File.WriteAllTextAsync(fileUri, logStringBuilder.ToString(), cToken);
 

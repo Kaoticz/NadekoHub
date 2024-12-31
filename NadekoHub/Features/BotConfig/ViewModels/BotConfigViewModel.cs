@@ -506,6 +506,12 @@ public class BotConfigViewModel : ViewModelBase<BotConfigView>, IDisposable
     /// <inheritdoc/>
     public void Dispose()
     {
+        UpdateBar.Click -= InstallOrUpdateAsync;
+        _botOrchestrator.OnStdout -= WriteLog;
+        _botOrchestrator.OnStderr -= WriteLog;
+        _botOrchestrator.OnBotExit -= LogBotExit;
+        _botOrchestrator.OnBotExit -= ReenableButtonsOnBotExit;
+        
         BotAvatar.Dispose();
         GC.SuppressFinalize(this);
     }

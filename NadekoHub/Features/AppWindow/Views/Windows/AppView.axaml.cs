@@ -125,7 +125,7 @@ public partial class AppView : ReactiveWindow<AppViewModel>
         base.Height = _appConfigManager.AppConfig.WindowSize.Height;
         base.Width = _appConfigManager.AppConfig.WindowSize.Width;
 
-        // Set the user prefered theme
+        // Set the user preferred theme
         base.RequestedThemeVariant = _appConfigManager.AppConfig.Theme switch
         {
             ThemeType.Auto => ThemeVariant.Default,
@@ -256,9 +256,23 @@ public partial class AppView : ReactiveWindow<AppViewModel>
 
         _ = new UpdateView().ShowDialog(this);
 
-        await _appResolver.InstallOrUpdateAsync(AppContext.BaseDirectory);
-        _appResolver.LaunchNewVersion();
 
+        try
+        {
+            Console.WriteLine("Downloading new updater...");
+            await _appResolver.InstallOrUpdateAsync(AppContext.BaseDirectory);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex);
+        }
+        finally
+        {
+            Console.WriteLine("Launching new updater...");
+            _appResolver.LaunchNewVersion();
+        }
+
+        Console.WriteLine("Finished update, closing down...");
         base.Close();
     }
 

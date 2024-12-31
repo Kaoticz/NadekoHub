@@ -1,3 +1,5 @@
+using Kotz.Utilities;
+
 namespace NadekoHub.Features.AppConfig.Services.Abstractions;
 
 /// <summary>
@@ -22,7 +24,7 @@ public abstract class FfmpegResolver : IFfmpegResolver
     public virtual async ValueTask<bool?> CanUpdateAsync(CancellationToken cToken = default)
     {
         // Check where ffmpeg is referenced.
-        using var whereProcess = Utilities.StartProcess(_programVerifier, FfmpegProcessName);
+        using var whereProcess = KotzUtilities.StartProcess(_programVerifier, FfmpegProcessName, true);
         var installationPath = await whereProcess.StandardOutput.ReadToEndAsync(cToken);
 
         // If ffmpeg is present but not managed by us, just report it is installed.
@@ -32,7 +34,7 @@ public abstract class FfmpegResolver : IFfmpegResolver
         var currentVer = await GetCurrentVersionAsync(cToken);
 
         // If ffmpeg or ffprobe are absent, a reinstall needs to be performed.
-        if (currentVer is null || !await Utilities.ProgramExistsAsync("ffprobe", cToken))
+        if (currentVer is null || !KotzUtilities.ProgramExists("ffprobe"))
             return null;
 
         var latestVer = await GetLatestVersionAsync(cToken);
@@ -44,20 +46,20 @@ public abstract class FfmpegResolver : IFfmpegResolver
     public virtual async ValueTask<string?> GetCurrentVersionAsync(CancellationToken cToken = default)
     {
         // If ffmpeg is not accessible from the shell...
-        if (!await Utilities.ProgramExistsAsync(FfmpegProcessName, cToken))
+        if (!KotzUtilities.ProgramExists(FfmpegProcessName))
         {
             // And doesn't exist in the dependencies folder,
             // report that ffmpeg is not installed.
-            if (!File.Exists(Path.Combine(AppStatics.AppDepsUri, FileName)))
+            if (!File.Exists(Path.Join(AppStatics.AppDepsUri, FileName)))
                 return null;
 
             // Else, add the dependencies directory to the PATH envar,
             // then try again.
-            Utilities.AddPathToPathEnvar(AppStatics.AppDepsUri);
+            KotzUtilities.AddPathToPATHEnvar(AppStatics.AppDepsUri);
             return await GetCurrentVersionAsync(cToken);
         }
 
-        using var ffmpeg = Utilities.StartProcess(FfmpegProcessName, "-version");
+        using var ffmpeg = KotzUtilities.StartProcess(FfmpegProcessName, "-version", true);
         var match = AppStatics.FfmpegVersionRegex.Match(await ffmpeg.StandardOutput.ReadLineAsync(cToken) ?? string.Empty);
 
         return match.Groups[1].Value;

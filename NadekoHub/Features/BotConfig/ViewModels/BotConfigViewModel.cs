@@ -183,7 +183,7 @@ public class BotConfigViewModel : ViewModelBase<BotConfigView>, IDisposable
             EnableButtons(!File.Exists(Path.Combine(botEntry.InstanceDirectoryUri, Resolver.FileName)), true);
 
         // Dispose when the view is deactivated
-        this.WhenActivated(disposables => Disposable.Create(() => Dispose()).DisposeWith(disposables));
+        this.WhenActivated(disposables => Disposable.Create(Dispose).DisposeWith(disposables));
     }
 
     /// <summary>
@@ -425,7 +425,7 @@ public class BotConfigViewModel : ViewModelBase<BotConfigView>, IDisposable
     /// </summary>
     /// <param name="botResolver">The bot resolver.</param>
     /// <param name="updateBotBar">The update bar.</param>
-    private async static Task LoadUpdateBarAsync(IBotResolver botResolver, DependencyButtonViewModel updateBotBar)
+    private static async Task LoadUpdateBarAsync(IBotResolver botResolver, DependencyButtonViewModel updateBotBar)
     {
         updateBotBar.DependencyName = "Checking...";
         updateBotBar.Status = DependencyStatus.Checking;

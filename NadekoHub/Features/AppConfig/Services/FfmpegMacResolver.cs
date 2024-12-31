@@ -1,3 +1,4 @@
+using Kotz.Utilities;
 using NadekoHub.Features.AppConfig.Models.Api.Evermeet;
 using NadekoHub.Features.AppConfig.Services.Abstractions;
 using System.IO.Compression;
@@ -15,7 +16,7 @@ public sealed class FfmpegMacResolver : FfmpegResolver
     private const string _apiFfmpegInfoEndpoint = "https://evermeet.cx/ffmpeg/info/ffmpeg/release";
     private const string _apiFfprobeInfoEndpoint = "https://evermeet.cx/ffmpeg/info/ffprobe/release";
     private readonly string _tempDirectory = Path.GetTempPath();
-    private bool _isUpdating = false;
+    private bool _isUpdating;
     private readonly IHttpClientFactory _httpClientFactory;
 
     /// <inheritdoc/>
@@ -57,8 +58,8 @@ public sealed class FfmpegMacResolver : FfmpegResolver
                 return (currentVersion, null);
             }
 
-            Utilities.TryDeleteFile(Path.Combine(installationUri, FileName));
-            Utilities.TryDeleteFile(Path.Combine(installationUri, "ffprobe"));
+            KotzUtilities.TryDeleteFile(Path.Join(installationUri, FileName));
+            KotzUtilities.TryDeleteFile(Path.Join(installationUri, "ffprobe"));
         }
 
         // Install
@@ -74,7 +75,7 @@ public sealed class FfmpegMacResolver : FfmpegResolver
         );
 
         // Update environment variable
-        Utilities.AddPathToPathEnvar(installationUri);
+        KotzUtilities.AddPathToPATHEnvar(installationUri);
 
         _isUpdating = false;
         return (currentVersion, newVersion);
@@ -91,26 +92,26 @@ public sealed class FfmpegMacResolver : FfmpegResolver
         var http = _httpClientFactory.CreateClient();
         var downloadUrl = downloadInfo.Download["zip"].Url;
         var zipFileName = downloadUrl[(downloadUrl.LastIndexOf('/') + 1)..];
-        var zipFilePath = Path.Combine(_tempDirectory, zipFileName);
+        var zipFilePath = Path.Join(_tempDirectory, zipFileName);
 
         // Download the zip file and save it to the temporary directory.
-        using var zipStream = await http.GetStreamAsync(downloadUrl, cToken);
+        await using var zipStream = await http.GetStreamAsync(downloadUrl, cToken);
 
-        using (var fileStream = new FileStream(zipFilePath, FileMode.Create))
+        await using (var fileStream = new FileStream(zipFilePath, FileMode.Create))
             await zipStream.CopyToAsync(fileStream, cToken);
 
         // Extract the zip file.
         ZipFile.ExtractToDirectory(zipFileName, _tempDirectory);
 
         // Move the dependency binary.
-        var finalFileUri = Path.Combine(dependenciesUri, downloadInfo.Name);
-        File.Move(Path.Combine(_tempDirectory, downloadInfo.Name), finalFileUri, true);
+        var finalFileUri = Path.Join(dependenciesUri, downloadInfo.Name);
+        KotzUtilities.TryMoveFile(Path.Join(_tempDirectory, downloadInfo.Name), finalFileUri, true);
 
         // Mark binary as executable.
-        using var chmod = Utilities.StartProcess("chmod", $"+x \"{finalFileUri}\"");
+        using var chmod = KotzUtilities.StartProcess("chmod", ["+x", finalFileUri]);
         await chmod.WaitForExitAsync(cToken);
 
         // Cleanup.
-        File.Delete(zipFilePath);
+        KotzUtilities.TryDeleteFile(zipFilePath);
     }
 }

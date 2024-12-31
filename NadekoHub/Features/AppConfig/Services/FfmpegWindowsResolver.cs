@@ -1,3 +1,4 @@
+using Kotz.Utilities;
 using NadekoHub.Features.AppConfig.Services.Abstractions;
 using System.IO.Compression;
 using System.Runtime.InteropServices;
@@ -13,7 +14,7 @@ namespace NadekoHub.Features.AppConfig.Services;
 public sealed class FfmpegWindowsResolver : FfmpegResolver
 {
     private readonly string _tempDirectory = Path.GetTempPath();
-    private bool _isUpdating = false;
+    private bool _isUpdating;
     private readonly IHttpClientFactory _httpClientFactory;
 
     /// <inheritdoc />
@@ -68,9 +69,9 @@ public sealed class FfmpegWindowsResolver : FfmpegResolver
                 return (currentVersion, null);
             }
 
-            Utilities.TryDeleteFile(Path.Combine(installationUri, FileName));
-            Utilities.TryDeleteFile(Path.Combine(installationUri, "ffprobe.exe"));
-            //Utilities.TryDeleteFile(Path.Combine(dependenciesUri, "ffplay.exe"));
+            KotzUtilities.TryDeleteFile(Path.Join(installationUri, FileName));
+            KotzUtilities.TryDeleteFile(Path.Join(installationUri, "ffprobe.exe"));
+            //KotzUtilities.TryDeleteFile(Path.Join(dependenciesUri, "ffplay.exe"));
         }
 
         // Install
@@ -78,12 +79,12 @@ public sealed class FfmpegWindowsResolver : FfmpegResolver
 
         var zipFileName = $"ffmpeg-{newVersion}-full_build.zip";
         var http = _httpClientFactory.CreateClient();
-        using var downloadStream = await http.GetStreamAsync($"https://github.com/GyanD/codexffmpeg/releases/download/{newVersion}/{zipFileName}", cToken);
+        await using var downloadStream = await http.GetStreamAsync($"https://github.com/GyanD/codexffmpeg/releases/download/{newVersion}/{zipFileName}", cToken);
 
         // Save zip file to the temporary directory.
-        var zipFilePath = Path.Combine(_tempDirectory, zipFileName);
-        var zipExtractDir = Path.Combine(_tempDirectory, zipFileName[..^4]);
-        using (var fileStream = new FileStream(zipFilePath, FileMode.Create))
+        var zipFilePath = Path.Join(_tempDirectory, zipFileName);
+        var zipExtractDir = Path.Join(_tempDirectory, zipFileName[..^4]);
+        await using (var fileStream = new FileStream(zipFilePath, FileMode.Create))
             await downloadStream.CopyToAsync(fileStream, cToken);
 
         // Schedule installation to the thread-pool because ffmpeg is pretty
@@ -94,17 +95,17 @@ public sealed class FfmpegWindowsResolver : FfmpegResolver
             ZipFile.ExtractToDirectory(zipFilePath, _tempDirectory);
 
             // Move ffmpeg to the dependencies directory.
-            File.Move(Path.Combine(zipExtractDir, "bin", FileName), Path.Combine(installationUri, FileName), true);
-            File.Move(Path.Combine(zipExtractDir, "bin", "ffprobe.exe"), Path.Combine(installationUri, "ffprobe.exe"), true);
-            //File.Move(Path.Combine(zipExtractDir, "bin", "ffplay.exe"), Path.Combine(dependenciesUri, "ffplay.exe"));
+            KotzUtilities.TryMoveFile(Path.Join(zipExtractDir, "bin", FileName), Path.Join(installationUri, FileName), true);
+            KotzUtilities.TryMoveFile(Path.Join(zipExtractDir, "bin", "ffprobe.exe"), Path.Join(installationUri, "ffprobe.exe"), true);
+            //KotzUtilities.TryMoveFile(Path.Join(zipExtractDir, "bin", "ffplay.exe"), Path.Join(dependenciesUri, "ffplay.exe"));
 
             // Cleanup
-            File.Delete(zipFilePath);
-            Directory.Delete(zipExtractDir, true);
+            KotzUtilities.TryDeleteFile(zipFilePath);
+            KotzUtilities.TryDeleteDirectory(zipExtractDir);
         }, cToken);
 
         // Update environment variable
-        Utilities.AddPathToPathEnvar(installationUri);
+        KotzUtilities.AddPathToPATHEnvar(installationUri);
 
         _isUpdating = false;
         return (currentVersion, newVersion);

@@ -1,3 +1,4 @@
+using Kotz.Utilities;
 using NadekoHub.Features.AppConfig.Services.Abstractions;
 using System.Runtime.InteropServices;
 using System.Runtime.Versioning;
@@ -64,8 +65,8 @@ public sealed partial class FfmpegLinuxResolver : FfmpegResolver
             if (currentVersion == newVersion)
                 return (currentVersion, null);
 
-            Utilities.TryDeleteFile(Path.Combine(installationUri, FileName));
-            Utilities.TryDeleteFile(Path.Combine(installationUri, "ffprobe"));
+            KotzUtilities.TryDeleteFile(Path.Join(installationUri, FileName));
+            KotzUtilities.TryDeleteFile(Path.Join(installationUri, "ffprobe"));
         }
 
         // Install
@@ -77,29 +78,29 @@ public sealed partial class FfmpegLinuxResolver : FfmpegResolver
         await using var downloadStream = await http.GetStreamAsync($"https://johnvansickle.com/ffmpeg/releases/{tarFileName}", cToken);
 
         // Save tar file to the temporary directory.
-        var tarFilePath = Path.Combine(_tempDirectory, tarFileName);
-        var tarExtractDir = Path.Combine(_tempDirectory, $"ffmpeg-{newVersion}-{architecture}64-static");
+        var tarFilePath = Path.Join(_tempDirectory, tarFileName);
+        var tarExtractDir = Path.Join(_tempDirectory, $"ffmpeg-{newVersion}-{architecture}64-static");
         await using (var fileStream = new FileStream(tarFilePath, FileMode.Create))
             await downloadStream.CopyToAsync(fileStream, cToken);
 
         // Extract the tar file.
-        using var extractProcess = Utilities.StartProcess("tar", $"xf \"{tarFilePath}\" --directory=\"{_tempDirectory}\"");
+        using var extractProcess = KotzUtilities.StartProcess("tar", ["xf", tarFilePath, $"--directory=\"{_tempDirectory}\""]);
         await extractProcess.WaitForExitAsync(cToken);
 
         // Move ffmpeg to the dependencies directory.
-        File.Move(Path.Combine(tarExtractDir, FileName), Path.Combine(installationUri, FileName), true);
-        File.Move(Path.Combine(tarExtractDir, "ffprobe"), Path.Combine(installationUri, "ffprobe"), true);
+        KotzUtilities.TryMoveFile(Path.Join(tarExtractDir, FileName), Path.Join(installationUri, FileName), true);
+        KotzUtilities.TryMoveFile(Path.Join(tarExtractDir, "ffprobe"), Path.Join(installationUri, "ffprobe"), true);
 
         // Mark the files as executable.
-        using var chmod = Utilities.StartProcess("chmod", $"+x \"{Path.Combine(installationUri, FileName)}\" \"{Path.Combine(installationUri, "ffprobe")}\"");
+        using var chmod = KotzUtilities.StartProcess("chmod", ["+x", Path.Join(installationUri, FileName), Path.Join(installationUri, "ffprobe")]);
         await chmod.WaitForExitAsync(cToken);
 
         // Cleanup
-        File.Delete(tarFilePath);
-        Directory.Delete(tarExtractDir, true);
+        KotzUtilities.TryDeleteFile(tarFilePath);
+        KotzUtilities.TryDeleteDirectory(tarExtractDir);
 
         // Update environment variable
-        Utilities.AddPathToPathEnvar(installationUri);
+        KotzUtilities.AddPathToPATHEnvar(installationUri);
 
         _isUpdating = false;
         return (currentVersion, newVersion);

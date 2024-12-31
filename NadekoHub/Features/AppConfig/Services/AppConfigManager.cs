@@ -1,3 +1,4 @@
+using Kotz.Utilities;
 using NadekoHub.Features.AppConfig.Models;
 using NadekoHub.Features.AppConfig.Services.Abstractions;
 using NadekoHub.Features.AppWindow.Models;
@@ -33,7 +34,7 @@ public sealed class AppConfigManager : IAppConfigManager
         var newId = CreateNewId();
         var newPosition = (_appConfig.BotEntries.IsEmpty) ? 0 : _appConfig.BotEntries.Values.Max(x => x.Position) + 1;
         var newBotName = "NewBot_" + newPosition;
-        var newEntry = new BotInstanceInfo(newBotName, Path.Combine(_appConfig.BotsDirectoryUri, newBotName), newPosition);
+        var newEntry = new BotInstanceInfo(newBotName, Path.Join(_appConfig.BotsDirectoryUri, newBotName), newPosition);
 
         if (!_appConfig.BotEntries.TryAdd(newId, newEntry))
             throw new InvalidOperationException($"Could not create a new bot entry with Id {newId}.");
@@ -49,7 +50,7 @@ public sealed class AppConfigManager : IAppConfigManager
         if (!_appConfig.BotEntries.TryRemove(id, out var removedEntry))
             return null;
 
-        Utilities.TryDeleteDirectory(removedEntry.InstanceDirectoryUri);
+        KotzUtilities.TryDeleteDirectory(removedEntry.InstanceDirectoryUri);
 
         await SaveAsync(cToken);
 

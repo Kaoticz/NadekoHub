@@ -1,3 +1,4 @@
+using Kotz.Utilities;
 using Microsoft.Extensions.Caching.Memory;
 using NadekoHub.Features.AppConfig.Services.Abstractions;
 using System.Runtime.InteropServices;
@@ -13,7 +14,7 @@ public sealed class YtdlpResolver : IYtdlpResolver
     private const string _cachedCurrentVersionKey = "currentVersion:yt-dlp";
     private const string _ytdlpProcessName = "yt-dlp";
     private static readonly string _downloadedFileName = GetDownloadFileName();
-    private bool _isUpdating = false;
+    private bool _isUpdating;
     private readonly IHttpClientFactory _httpClientFactory;
     private readonly IMemoryCache _memoryCache;
 
@@ -56,16 +57,16 @@ public sealed class YtdlpResolver : IYtdlpResolver
     public async ValueTask<string?> GetCurrentVersionAsync(CancellationToken cToken = default)
     {
         // If yt-dlp is not accessible from the shell...
-        if (!await Utilities.ProgramExistsAsync(_ytdlpProcessName, cToken))
+        if (!KotzUtilities.ProgramExists(_ytdlpProcessName))
         {
             // And doesn't exist in the dependencies folder,
             // report that yt-dlp is not installed.
-            if (!File.Exists(Path.Combine(AppStatics.AppDepsUri, FileName)))
+            if (!File.Exists(Path.Join(AppStatics.AppDepsUri, FileName)))
                 return null;
 
             // Else, add the dependencies directory to the PATH envar,
             // then try again.
-            Utilities.AddPathToPathEnvar(AppStatics.AppDepsUri);
+            KotzUtilities.AddPathToPATHEnvar(AppStatics.AppDepsUri);
             return await GetCurrentVersionAsync(cToken);
         }
 
@@ -73,7 +74,7 @@ public sealed class YtdlpResolver : IYtdlpResolver
         if (_memoryCache.TryGetValue<string>(_cachedCurrentVersionKey, out var currentVersion) && currentVersion is not null)
             return currentVersion;
 
-        using var ytdlp = Utilities.StartProcess(_ytdlpProcessName, "--version");
+        using var ytdlp = KotzUtilities.StartProcess(_ytdlpProcessName, "--version", true);
 
         var currentProcessVersion = (await ytdlp.StandardOutput.ReadToEndAsync(cToken)).Trim();
         _memoryCache.Set(_cachedCurrentVersionKey, currentProcessVersion, TimeSpan.FromMinutes(1.5));
@@ -116,7 +117,7 @@ public sealed class YtdlpResolver : IYtdlpResolver
                 return (currentVersion, null);
             }
 
-            using var ytdlp = Utilities.StartProcess(_ytdlpProcessName, "-U");
+            using var ytdlp = KotzUtilities.StartProcess(_ytdlpProcessName, "-U");
             await ytdlp.WaitForExitAsync(cToken);
 
             _isUpdating = false;
@@ -126,19 +127,19 @@ public sealed class YtdlpResolver : IYtdlpResolver
         // Install
         Directory.CreateDirectory(installationUri);
 
-        var finalFilePath = Path.Combine(installationUri, FileName);
+        var finalFilePath = Path.Join(installationUri, FileName);
         var http = _httpClientFactory.CreateClient();
-        using var downloadStream = await http.GetStreamAsync($"https://github.com/yt-dlp/yt-dlp/releases/download/{newVersion}/{_downloadedFileName}", cToken);
-        using (var fileStream = new FileStream(finalFilePath, FileMode.Create))
+        await using var downloadStream = await http.GetStreamAsync($"https://github.com/yt-dlp/yt-dlp/releases/download/{newVersion}/{_downloadedFileName}", cToken);
+        await using (var fileStream = new FileStream(finalFilePath, FileMode.Create))
             await downloadStream.CopyToAsync(fileStream, cToken);
 
         // Update environment variable
-        Utilities.AddPathToPathEnvar(installationUri);
+        KotzUtilities.AddPathToPATHEnvar(installationUri);
 
         // On Linux and MacOS, we need to mark the file as executable.
         if (Environment.OSVersion.Platform is PlatformID.Unix)
         {
-            using var chmod = Utilities.StartProcess("chmod", $"+x \"{finalFilePath}\"");
+            using var chmod = KotzUtilities.StartProcess("chmod", ["+x", finalFilePath]);
             await chmod.WaitForExitAsync(cToken);
         }
 

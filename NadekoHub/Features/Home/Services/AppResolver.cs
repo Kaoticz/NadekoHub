@@ -43,7 +43,7 @@ public sealed class AppResolver : IAppResolver
         _httpClientFactory = httpClientFactory;
         _memoryCache = memoryCache;
         FileName = OperatingSystem.IsWindows() ? "NadekoHub.exe" : "NadekoHub";
-        BinaryUri = Path.Combine(AppContext.BaseDirectory, FileName);
+        BinaryUri = Path.Join(AppContext.BaseDirectory, FileName);
     }
 
     /// <inheritdoc/>
@@ -117,8 +117,8 @@ public sealed class AppResolver : IAppResolver
             return (currentVersion, null);
 
         var http = _httpClientFactory.CreateClient();   // Do not initialize a GithubClient here, it returns 302 with no data
-        var appTempLocation = Path.Combine(_tempDirectory, _downloadedFileName[.._downloadedFileName.LastIndexOf('.')]);
-        var zipTempLocation = Path.Combine(_tempDirectory, _downloadedFileName);
+        var appTempLocation = Path.Join(_tempDirectory, _downloadedFileName[.._downloadedFileName.LastIndexOf('.')]);
+        var zipTempLocation = Path.Join(_tempDirectory, _downloadedFileName);
 
         try
         {
@@ -139,13 +139,24 @@ public sealed class AppResolver : IAppResolver
 
             foreach (var newFileUri in newFilesUris)
             {
-                var destinationUri = Path.Combine(AppContext.BaseDirectory, newFileUri[(newFileUri.LastIndexOf(Path.DirectorySeparatorChar) + 1)..]);
+                var destinationUri = Path.Join(AppContext.BaseDirectory, newFileUri[(newFileUri.LastIndexOf(Path.DirectorySeparatorChar) + 1)..]);
 
                 // Rename the original file from "file" to "file_old".
                 if (File.Exists(destinationUri))
-                    File.Move(destinationUri, destinationUri + OldFileSuffix, true);
-
-                KotzUtilities.TryMoveFile(newFileUri, destinationUri, true);
+                    File.Move(destinationUri, destinationUri + OldFileSuffix, true); // This executes fine
+                
+                // Move the new file to the application's directory.
+                // ...
+                // This is a workaround for really weird bug with applications published as single-file, where
+                // FileNotFoundException: Could not load file or assembly 'System.IO.Pipes, Version=9.0.0.0 [...] 
+                if (Environment.OSVersion.Platform is not PlatformID.Unix)
+                    File.Move(newFileUri, destinationUri, true);
+                else
+                {
+                    // Circumvent this issue on Unix systems: https://github.com/dotnet/runtime/issues/31149
+                    using var moveProcess = KotzUtilities.StartProcess("mv", [newFileUri, destinationUri]);
+                    await moveProcess.WaitForExitAsync(cToken);
+                }
             }
 
             // Mark the new binary file as executable.

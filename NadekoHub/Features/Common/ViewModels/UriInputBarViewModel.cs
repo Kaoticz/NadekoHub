@@ -1,4 +1,5 @@
 using Avalonia.Platform.Storage;
+using Kotz.Utilities;
 using NadekoHub.Features.Abstractions;
 using NadekoHub.Features.Common.Models;
 using NadekoHub.Features.Common.Views.Controls;
@@ -14,7 +15,7 @@ public class UriInputBarViewModel : ViewModelBase<UriInputBar>
 {
     private static readonly FolderPickerOpenOptions _folderPickerOptions = new();
     private string _lastValidUri = AppStatics.AppDefaultConfigDirectoryUri;
-    private bool _isDirectoryValid = false;
+    private bool _isDirectoryValid;
     private string _currentUri = string.Empty;
     private readonly IStorageProvider _storageProvider;
 
@@ -92,5 +93,5 @@ public class UriInputBarViewModel : ViewModelBase<UriInputBar>
     /// <param name="directoryUri">The absolute path to a directory.</param>
     /// <returns><see langword="true"/> if the directory is valid, <see langword="false"/> otherwise.</returns>
     private bool IsValidDirectory(string directoryUri)
-        => Directory.Exists(directoryUri) && Utilities.CanWriteTo(directoryUri);
+        => Directory.Exists(directoryUri) && KotzUtilities.HasWritePermissionAt(directoryUri);
 }

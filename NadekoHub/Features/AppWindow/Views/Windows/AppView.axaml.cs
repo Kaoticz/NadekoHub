@@ -156,15 +156,24 @@ public partial class AppView : ReactiveWindow<AppViewModel>
 
         base.OnClosing(eventArgs);
     }
-
+    
     /// <inheritdoc/>
-    protected override void OnClosed(EventArgs eventArgs)
+    protected override async void OnClosed(EventArgs eventArgs)
     {
-        // When the updater is closed, kill all bots and write their logs.
-        _botOrchestrator.StopAllBots();
-        _logWriter.FlushAllAsync(true).Wait();
-
-        base.OnClosed(eventArgs);
+        try
+        {
+            // When the updater is closed, kill all bots and write their logs.
+            _botOrchestrator.StopAllBots();
+            await _logWriter.FlushAllAsync(true);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex);
+        }
+        finally
+        {
+            base.OnClosed(eventArgs);
+        }
     }
 
     /// <summary>
@@ -255,8 +264,7 @@ public partial class AppView : ReactiveWindow<AppViewModel>
             return;
 
         _ = new UpdateView().ShowDialog(this);
-
-
+        
         try
         {
             await _appResolver.InstallOrUpdateAsync(AppContext.BaseDirectory);
@@ -276,13 +284,13 @@ public partial class AppView : ReactiveWindow<AppViewModel>
     [SupportedOSPlatform("windows")]
     private async Task MigrateOldBotsAsync()
     {
-        var configFileUri = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "NadekoBotUpdater", "bots.json");
+        var configFileUri = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "NadekoBotUpdater", "bots.json");
 
         if (File.Exists(AppStatics.AppConfigUri) || !File.Exists(configFileUri))
             return;
 
         var bots = (JsonSerializer.Deserialize<OldUpdaterBotEntry[]>(await File.ReadAllTextAsync(configFileUri)) ?? [])
-            .Where(x => !string.IsNullOrWhiteSpace(x.PathUri) && File.Exists(Path.Combine(x.PathUri, "NadekoBot.exe")))
+            .Where(x => !string.IsNullOrWhiteSpace(x.PathUri) && File.Exists(Path.Join(x.PathUri, "NadekoBot.exe")))
             .Select((x, y) => new BotEntry(x.Guid, new(x.Name, x.PathUri!, (uint)y, x.Version, x.IconUri)));
 
         foreach (var botEntry in bots)

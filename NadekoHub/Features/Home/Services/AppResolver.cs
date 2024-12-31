@@ -159,7 +159,7 @@ public sealed class AppResolver : IAppResolver
                 }
             }
 
-            // Mark the new binary file as executable.
+            // Mark the new binary file as executable.c
             if (Environment.OSVersion.Platform is PlatformID.Unix)
             {
                 using var chmod = KotzUtilities.StartProcess("chmod", ["+x", BinaryUri]);

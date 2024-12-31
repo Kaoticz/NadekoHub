@@ -147,7 +147,8 @@ public sealed class AppResolver : IAppResolver
                 
                 // Move the new file to the application's directory.
                 // ...
-                // This is a workaround for really weird bug with Unix applications published as single-file:
+                // This is a workaround for a really weird bug with Unix applications published as single-file.
+                // The moving operation works, but invoking any process from the shell results in:
                 // FileNotFoundException: Could not load file or assembly 'System.IO.Pipes, Version=9.0.0.0 [...] 
                 if (Environment.OSVersion.Platform is not PlatformID.Unix)
                     File.Move(newFileUri, destinationUri, true);

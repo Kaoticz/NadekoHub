@@ -259,20 +259,14 @@ public partial class AppView : ReactiveWindow<AppViewModel>
 
         try
         {
-            Console.WriteLine("Downloading new updater...");
             await _appResolver.InstallOrUpdateAsync(AppContext.BaseDirectory);
+            _appResolver.LaunchNewVersion();
         }
         catch (Exception ex)
         {
             Console.WriteLine(ex);
         }
-        finally
-        {
-            Console.WriteLine("Launching new updater...");
-            _appResolver.LaunchNewVersion();
-        }
 
-        Console.WriteLine("Finished update, closing down...");
         base.Close();
     }
 

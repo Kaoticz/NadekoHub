@@ -147,13 +147,12 @@ public sealed class AppResolver : IAppResolver
                 
                 // Move the new file to the application's directory.
                 // ...
-                // This is a workaround for really weird bug with applications published as single-file, where
+                // This is a workaround for really weird bug with Unix applications published as single-file:
                 // FileNotFoundException: Could not load file or assembly 'System.IO.Pipes, Version=9.0.0.0 [...] 
                 if (Environment.OSVersion.Platform is not PlatformID.Unix)
                     File.Move(newFileUri, destinationUri, true);
                 else
                 {
-                    // Circumvent this issue on Unix systems: https://github.com/dotnet/runtime/issues/31149
                     using var moveProcess = KotzUtilities.StartProcess("mv", [newFileUri, destinationUri]);
                     await moveProcess.WaitForExitAsync(cToken);
                 }

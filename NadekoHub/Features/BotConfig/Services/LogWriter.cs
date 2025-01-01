@@ -1,6 +1,7 @@
 using NadekoHub.Features.AppConfig.Models;
 using NadekoHub.Features.BotConfig.Models;
 using NadekoHub.Features.BotConfig.Services.Abstractions;
+using System.Collections.Concurrent;
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
 
@@ -11,7 +12,7 @@ namespace NadekoHub.Features.BotConfig.Services;
 /// </summary>
 public sealed class LogWriter : ILogWriter
 {
-    private readonly Dictionary<Guid, StringBuilder> _botLogs = [];
+    private readonly ConcurrentDictionary<Guid, StringBuilder> _botLogs = [];
     private readonly ReadOnlyAppSettings _appConfig;
 
     /// <inheritdoc/>
@@ -27,7 +28,11 @@ public sealed class LogWriter : ILogWriter
     /// <inheritdoc/>
     public async Task<bool> FlushAllAsync(bool removeFromMemory = false, CancellationToken cToken = default)
     {
-        var result = await Task.WhenAll(_botLogs.Keys.Select(x => FlushAsync(x, removeFromMemory, cToken)));
+        var result = await Task.WhenAll(_botLogs.Keys.Select(x => FlushAsync(x, false, cToken)));
+        
+        if (removeFromMemory)
+            _botLogs.Clear();
+        
         return result.Any(x => x);
     }
 
@@ -38,7 +43,7 @@ public sealed class LogWriter : ILogWriter
             return false;
 
         if (removeFromMemory)
-            _botLogs.Remove(botId);
+            _botLogs.Remove(botId, out _);
 
         if (logStringBuilder.Length is 0)
             return false;

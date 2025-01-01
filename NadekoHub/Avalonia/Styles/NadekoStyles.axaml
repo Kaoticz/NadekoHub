@@ -16,7 +16,6 @@
                 <Border Classes="circular">
                     <Button Classes="accent" Content="+" />
                 </Border>
-                <Button Classes="link-11" Content="HyperlinkButton" />
                 <TextBlock Text="Text Block" />
                 <TextBox Classes="console" Watermark="Fake Console" />
                 <TextBox Watermark="Regular Text Box" Text="Sample Text" />

@@ -1,7 +1,5 @@
 using Avalonia.Platform;
 using SkiaSharp;
-using System.ComponentModel;
-using System.Diagnostics;
 
 namespace NadekoHub.Common;
 

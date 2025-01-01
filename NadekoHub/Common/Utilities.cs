@@ -11,29 +11,29 @@ namespace NadekoHub.Common;
 internal static class Utilities
 {
     /// <summary>
-    /// Loads an image embeded with this application.
+    /// Loads an image embedded with this application.
     /// </summary>
     /// <param name="uri">An uri that starts with "avares://"</param>
     /// <remarks>Valid uris must start with "avares://".</remarks>
-    /// <returns>The embeded image or the default bot avatar placeholder.</returns>
-    /// <exception cref="FileNotFoundException">Occurs when the embeded resource does not exist.</exception>
-    public static SKBitmap LoadEmbededImage(string? uri = default)
+    /// <returns>The embedded image or the default bot avatar placeholder.</returns>
+    /// <exception cref="FileNotFoundException">Occurs when the embedded resource does not exist.</exception>
+    public static SKBitmap LoadEmbeddedImage(string? uri = default)
     {
         return (string.IsNullOrWhiteSpace(uri) || !uri.StartsWith("avares://", StringComparison.Ordinal))
-            ? SKBitmap.Decode(AssetLoader.Open(new Uri(AppConstants.BotAvatarUri)))
-            : SKBitmap.Decode(AssetLoader.Open(new Uri(uri)));
+            ? SKBitmap.Decode(AssetLoader.Open(new(AppConstants.BotAvatarUri)))
+            : SKBitmap.Decode(AssetLoader.Open(new(uri)));
     }
 
     /// <summary>
     /// Loads the image at the specified location or the bot avatar placeholder if it was not found.
     /// </summary>
-    /// <param name="uri">The absolute path to the image file or <see langword="null"/> to get the avatar placeholder.</param>
-    /// <remarks>This fallsback to <see cref="LoadEmbededImage(string?)"/> if <paramref name="uri"/> doesn't point to a valid image file.</remarks>
+    /// <param name="imagePath">The absolute path to the image file or <see langword="null"/> to get the avatar placeholder.</param>
+    /// <remarks>This fallsback to <see cref="LoadEmbeddedImage"/> if <paramref name="imagePath"/> doesn't point to a valid image file.</remarks>
     /// <returns>The requested image or the default bot avatar placeholder.</returns>
-    public static SKBitmap LoadLocalImage(string? uri = default)
+    public static SKBitmap LoadLocalImage(string? imagePath)
     {
-        return (File.Exists(uri))
-            ? SKBitmap.Decode(uri)
-            : LoadEmbededImage(uri);
+        return (File.Exists(imagePath))
+            ? SKBitmap.Decode(imagePath)
+            : LoadEmbeddedImage(imagePath);
     }
 }

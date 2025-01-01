@@ -15,35 +15,35 @@ public static partial class AppStatics
     /// Defines the default location where the updater configuration and bot instances are stored.
     /// </summary>
 #if DEBUG
-    public static string AppDefaultConfigDirectoryUri { get; } = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "NadekoHubDebug");
+    public static string AppDefaultConfigDirectoryUri { get; } = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "NadekoHubDebug");
 #else
-    public static string AppDefaultConfigDirectoryUri { get; } = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "NadekoHub");
+    public static string AppDefaultConfigDirectoryUri { get; } = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "NadekoHub");
 #endif
 
     /// <summary>
     /// Defines the default location where the bot instances are stored.
     /// </summary>
-    public static string AppDefaultBotDirectoryUri { get; } = Path.Combine(AppDefaultConfigDirectoryUri, "Bots");
+    public static string AppDefaultBotDirectoryUri { get; } = Path.Join(AppDefaultConfigDirectoryUri, "Bots");
 
     /// <summary>
     /// Defines the default location where the backups of bot instances are stored.
     /// </summary>
-    public static string AppDefaultBotBackupDirectoryUri { get; } = Path.Combine(AppDefaultConfigDirectoryUri, "Backups");
+    public static string AppDefaultBotBackupDirectoryUri { get; } = Path.Join(AppDefaultConfigDirectoryUri, "Backups");
 
     /// <summary>
     /// Defines the default location where the logs of bot instances are stored.
     /// </summary>
-    public static string AppDefaultLogDirectoryUri { get; } = Path.Combine(AppDefaultConfigDirectoryUri, "Logs");
+    public static string AppDefaultLogDirectoryUri { get; } = Path.Join(AppDefaultConfigDirectoryUri, "Logs");
 
     /// <summary>
     /// Defines the location of the application's configuration file.
     /// </summary>
-    public static string AppConfigUri { get; } = Path.Combine(AppDefaultConfigDirectoryUri, "config.json");
+    public static string AppConfigUri { get; } = Path.Join(AppDefaultConfigDirectoryUri, "config.json");
 
     /// <summary>
     /// Defines the location of the application's dependencies.
     /// </summary>
-    public static string AppDepsUri { get; } = Path.Combine(AppDefaultConfigDirectoryUri, "Dependencies");
+    public static string AppDepsUri { get; } = Path.Join(AppDefaultConfigDirectoryUri, "Dependencies");
 
     /// <summary>
     /// Defines a transparent color brush.
@@ -56,11 +56,11 @@ public static partial class AppStatics
     public static FilePickerOpenOptions ImageFilePickerOptions { get; } = new()
     {
         AllowMultiple = false,
-        FileTypeFilter = new FilePickerFileType[]
-        {
-            new("Image") { Patterns = new[] { "*.png", "*.jpg", "*.jpeg", "*.gif", "*.webp" } },
-            new("All") { Patterns = new[] { "*.*" } }
-        }
+        FileTypeFilter =
+        [
+            new("Image") { Patterns = ["*.png", "*.jpg", "*.jpeg", "*.gif", "*.webp"]},
+            new("All") { Patterns = ["*.*"]}
+        ]
     };
 
     /// <summary>

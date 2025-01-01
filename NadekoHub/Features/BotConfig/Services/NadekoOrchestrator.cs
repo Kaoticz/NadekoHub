@@ -10,8 +10,9 @@ namespace NadekoHub.Features.BotConfig.Services;
 /// </summary>
 public sealed class NadekoOrchestrator : IBotOrchestrator
 {
-    private readonly Dictionary<Guid, Process> _runningBots = new();
     private readonly ReadOnlyAppSettings _appConfig;
+    private readonly ILogWriter _logWriter;
+    private readonly Dictionary<Guid, Process> _runningBots = new();
     private readonly string _fileName = OperatingSystem.IsWindows() ? "NadekoBot.exe" : "NadekoBot";
 
     /// <inheritdoc/>
@@ -27,8 +28,12 @@ public sealed class NadekoOrchestrator : IBotOrchestrator
     /// Creates an object that coordinates multiple running processes of NadekoBot.
     /// </summary>
     /// <param name="appConfig">The application settings.</param>
-    public NadekoOrchestrator(ReadOnlyAppSettings appConfig)
-        => _appConfig = appConfig;
+    /// <param name="logWriter">The service that writes bot logs to disk.</param>
+    public NadekoOrchestrator(ReadOnlyAppSettings appConfig, ILogWriter logWriter)
+    {
+        _appConfig = appConfig;
+        _logWriter = logWriter;
+    }
 
     /// <inheritdoc/>
     public bool IsBotRunning(Guid botId)
@@ -39,12 +44,12 @@ public sealed class NadekoOrchestrator : IBotOrchestrator
     {
         if (_runningBots.ContainsKey(botId)
             || !_appConfig.BotEntries.TryGetValue(botId, out var botEntry)
-            || !File.Exists(Path.Combine(botEntry.InstanceDirectoryUri, _fileName)))
+            || !File.Exists(Path.Join(botEntry.InstanceDirectoryUri, _fileName)))
             return false;
 
         var botProcess = Process.Start(new ProcessStartInfo()
         {
-            FileName = Path.Combine(botEntry.InstanceDirectoryUri, _fileName),
+            FileName = Path.Join(botEntry.InstanceDirectoryUri, _fileName),
             WorkingDirectory = botEntry.InstanceDirectoryUri,
             UseShellExecute = false,
             CreateNoWindow = true,
@@ -96,7 +101,12 @@ public sealed class NadekoOrchestrator : IBotOrchestrator
     private void OnExit(object? sender, EventArgs eventArgs)
     {
         var (id, process) = _runningBots.First(x => x.Value.Equals(sender));
-        OnBotExit?.Invoke(this, new(id, process.ExitCode));
+        var message = Environment.NewLine
+            + $"{_appConfig.BotEntries[id].Name} stopped. Status code: {process.ExitCode}"
+            + Environment.NewLine;
+
+        _logWriter.TryAdd(id, message);
+        OnBotExit?.Invoke(this, new(id, process.ExitCode, message));
 
         _runningBots.Remove(id);
         process.CancelOutputRead();
@@ -116,7 +126,8 @@ public sealed class NadekoOrchestrator : IBotOrchestrator
 
         var (id, _) = _runningBots.First(x => x.Value.Equals(sender));
         var newEventArgs = new ProcessStdWriteEventArgs(id, eventArgs.Data);
-
+        
+        _logWriter.TryAdd(id, eventArgs.Data);
         OnStdout?.Invoke(this, newEventArgs);
     }
 
@@ -132,7 +143,8 @@ public sealed class NadekoOrchestrator : IBotOrchestrator
 
         var (id, _) = _runningBots.First(x => x.Value.Equals(sender));
         var newEventArgs = new ProcessStdWriteEventArgs(id, eventArgs.Data);
-
+        
+        _logWriter.TryAdd(id, eventArgs.Data);
         OnStderr?.Invoke(this, newEventArgs);
     }
 }

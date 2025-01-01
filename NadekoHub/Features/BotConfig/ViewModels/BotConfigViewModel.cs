@@ -103,7 +103,7 @@ public class BotConfigViewModel : ViewModelBase<BotConfigView>, IDisposable
         {
             var sanitizedValue = value.ReplaceLineEndings(string.Empty);
 
-            DirectoryHint = $"Select the absolute path to the bot directory. For example: {Path.Combine(_appConfigManager.AppConfig.BotsDirectoryUri, sanitizedValue)}";
+            DirectoryHint = $"Select the absolute path to the bot directory. For example: {Path.Join(_appConfigManager.AppConfig.BotsDirectoryUri, sanitizedValue)}";
             this.RaiseAndSetIfChanged(ref _botName, sanitizedValue);
         }
     }
@@ -180,7 +180,7 @@ public class BotConfigViewModel : ViewModelBase<BotConfigView>, IDisposable
         if (IsBotRunning)
             EnableButtons(true, false);
         else
-            EnableButtons(!File.Exists(Path.Combine(botEntry.InstanceDirectoryUri, Resolver.FileName)), true);
+            EnableButtons(!File.Exists(Path.Join(botEntry.InstanceDirectoryUri, Resolver.FileName)), true);
 
         // Dispose when the view is deactivated
         this.WhenActivated(disposables => Disposable.Create(Dispose).DisposeWith(disposables));
@@ -245,7 +245,7 @@ public class BotConfigViewModel : ViewModelBase<BotConfigView>, IDisposable
         {
             _ = LoadUpdateBarAsync(Resolver, UpdateBar);
 
-            if (!wereButtonsUnlocked && File.Exists(Path.Combine(BotDirectoryUriBar.CurrentUri, Resolver.FileName)))
+            if (!wereButtonsUnlocked && File.Exists(Path.Join(BotDirectoryUriBar.CurrentUri, Resolver.FileName)))
                 EnableButtons(false, true);
             else
                 EnableButtons(!wereButtonsUnlocked, true);
@@ -466,8 +466,6 @@ public class BotConfigViewModel : ViewModelBase<BotConfigView>, IDisposable
         if (eventArgs.Id != Resolver.Id)
             return;
 
-        _logWriter.TryAdd(eventArgs.Id, eventArgs.Output);
-
         FakeConsole.Content = FakeConsole.Content.Length > 100_000
             ? FakeConsole.Content[FakeConsole.Content.IndexOf(Environment.NewLine, 60_000, StringComparison.Ordinal)..] + eventArgs.Output + Environment.NewLine
             : FakeConsole.Content + eventArgs.Output + Environment.NewLine;
@@ -482,15 +480,12 @@ public class BotConfigViewModel : ViewModelBase<BotConfigView>, IDisposable
     {
         if (eventArgs.Id != Resolver.Id)
             return;
-
-        var message = Environment.NewLine + ActualBotName + " stopped." + Environment.NewLine;
-
-        _logWriter.TryAdd(Resolver.Id, message);
-        FakeConsole.Content += message;
+        
+        FakeConsole.Content += eventArgs.Message;
     }
 
     /// <summary>
-    /// Reenables the buttons when the bot instance associated with this view-model exits.
+    /// Re-enables the buttons when the bot instance associated with this view-model exits.
     /// </summary>
     /// <param name="botOrchestrator">The bot orchestrator.</param>
     /// <param name="eventArgs">The event arguments.</param>

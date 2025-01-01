@@ -10,7 +10,7 @@ namespace NadekoHub.Features.AppConfig.Services.Mocks;
 internal sealed class MockAppConfigManager : IAppConfigManager
 {
     /// <inheritdoc/>
-    public ReadOnlyAppSettings AppConfig { get; } = new(new() { BotEntries = new() { [Guid.Empty] = new("MockBot", Path.Combine(AppStatics.AppDefaultBotDirectoryUri, "MockBot"), 0) } });
+    public ReadOnlyAppSettings AppConfig { get; } = new(new() { BotEntries = new() { [Guid.Empty] = new("MockBot", Path.Join(AppStatics.AppDefaultBotDirectoryUri, "MockBot"), 0) } });
 
     /// <inheritdoc/>
     public ValueTask<BotEntry> CreateBotEntryAsync(CancellationToken cToken = default)

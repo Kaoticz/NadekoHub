@@ -229,11 +229,11 @@ public sealed class AppResolver : IAppResolver
     /// <exception cref="InvalidOperationException">Occurs when parsing of the response fails.</exception>
     private async ValueTask<string> GetLatestVersionFromUrlAsync(CancellationToken cToken = default)
     {
-        var http = _httpClientFactory.CreateClient(AppConstants.NoRedirectClient);
+        var http = _httpClientFactory.CreateClient(AppConstants.GithubClient);
         var response = await http.GetAsync(_githubReleasesRepoUrl, cToken);
 
         var lastSlashIndex = response.Headers.Location?.OriginalString.LastIndexOf('/')
-            ?? throw new InvalidOperationException("Failed to get the latest NadekoBot version.");
+            ?? throw new InvalidOperationException("Failed to get the latest NadekoHub version.");
 
         return response.Headers.Location.OriginalString[(lastSlashIndex + 1)..];
     }

@@ -254,7 +254,7 @@ public sealed partial class NadekoResolver : IBotResolver
         using var zipFile = ZipFile.OpenRead(backupFileUri);
         var zippedFiles = zipFile.Entries
             .Where(x =>
-                x.Name is "creds.yml"   // Restore creds.yml and everything in the "data" folder, except the stuff in the "strings" folder.
+                x.Name is "creds.yml"   // Restore creds.yml and everything in the "data" folder, but not the stuff in the "strings" folder.
                 || (!string.IsNullOrWhiteSpace(x.Name) && x.FullName.Contains("data/") && !x.FullName.Contains("strings/"))
             );
 

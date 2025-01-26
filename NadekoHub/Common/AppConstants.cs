@@ -18,5 +18,5 @@ public static class AppConstants
     /// <summary>
     /// The name for an <see cref="HttpClient"/> that makes calls to the Github API.
     /// </summary>
-    public const string GithubClient = "NoRedirect";
+    public const string GithubClient = "GithubClient";
 }

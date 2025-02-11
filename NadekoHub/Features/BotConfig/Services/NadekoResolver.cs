@@ -167,7 +167,7 @@ public sealed partial class NadekoResolver : IBotResolver
 
         try
         {
-            using var downloadStream = await http.GetStreamAsync(
+            await using var downloadStream = await http.GetStreamAsync(
                 await GetDownloadUrlAsync(latestVersion, cToken),
                 cToken
             );
@@ -185,11 +185,17 @@ public sealed partial class NadekoResolver : IBotResolver
             // Update settings
             await _appConfigManager.UpdateBotEntryAsync(Id, x => x with { Version = latestVersion }, cToken);
 
-            // Create creds.yml
-            var credsUri = Path.Join(installationUri, "creds.yml");
+            // Create creds.yml if it doesn't exist
+            // Old versions have creds.yml and example in ./
+            // New versions have creds.yml and example in ./data/
+            // If downloaded bot has creds example in ./, create creds.yml to ./, else create to ./data/
+            var credsExampleUri = Directory.EnumerateFiles(installationUri, "creds_example.yml", SearchOption.AllDirectories)
+                .Last();
+            
+            var credsUri = Path.Join(Directory.GetParent(credsExampleUri)?.FullName ?? Path.Join(installationUri, "data"), "creds.yml");
 
             if (!File.Exists(credsUri))
-                File.Copy(Path.Join(installationUri, "creds_example.yml"), credsUri);
+                File.Copy(Path.Join(installationUri, "data", "creds_example.yml"), credsUri);
 
             return (currentVersion, latestVersion);
         }
@@ -264,7 +270,13 @@ public sealed partial class NadekoResolver : IBotResolver
                 .Prepend(Directory.GetParent(installationUri)?.FullName ?? string.Empty)
                 .ToArray();
 
-            await RestoreFileAsync(zippedFile, Path.Join(fileDestinationPath), cToken);
+            // Old versions have creds.yml and example in ./
+            // New versions have creds.yml and example in ./data/
+            // If downloaded bot has creds example in the root, restore creds.yml to root, else restore to ./data/
+            if (zippedFile.Name is "creds.yml" && !File.Exists(Path.Join(installationUri, "creds_example.yml")))
+                await RestoreFileAsync(zippedFile, Path.Join(installationUri, "data", zippedFile.Name), cToken);
+            else
+                await RestoreFileAsync(zippedFile, Path.Join(fileDestinationPath), cToken);
         }
     }
 

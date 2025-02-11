@@ -261,8 +261,9 @@ public class BotConfigViewModel : ViewModelBase<BotConfigView>, IDisposable
     {
         try
         {
+            // Get result from inner directories first, for compatibility with creds.yml being in the root (old versions) and in the data folder (newer versions).
             var fileUri = Directory.EnumerateFiles(_appConfigManager.AppConfig.BotEntries[Resolver.Id].InstanceDirectoryUri, fileName, SearchOption.AllDirectories)
-                .First(x => x.Contains(fileName, StringComparison.Ordinal));
+                .Last();
 
             var process = Process.Start(new ProcessStartInfo()
             {

@@ -195,7 +195,7 @@ public sealed partial class NadekoResolver : IBotResolver
             var credsUri = Path.Join(Directory.GetParent(credsExampleUri)?.FullName ?? Path.Join(installationUri, "data"), "creds.yml");
 
             if (!File.Exists(credsUri))
-                File.Copy(Path.Join(installationUri, "data", "creds_example.yml"), credsUri);
+                File.Copy(credsExampleUri, credsUri);
 
             return (currentVersion, latestVersion);
         }

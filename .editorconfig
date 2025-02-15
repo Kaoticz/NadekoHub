@@ -95,7 +95,8 @@ dotnet_style_parentheses_in_other_operators = never_if_unnecessary
 dotnet_style_parentheses_in_relational_binary_operators = always_for_clarity:warning
 
 # Modifier preferences
-dotnet_style_require_accessibility_modifiers = always:error
+dotnet_style_require_accessibility_modifiers = for_non_interface_members:warning
+dotnet_diagnostics.IDE0040.severity = warning
 
 # Expression-level preferences
 dotnet_style_coalesce_expression = true

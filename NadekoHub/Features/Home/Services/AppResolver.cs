@@ -253,10 +253,10 @@ public sealed class AppResolver : IAppResolver
         var httpResponse = await http.GetAsync(_githubReleasesEndpointUrl, cToken);
 
         if (!httpResponse.IsSuccessStatusCode)
-            throw new InvalidOperationException("The call to the Gitlab API failed.");
+            throw new InvalidOperationException("The call to the Github API failed.");
 
         var response = JsonSerializer.Deserialize<GithubRelease>(await httpResponse.Content.ReadAsStringAsync(cToken))
-            ?? throw new InvalidOperationException("Failed deserializing Gitlab's response.");
+            ?? throw new InvalidOperationException("Failed deserializing Github's response.");
 
         _memoryCache.Set(_cachedCurrentVersionKey, response, TimeSpan.FromMinutes(1));
 

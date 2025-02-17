@@ -143,7 +143,15 @@ public sealed class AppResolver : IAppResolver
 
                 // Rename the original file from "file" to "file_old".
                 if (File.Exists(destinationUri))
-                    File.Move(destinationUri, destinationUri + OldFileSuffix, true); // This executes fine
+                {
+                    if (Environment.OSVersion.Platform is not PlatformID.Unix)
+                        File.Move(destinationUri, destinationUri + OldFileSuffix, true);
+                    else
+                    {
+                        using var moveProcess = KotzUtilities.StartProcess("mv", [destinationUri, destinationUri + OldFileSuffix]);
+                        await moveProcess.WaitForExitAsync(cToken);
+                    }
+                }
                 
                 // Move the new file to the application's directory.
                 // ...

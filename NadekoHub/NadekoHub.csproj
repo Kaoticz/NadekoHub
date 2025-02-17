@@ -19,7 +19,7 @@
     <SelfContained>true</SelfContained>
     <DebugType>embedded</DebugType>
     <!--Version-->
-    <VersionPrefix>1.0.6.0</VersionPrefix>
+    <VersionPrefix>1.0.7.0</VersionPrefix>
     <!--Avalonia Settings-->
     <ApplicationManifest>app.manifest</ApplicationManifest>
     <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
